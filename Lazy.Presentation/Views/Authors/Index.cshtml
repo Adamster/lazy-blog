@@ -2,21 +2,21 @@
 @model IEnumerable<Lazy.Presentation.Models.Author.AuthorItemModel>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Blog Authors";
 }
-
-<h1>Index</h1>
+<h1>Blog Authors</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
 </p>
-<table class="table">
+<table class="table table-striped">
     <thead>
         <tr>
-            <th>
+            <th class="text-center align-middle">Avatar</th>
+            <th class="text-center align-middle">
                 @Html.DisplayNameFor(model => model.Name)
             </th>
-            <th>
+            <th class="text-center align-middle">
                 @Html.DisplayNameFor(model => model.WebUrl)
             </th>
             <th></th>
@@ -25,13 +25,16 @@
     <tbody>
 @foreach (var item in Model) {
         <tr>
-            <td>
+                <td>
+                    <img src="@(string.IsNullOrEmpty(item.AvatarUrl) ? "/images/avatar-placeholder.png" : item.AvatarUrl)" class="rounded-circle" width="50" height="50">
+                </td>
+                <td class="text-center align-middle">
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
-            <td>
+                <td class="text-center align-middle">
                 @Html.DisplayFor(modelItem => item.WebUrl)
             </td>
-            <td>
+                <td class="text-center align-middle">
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                     <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
                     <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
@@ -40,3 +43,6 @@
 }
     </tbody>
 </table>
+
+
+

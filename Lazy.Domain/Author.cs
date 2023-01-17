@@ -2,10 +2,11 @@
 
 public class Author : Entity
 {
+
     public Author(string name, string webUrl)
     {
-        Name = name;
-        WebUrl = webUrl;
+        Name = name ?? throw new ArgumentNullException(nameof(name));
+        WebUrl = webUrl ?? throw new ArgumentNullException(nameof(webUrl));
     }
 
     public string Name { get; set; }

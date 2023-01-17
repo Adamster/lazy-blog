@@ -2,6 +2,7 @@
 using Lazy.Repository;
 using Lazy.Repository.Models.Author;
 using Lazy.Services.Exceptions;
+using Lazy.Services.Extensions;
 using Mapster;
 
 namespace Lazy.Services.Author;
@@ -33,10 +34,10 @@ public class AuthorService : IAuthorService
 
     public async Task<AuthorItemDto> CreateAuthor(CreateAuthorDto author)
     {
-        var authorWebUrl = author.Name;
-        var authorDto = new AuthorDto(Guid.NewGuid(), author.Name, authorWebUrl);
-        AuthorDto newAuthor =  await _authorRepository.CreateAuthor(authorDto);
-        return newAuthor.Adapt<AuthorItemDto>();
+        var urlName = author.Name.Slugify();
+        var newAuthor = new AuthorDto(Guid.Empty, author.Name, urlName);
+        AuthorDto createdAuthor = await _authorRepository.CreateAuthor(newAuthor);
+        return createdAuthor.Adapt<AuthorItemDto>();
     }
 
     public async Task UpdateAuthor(UpdateAuthorDto updatedAuthorDto)
