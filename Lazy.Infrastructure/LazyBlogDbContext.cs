@@ -8,7 +8,11 @@ public class LazyBlogDbContext : DbContext
     public LazyBlogDbContext(DbContextOptions<LazyBlogDbContext> options) : base(options)
     {
         Database.EnsureCreated();
-        Database.Migrate();
+        var pendingMigrations = Database.GetPendingMigrations();
+        if (pendingMigrations.Any())
+        {
+            Database.Migrate();
+        }
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
