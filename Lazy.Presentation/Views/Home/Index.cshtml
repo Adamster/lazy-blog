@@ -2,7 +2,31 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+@model IList<Lazy.Presentation.Models.Post.PostItemModel>
+@using System.Linq
+
+<div id="infinite-scroll-container" style="scroll-behavior: auto; height: auto" >
+    <div class="card-deck">
+        @foreach (var post in Model)
+        {
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">@post.Title</h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">@post.Description</p>
+                    <p class="card-text">@post.Content</p>
+                </div>
+                <div class='card-footer'>
+                    <small class='text-muted'>Author: @post.AuthorName |
+                        <span >
+                            <i class="fa fa-thumbs-up"></i> Likes: @post.LikeCount 
+                        </span>
+                        | Comments: @post.CommentsCount | Date posted: @post.DatePosted
+                    </small>
+                </div>
+            </div>
+        }
+    </div>
+    <div id="loading-indicator" style="display: none;">Loading...</div>
 </div>

@@ -1,6 +1,7 @@
 using Lazy.Infrastructure;
 using Lazy.Repository;
 using Lazy.Services.Author;
+using Lazy.Services.Post;
 using Microsoft.EntityFrameworkCore;
 
 namespace Lazy.Presentation
@@ -19,6 +20,8 @@ namespace Lazy.Presentation
 
             builder.Services.AddScoped<IAuthorService, AuthorService>();
             builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
+            builder.Services.AddScoped<IPostService, PostService>();
+            builder.Services.AddScoped<IPostRepository, PostRepository>();
 
             var app = builder.Build();
 
