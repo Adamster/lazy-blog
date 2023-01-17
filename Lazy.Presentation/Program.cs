@@ -42,6 +42,9 @@ namespace Lazy.Presentation
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
             app.Run();
+
+            using var context = app.Services.GetService<LazyBlogDbContext>();
+                context.Database.Migrate();
         }
     }
 }
