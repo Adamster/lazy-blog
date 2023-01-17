@@ -5,9 +5,9 @@ namespace Lazy.Infrastructure;
 
 public class LazyBlogDbContext : DbContext
 {
-    public LazyBlogDbContext(DbContextOptions<LazyBlogDbContext> options): base(options)
+    public LazyBlogDbContext(DbContextOptions<LazyBlogDbContext> options) : base(options)
     {
-        
+
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

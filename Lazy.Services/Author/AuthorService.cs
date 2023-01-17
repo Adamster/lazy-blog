@@ -1,6 +1,7 @@
 ﻿using Lazy.DataContracts.Author;
 using Lazy.Repository;
 using Lazy.Repository.Models.Author;
+using Lazy.Services.Exceptions;
 using Mapster;
 
 namespace Lazy.Services.Author;
@@ -38,13 +39,31 @@ public class AuthorService : IAuthorService
         return newAuthor.Adapt<AuthorItemDto>();
     }
 
-    public Task UpdateAuthor(UpdateAuthorDto adapt)
+    public async Task UpdateAuthor(UpdateAuthorDto updatedAuthorDto)
     {
-        throw new NotImplementedException();
+        AuthorDto? existingAuthor = await _authorRepository.GetById(updatedAuthorDto.Id);
+        if (existingAuthor == null)
+        {
+            throw new EntityNotFoundException($"$Author with id: {updatedAuthorDto.Id} not found");
+        }
+
+        AuthorDto newAuthor = existingAuthor with { Name = updatedAuthorDto.Name, WebUrl = updatedAuthorDto.WebUrl };
+        if (existingAuthor != newAuthor)
+        {
+            await _authorRepository.UpdateAuthor(newAuthor);
+        }
+
     }
 
-    public Task<bool> DeleteById(Guid id)
+    public async Task<bool> DeleteById(Guid id)
     {
-        throw new NotImplementedException();
+        AuthorDto? existingAuthor = await _authorRepository.GetById(id);
+        if (existingAuthor == null)
+        {
+            throw new EntityNotFoundException($"$Author with id: {id} not found");
+        }
+
+        return await _authorRepository.DeleteByAuthor(id);
+
     }
 }
