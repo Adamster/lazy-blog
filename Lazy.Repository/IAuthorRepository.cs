@@ -9,6 +9,7 @@ public interface IAuthorRepository : IRepository<Author>
 {
     Task<IList<AuthorDto>> GetAll();
     Task<AuthorDto?> GetById(Guid id);
+    Task<AuthorDto> CreateAuthor(AuthorDto authorDto);
 }
 
 public class AuthorRepository : Repository<Author>, IAuthorRepository
@@ -27,5 +28,13 @@ public class AuthorRepository : Repository<Author>, IAuthorRepository
     {
         var result = await GetItemById(id);
         return result?.Adapt<AuthorDto>();
+    }
+
+    public async Task<AuthorDto> CreateAuthor(AuthorDto authorDto)
+    {
+        var author = new Author(authorDto.Name, authorDto.WebUrl);
+
+        await SaveOrUpdate(author, CancellationToken.None);
+        return authorDto;
     }
 }

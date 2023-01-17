@@ -30,9 +30,12 @@ public class AuthorService : IAuthorService
         return author?.Adapt<AuthorItemDto>();
     }
 
-    public Task<AuthorItemDto> CreateAuthor(CreateAuthorDto author)
+    public async Task<AuthorItemDto> CreateAuthor(CreateAuthorDto author)
     {
-        throw new NotImplementedException();
+        var authorWebUrl = author.Name;
+        var authorDto = new AuthorDto(Guid.NewGuid(), author.Name, authorWebUrl);
+        AuthorDto newAuthor =  await _authorRepository.CreateAuthor(authorDto);
+        return newAuthor.Adapt<AuthorItemDto>();
     }
 
     public Task UpdateAuthor(UpdateAuthorDto adapt)
