@@ -43,8 +43,7 @@ namespace Lazy.Presentation
 
             app.Run();
 
-            using var context = app.Services.GetService<LazyBlogDbContext>();
-                context.Database.Migrate();
+           
         }
     }
 }

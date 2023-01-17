@@ -7,7 +7,8 @@ public class LazyBlogDbContext : DbContext
 {
     public LazyBlogDbContext(DbContextOptions<LazyBlogDbContext> options) : base(options)
     {
-
+        Database.EnsureCreated();
+        Database.Migrate();
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
