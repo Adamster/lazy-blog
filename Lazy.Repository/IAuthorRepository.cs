@@ -32,12 +32,12 @@ public class AuthorRepository : Repository<Author>, IAuthorRepository
         return result?.Adapt<AuthorItemDto>();
     }
 
-    public async Task<AuthorItemDto> CreateAuthor(AuthorItemDto AuthorItemDto)
+    public async Task<AuthorItemDto> CreateAuthor(AuthorItemDto authorItemDto)
     {
-        var author = new Author(AuthorItemDto.Name, AuthorItemDto.WebUrl);
+        var author = new Author(authorItemDto.Name, authorItemDto.WebUrl);
 
-        await SaveOrUpdate(author, CancellationToken.None);
-        return AuthorItemDto;
+        var createdAuthor = await SaveOrUpdate(author, CancellationToken.None);
+        return createdAuthor.Adapt<AuthorItemDto>();
     }
 
     public async Task UpdateAuthor(AuthorItemDto updatedAuthor)

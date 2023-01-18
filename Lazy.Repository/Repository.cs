@@ -28,17 +28,18 @@ public class Repository<T> : IRepository<T> where T : Entity
         return await _dbSet.Where(x => x.Id == id).FirstOrDefaultAsync();
     }
 
-    public async Task<int> SaveOrUpdate(T item, CancellationToken ct)
+    public async Task<T> SaveOrUpdate(T item, CancellationToken ct)
     {
         if (item.Id == Guid.Empty)
         {
             await _dbSet.AddAsync(item, ct);
-            return await _lazyBlogDbContext.SaveChangesAsync(ct);
+            await _lazyBlogDbContext.SaveChangesAsync(ct);
         }
 
         _dbSet.Attach(item);
         _lazyBlogDbContext.Update(item);
-        return await _lazyBlogDbContext.SaveChangesAsync(ct);
+         await _lazyBlogDbContext.SaveChangesAsync(ct);
+         return item;
     }
 
     public async Task<bool> DeleteItem(Guid id, CancellationToken ct)

@@ -34,8 +34,8 @@ public class AuthorService : IAuthorService
     {
         var urlName = author.Name.Slugify();
         var newAuthor = new AuthorItemDto(Guid.Empty, author.Name, urlName);
-        return await _authorRepository.CreateAuthor(newAuthor);
-
+        var createdAuthor = await _authorRepository.CreateAuthor(newAuthor);
+        return createdAuthor;
     }
 
     public async Task UpdateAuthor(UpdateAuthorDto updatedAuthorDto)

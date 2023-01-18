@@ -8,7 +8,7 @@ public interface IRepository<T> where T : Entity
 
    Task<T?> GetItemById(Guid id);
 
-   Task<int> SaveOrUpdate(T item, CancellationToken ct);
+   Task<T> SaveOrUpdate(T item, CancellationToken ct);
 
    Task<bool> DeleteItem(Guid id, CancellationToken ct);
 }
