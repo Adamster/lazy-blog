@@ -2,6 +2,7 @@
 
 public record PostItemModel
 (
+    Guid Id,
     string Title,
     string Description,
     string Content,

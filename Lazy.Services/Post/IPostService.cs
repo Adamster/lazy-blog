@@ -12,9 +12,9 @@ public interface IPostService
 
     Task VotePost(Guid postId, bool isUpvote);
 
-    Task<bool> UpdatePost(UpdatePostDto updatedPost);
+    Task UpdatePost(UpdatePostDto updatedPost);
 
-    Task<PostItemDetails> GetPostById(Guid postId);
+    Task<PostItemDto?> GetPostById(Guid postId);
 
     Task<IList<PostItemDto>> GetPostList(int pageNumber = 0);
 }

@@ -1,6 +1,7 @@
 ﻿using Lazy.DataContracts.Post;
 using Lazy.Infrastructure;
 using Lazy.Repository;
+using Lazy.Services.Exceptions;
 using Mapster;
 
 namespace Lazy.Services.Post;
@@ -42,14 +43,31 @@ public class PostService : IPostService
         throw new NotImplementedException();
     }
 
-    public Task<bool> UpdatePost(UpdatePostDto updatedPost)
+    public async Task UpdatePost(UpdatePostDto updatedPost)
     {
-        throw new NotImplementedException();
+        PostItemDto? existingPost = await _postRepository.GetPostById(updatedPost.Id);
+        if (existingPost == null)
+        {
+            throw new EntityNotFoundException($"Post with: id {updatedPost.Id} not found");
+        }
+
+        var newUpdatedPost = existingPost with
+        {
+            Title = updatedPost.Title,
+            Description = updatedPost.Description,
+            Content = updatedPost.Content
+        };
+
+        if (existingPost != newUpdatedPost)
+        {
+            await _postRepository.UpdatePost(newUpdatedPost);
+        }
     }
 
-    public Task<PostItemDetails> GetPostById(Guid postId)
+    public async Task<PostItemDto?> GetPostById(Guid postId)
     {
-        throw new NotImplementedException();
+        var post = await _postRepository.GetItemById(postId);
+        return post?.Adapt<PostItemDto>();
     }
 
     public async Task<IList<PostItemDto>> GetPostList(int pageNumber = 0)

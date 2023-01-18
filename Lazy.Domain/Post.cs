@@ -19,4 +19,11 @@ public class Post : Entity
     public ICollection<Comment> Comments { get; set; } = new List<Comment>();
     public int LikeCount { get; set; }
 
+    public void Update(string title, string content, string description)
+    {
+        Title = title ?? throw new ArgumentNullException(nameof(title));
+        Content = content ?? throw new ArgumentNullException(nameof(content));
+        Description = description;
+        UpdatedAt = DateTime.Now;
+    }
 }
