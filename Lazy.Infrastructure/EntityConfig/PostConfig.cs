@@ -12,8 +12,9 @@ internal sealed class PostConfig : IEntityTypeConfiguration<Post>
         post.Property(x => x.Title);
         post.Property(x => x.Description);
         post.Property(x => x.Content);
+        post.Property(x => x.LikeCount);
 
         post.HasOne(x => x.Author);
-
+        post.HasMany(x => x.Comments);
     }
 }

@@ -7,12 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Lazy.DataContracts\Lazy.DataContracts.csproj" />
     <ProjectReference Include="..\Lazy.Domain\Lazy.Domain.csproj" />
     <ProjectReference Include="..\Lazy.Infrastructure\Lazy.Infrastructure.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Models\Author\" />
   </ItemGroup>
 
   <ItemGroup>

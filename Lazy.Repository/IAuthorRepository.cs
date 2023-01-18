@@ -1,16 +1,16 @@
-﻿using Lazy.Domain;
+﻿using Lazy.DataContracts.Author;
+using Lazy.Domain;
 using Lazy.Infrastructure;
-using Lazy.Repository.Models.Author;
 using Mapster;
 
 namespace Lazy.Repository;
 
 public interface IAuthorRepository : IRepository<Author>
 {
-    Task<IList<AuthorDto>> GetAll();
-    Task<AuthorDto?> GetById(Guid id);
-    Task<AuthorDto> CreateAuthor(AuthorDto authorDto);
-    Task UpdateAuthor(AuthorDto updatedAuthor);
+    Task<IList<AuthorItemDto>> GetAll();
+    Task<AuthorItemDto?> GetById(Guid id);
+    Task<AuthorItemDto> CreateAuthor(AuthorItemDto AuthorItemDto);
+    Task UpdateAuthor(AuthorItemDto updatedAuthor);
     Task<bool> DeleteByAuthor(Guid id);
 }
 
@@ -20,27 +20,27 @@ public class AuthorRepository : Repository<Author>, IAuthorRepository
     {
     }
 
-    public async Task<IList<AuthorDto>> GetAll()
+    public async Task<IList<AuthorItemDto>> GetAll()
     {
         var items = await GetItems();
-        return items.Adapt<IList<AuthorDto>>();
+        return items.Adapt<IList<AuthorItemDto>>();
     }
 
-    public async Task<AuthorDto?> GetById(Guid id)
+    public async Task<AuthorItemDto?> GetById(Guid id)
     {
         var result = await GetItemById(id);
-        return result?.Adapt<AuthorDto>();
+        return result?.Adapt<AuthorItemDto>();
     }
 
-    public async Task<AuthorDto> CreateAuthor(AuthorDto authorDto)
+    public async Task<AuthorItemDto> CreateAuthor(AuthorItemDto AuthorItemDto)
     {
-        var author = new Author(authorDto.Name, authorDto.WebUrl);
+        var author = new Author(AuthorItemDto.Name, AuthorItemDto.WebUrl);
 
         await SaveOrUpdate(author, CancellationToken.None);
-        return authorDto;
+        return AuthorItemDto;
     }
 
-    public async Task UpdateAuthor(AuthorDto updatedAuthor)
+    public async Task UpdateAuthor(AuthorItemDto updatedAuthor)
     {
         var author = await GetItemById(updatedAuthor.Id);
         if (author == null)

@@ -20,7 +20,6 @@ public class Repository<T> : IRepository<T> where T : Entity
         return await _dbSet.OrderByDescending(x => x.CreatedAt)
             .Skip(pageIndex * pageSize)
             .Take(pageSize)
-
             .ToListAsync();
     }
 
@@ -33,7 +32,7 @@ public class Repository<T> : IRepository<T> where T : Entity
     {
         if (item.Id == Guid.Empty)
         {
-            var result = await _dbSet.AddAsync(item, ct);
+            await _dbSet.AddAsync(item, ct);
             return await _lazyBlogDbContext.SaveChangesAsync(ct);
         }
 
@@ -51,7 +50,7 @@ public class Repository<T> : IRepository<T> where T : Entity
         }
 
         _dbSet.Remove(itemToDelete);
-       await _lazyBlogDbContext.SaveChangesAsync(ct);
-       return true;
+        await _lazyBlogDbContext.SaveChangesAsync(ct);
+        return true;
     }
 }

@@ -13,5 +13,8 @@ internal sealed class AuthorConfig : IEntityTypeConfiguration<Author>
         author.Property(x => x.WebUrl);
 
         author.HasMany(x => x.Posts);
+        author.HasMany(x => x.Comments);
+
+        author.HasData(new Author(Constants.SystemAuthor.SystemAuthorId, "System", "system"));
     }
 }
