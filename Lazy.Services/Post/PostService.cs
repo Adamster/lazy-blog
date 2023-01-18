@@ -52,7 +52,7 @@ public class PostService : IPostService
         throw new NotImplementedException();
     }
 
-    public async Task<IList<PostItemDto>> GetPostList(int pageNumber = 1)
+    public async Task<IList<PostItemDto>> GetPostList(int pageNumber = 0)
     {
         return await _postRepository.GetPostsAsync(pageNumber);
     }

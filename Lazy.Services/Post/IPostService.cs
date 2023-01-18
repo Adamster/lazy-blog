@@ -16,5 +16,5 @@ public interface IPostService
 
     Task<PostItemDetails> GetPostById(Guid postId);
 
-    Task<IList<PostItemDto>> GetPostList(int pageNumber = 1);
+    Task<IList<PostItemDto>> GetPostList(int pageNumber = 0);
 }

@@ -20,7 +20,7 @@ public class HomeController : Controller
         _postService = postService;
     }
 
-    public async Task<IActionResult> Index(int pageNumber = 1)
+    public async Task<IActionResult> Index(int pageNumber = 0)
     {
         var posts = await _postService.GetPostList(pageNumber);
         var postsModel = posts.Adapt<IList<PostItemModel>>();
