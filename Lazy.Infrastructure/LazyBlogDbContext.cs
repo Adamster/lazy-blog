@@ -7,7 +7,6 @@ public class LazyBlogDbContext : DbContext
 {
     public LazyBlogDbContext(DbContextOptions<LazyBlogDbContext> options) : base(options)
     {
-        Database.EnsureCreated();
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
