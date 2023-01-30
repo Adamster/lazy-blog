@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <Folder Include="Exceptions\" />
+    <Folder Include="Providers\" />
   </ItemGroup>
 
 </Project>

@@ -1,7 +1,7 @@
 using Lazy.DataContracts.Author;
 using Lazy.Repository;
+using Lazy.Services.Authentication;
 using Lazy.Services.Exceptions;
-using Lazy.Services.Providers;
 
 namespace Lazy.Services.UserManagement;
 

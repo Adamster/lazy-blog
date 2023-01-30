@@ -1,8 +1,7 @@
 ﻿using Lazy.DataContracts.Author;
-using Lazy.Presentation.Models.Author;
 using Lazy.Services.Author;
 using Lazy.Services.UserManagement;
-using Mapster;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -23,6 +22,7 @@ public class AuthorController : ControllerBase
     }
 
     // GET: api/<AuthorController>
+    [Authorize]
     [HttpGet]
     public async Task<ActionResult<IList<AuthorItemDto>>> Get()
     {
@@ -30,8 +30,8 @@ public class AuthorController : ControllerBase
 
         return Ok(authors);
     }
-
     
+    [HttpPost("login")]
     public async Task<IActionResult> LoginAuthor([FromBody] AuthorCredentials authorCredentials)
     {
         var token = await _userService.Login(authorCredentials);
