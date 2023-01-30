@@ -1,6 +1,7 @@
 ﻿using Lazy.DataContracts.Author;
 using Lazy.Presentation.Models.Author;
 using Lazy.Services.Author;
+using Lazy.Services.UserManagement;
 using Mapster;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,10 +14,12 @@ namespace Lazy.Presentation.Controllers;
 public class AuthorController : ControllerBase
 {
     private readonly IAuthorService _authorService;
+    private readonly IUserService _userService;
 
-    public AuthorController(IAuthorService authorService)
+    public AuthorController(IAuthorService authorService, IUserService userService)
     {
         _authorService = authorService;
+        _userService = userService;
     }
 
     // GET: api/<AuthorController>
@@ -26,6 +29,13 @@ public class AuthorController : ControllerBase
         IList<AuthorItemDto> authors = await _authorService.GetAllAuthors();
 
         return Ok(authors);
+    }
+
+    
+    public async Task<IActionResult> LoginAuthor([FromBody] AuthorCredentials authorCredentials)
+    {
+        var token = await _userService.Login(authorCredentials);
+        return Ok(token); 
     }
 
     // GET api/<AuthorController>/5

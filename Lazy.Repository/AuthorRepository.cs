@@ -2,12 +2,13 @@
 using Lazy.Domain;
 using Lazy.Infrastructure;
 using Mapster;
+using Microsoft.EntityFrameworkCore;
 
 namespace Lazy.Repository;
 
 public class AuthorRepository : Repository<Author>, IAuthorRepository
 {
-    public AuthorRepository(LazyBlogDbContext lazyBlogDbContext) : base(lazyBlogDbContext)
+    public AuthorRepository(LazyBlogDbContext dbContext) : base(dbContext)
     {
     }
 
@@ -20,15 +21,21 @@ public class AuthorRepository : Repository<Author>, IAuthorRepository
     public async Task<AuthorItemDto?> GetById(Guid id)
     {
         var result = await GetItemById(id);
-        return result?.Adapt<AuthorItemDto>();
+        return result != null
+            ? new AuthorItemDto(
+                result.Id,
+                result.Name,
+                result.WebUrl,
+                result.Email)
+            : null;
     }
 
     public async Task<AuthorItemDto> CreateAuthor(AuthorItemDto authorItemDto)
     {
-        var author = new Author(authorItemDto.Name, authorItemDto.WebUrl);
+        var author = new Author(authorItemDto.Name, authorItemDto.WebUrl, authorItemDto.AuthorEmail);
 
         var createdAuthor = await SaveOrUpdate(author, CancellationToken.None);
-        return createdAuthor.Adapt<AuthorItemDto>();
+        return new AuthorItemDto(createdAuthor.Id, createdAuthor.Name, createdAuthor.WebUrl, createdAuthor.Email);
     }
 
     public async Task UpdateAuthor(AuthorItemDto updatedAuthor)
@@ -47,5 +54,11 @@ public class AuthorRepository : Repository<Author>, IAuthorRepository
     public async Task<bool> DeleteByAuthor(Guid id)
     {
         return await DeleteItem(id, CancellationToken.None);
+    }
+
+    public async Task<AuthorItemDto> GetByEmail(string email)
+    {
+        var author = await DbContext.Authors.SingleAsync(x => x.Email == email);
+        return new AuthorItemDto(author.Id, author.Name, author.WebUrl, author.Email);
     }
 }

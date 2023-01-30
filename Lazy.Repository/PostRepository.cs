@@ -7,7 +7,7 @@ namespace Lazy.Repository;
 
 public class PostRepository : Repository<Post>, IPostRepository
 {
-    public PostRepository(LazyBlogDbContext lazyBlogDbContext) : base(lazyBlogDbContext)
+    public PostRepository(LazyBlogDbContext dbContext) : base(dbContext)
     {
     }
 

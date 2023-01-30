@@ -1,22 +1,25 @@
-﻿namespace Lazy.Domain;
+﻿    namespace Lazy.Domain;
 
 public class Author : Entity
 {
-
-    public Author(string name, string webUrl)
-    {
-        Name = name ?? throw new ArgumentNullException(nameof(name));
-        WebUrl = webUrl ?? throw new ArgumentNullException(nameof(webUrl));
-    }
-
-    public Author(Guid id, string name, string webUrl)
+    public Author(Guid id, string name, string webUrl, string email)
     {
         Id = id;
         Name = name;
         WebUrl = webUrl;
+        Email = email;
+    }
+    
+    public Author(string name, string webUrl, string email)
+    {
+        Name = name;
+        WebUrl = webUrl;
+        Email = email;
     }
 
     public string Name { get; set; }
+
+    public string Email { get; set; }
 
     public string WebUrl { get; set; }
 

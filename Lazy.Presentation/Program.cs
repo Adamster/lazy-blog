@@ -1,4 +1,4 @@
-using Lazy.Infrastructure;
+    using Lazy.Infrastructure;
 using Lazy.Repository;
 using Lazy.Services.Author;
 using Lazy.Services.Post;

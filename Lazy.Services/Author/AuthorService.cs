@@ -33,7 +33,7 @@ public class AuthorService : IAuthorService
     public async Task<AuthorItemDto> CreateAuthor(CreateAuthorDto author)
     {
         var urlName = author.Name.Slugify();
-        var newAuthor = new AuthorItemDto(Guid.Empty, author.Name, urlName);
+        var newAuthor = new AuthorItemDto(Guid.Empty, author.Name, urlName, author.Email);
         var createdAuthor = await _authorRepository.CreateAuthor(newAuthor);
         return createdAuthor;
     }
@@ -51,7 +51,6 @@ public class AuthorService : IAuthorService
         {
             await _authorRepository.UpdateAuthor(newAuthor);
         }
-
     }
 
     public async Task<bool> DeleteById(Guid id)

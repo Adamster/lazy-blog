@@ -10,4 +10,5 @@ public interface IAuthorRepository : IRepository<Author>
     Task<AuthorItemDto> CreateAuthor(AuthorItemDto AuthorItemDto);
     Task UpdateAuthor(AuthorItemDto updatedAuthor);
     Task<bool> DeleteByAuthor(Guid id);
+    Task<AuthorItemDto?> GetByEmail(string email);
 }

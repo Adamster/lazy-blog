@@ -6,13 +6,13 @@ namespace Lazy.Repository;
 
 public class Repository<T> : IRepository<T> where T : Entity
 {
-    private readonly LazyBlogDbContext _lazyBlogDbContext;
+    protected readonly LazyBlogDbContext DbContext;
     private readonly DbSet<T> _dbSet;
 
-    public Repository(LazyBlogDbContext lazyBlogDbContext)
+    protected Repository(LazyBlogDbContext dbContext)
     {
-        _lazyBlogDbContext = lazyBlogDbContext;
-        _dbSet = lazyBlogDbContext.Set<T>();
+        DbContext = dbContext;
+        _dbSet = dbContext.Set<T>();
     }
 
     public async Task<IList<T>> GetItems(int pageIndex = 0, int pageSize = 100)
@@ -33,12 +33,12 @@ public class Repository<T> : IRepository<T> where T : Entity
         if (item.Id == Guid.Empty)
         {
             await _dbSet.AddAsync(item, ct);
-            await _lazyBlogDbContext.SaveChangesAsync(ct);
+            await DbContext.SaveChangesAsync(ct);
         }
 
         _dbSet.Attach(item);
-        _lazyBlogDbContext.Update(item);
-         await _lazyBlogDbContext.SaveChangesAsync(ct);
+        DbContext.Update(item);
+         await DbContext.SaveChangesAsync(ct);
          return item;
     }
 
@@ -51,7 +51,7 @@ public class Repository<T> : IRepository<T> where T : Entity
         }
 
         _dbSet.Remove(itemToDelete);
-        await _lazyBlogDbContext.SaveChangesAsync(ct);
+        await DbContext.SaveChangesAsync(ct);
         return true;
     }
 }
