@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lazy.App", "Lazy.App\Lazy.A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lazy.Application", "Lazy.Application\Lazy.Application.csproj", "{0A5A7376-E677-4F7C-945B-92C4F7169CCB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lazy.Presentation", "Lazy.Presentation\Lazy.Presentation.csproj", "{78F70E3B-33DE-4C91-B8DB-0E39AD74640A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +45,10 @@ Global
 		{0A5A7376-E677-4F7C-945B-92C4F7169CCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0A5A7376-E677-4F7C-945B-92C4F7169CCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0A5A7376-E677-4F7C-945B-92C4F7169CCB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{78F70E3B-33DE-4C91-B8DB-0E39AD74640A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{78F70E3B-33DE-4C91-B8DB-0E39AD74640A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{78F70E3B-33DE-4C91-B8DB-0E39AD74640A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{78F70E3B-33DE-4C91-B8DB-0E39AD74640A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -53,6 +59,7 @@ Global
 		{2A4CF1D1-682B-4E4A-8427-5A902691CDA1} = {180E7DC2-A3AD-45FB-9E11-82B5F933A276}
 		{3A69C477-8872-48F1-AF92-5C1765ED7E4C} = {180E7DC2-A3AD-45FB-9E11-82B5F933A276}
 		{0A5A7376-E677-4F7C-945B-92C4F7169CCB} = {180E7DC2-A3AD-45FB-9E11-82B5F933A276}
+		{78F70E3B-33DE-4C91-B8DB-0E39AD74640A} = {180E7DC2-A3AD-45FB-9E11-82B5F933A276}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9C0BD026-180A-48A6-9DDB-F0CAA6D96B7F}

@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Lazy.Application\Lazy.Application.csproj" />
+    <ProjectReference Include="..\Lazy.Persistence\Lazy.Persistence.csproj" />
+  </ItemGroup>
+
 </Project>
