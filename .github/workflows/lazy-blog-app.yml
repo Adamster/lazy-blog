@@ -11,7 +11,7 @@ env:
   WORKING_DIRECTORY: Lazy.Presentation
 jobs:
   build:
-    runs-on: self-hosted
+    runs-on: windows-latest
     steps:
     - uses: actions/checkout@v2
     - name: Setup .NET Core
@@ -32,7 +32,7 @@ jobs:
         name: webapp
         path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
   deploy:
-    runs-on: self-hosted
+    runs-on: windows-latest
     needs: build
     steps:
     - name: Download artifact from build job
