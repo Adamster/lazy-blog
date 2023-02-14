@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Posts\GetPostById\" />
     <Folder Include="Users\Login\" />
     <Folder Include="Users\CreateUser\" />
     <Folder Include="Users\UpdateUser\" />

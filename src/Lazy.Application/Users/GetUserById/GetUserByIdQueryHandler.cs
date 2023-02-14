@@ -4,11 +4,11 @@ using Lazy.Domain.Shared;
 
 namespace Lazy.Application.Users.GetUserById;
 
-internal sealed class GetAuthorByIdQueryHandler : IQueryHandler<GetUserByIdQuery, UserResponse>
+internal sealed class GetUserByIdQueryHandler : IQueryHandler<GetUserByIdQuery, UserResponse>
 {
     private readonly IUserRepository _userRepository;
 
-    public GetAuthorByIdQueryHandler(IUserRepository userRepository)
+    public GetUserByIdQueryHandler(IUserRepository userRepository)
     {
         _userRepository = userRepository;
     }
@@ -17,18 +17,18 @@ internal sealed class GetAuthorByIdQueryHandler : IQueryHandler<GetUserByIdQuery
         GetUserByIdQuery request,
         CancellationToken cancellationToken)
     {
-        var author = await _userRepository.GetByIdAsync(
+        var user = await _userRepository.GetByIdAsync(
             request.UserId,
             cancellationToken);
 
-        if (author is null)
+        if (user is null)
         {
             return Result.Failure<UserResponse>(new Error(
                 "Author.NotFound",
                 $"The author with Id {request.UserId} was not found."));
         }
 
-        var response = new UserResponse(author.Id, author.Email.Value);
+        var response = new UserResponse(user.Id, user.Email.Value);
 
         return response;
     }
