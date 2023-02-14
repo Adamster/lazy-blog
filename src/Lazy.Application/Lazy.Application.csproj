@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="11.4.0" />
+    <PackageReference Include="MediatR" Version="11.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Lazy.Domain\Lazy.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Posts\GetPostById\" />
+    <Folder Include="Posts\CreatePost\" />
+    <Folder Include="Posts\GetPublishedPosts\" />
+    <Folder Include="Posts\UpdatePost\" />
+    <Folder Include="Users\Login\" />
+    <Folder Include="Users\CreateUser\" />
+    <Folder Include="Users\UpdateUser\" />
+  </ItemGroup>
+
+</Project>
