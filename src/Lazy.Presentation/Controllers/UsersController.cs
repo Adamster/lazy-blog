@@ -9,12 +9,14 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Lazy.Presentation.Controllers;
 
+[Route("api/users")]
 public class UsersController : ApiController
 {
     public UsersController(ISender sender) : base(sender)
     {
     }
 
+    [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetUserById(Guid id, CancellationToken cancellationToken)
     {
         var query = new GetUserByIdQuery(id);

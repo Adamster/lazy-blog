@@ -36,6 +36,46 @@ public static class DomainErrors
             "Email format is invalid");
     }
 
+    public static class Title
+    {
+        public static readonly Error Empty = new(
+            "Title.Empty",
+            "Title is empty");
+
+        public static readonly Error TooLong = new(
+            "Title.TooLong",
+            "Title is too long");
+    }
+
+    public static class Tag
+    {
+        public static readonly Error Empty = new(
+            "Tag.Empty",
+            "Tag is empty");
+
+        public static readonly Error TooLong = new(
+            "Tag.TooLong",
+            "Tag is too long");
+    }
+
+    public static class Body
+    {
+        public static readonly Error Empty = new(
+            "Body.Empty",
+            "Body is empty");
+    }
+
+    public static class Summary
+    {
+        public static readonly Error Empty = new(
+            "Summary.Empty",
+            "Summary is empty");
+
+        public static readonly Error TooLong = new(
+            "Summary.TooLong",
+            "Summary is too long");
+    }
+
     public static class FirstName
     {
         public static readonly Error Empty = new(

@@ -27,7 +27,19 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
             .Property(x => x.LastName)
             .HasConversion(x => x.Value, v => LastName.Create(v).Value)
             .HasMaxLength(LastName.MaxLength);
-        
+
+        builder
+            .HasMany(u => u.Posts)
+            .WithOne()
+            .HasForeignKey(p => p.UserId);
+
+        builder
+            .HasMany(u => u.Comments)
+            .WithOne()
+            .HasForeignKey(c => c.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         builder.HasIndex(x => x.Email).IsUnique();
+
     }
 }
