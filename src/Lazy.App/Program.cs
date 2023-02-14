@@ -1,11 +1,12 @@
 using Lazy.Application.Behaviors;
 using Lazy.Domain.Repositories;
 using Lazy.Persistence;
-using Lazy.Infrastructure;
 using Lazy.Persistence.Repositories;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Scrutor;
+using FluentValidation;
+using Lazy.Persistence.Interceptors;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -27,9 +28,16 @@ builder
 builder.Services.AddMediatR(Lazy.Application.AssemblyReference.Assembly);
 
 builder.Services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>));
-builder.Services.Decorate(typeof(INotificationHandler<>), typeof())
+//TODO: add after adding few commands with Domain events
+//builder.Services.Decorate(typeof(INotificationHandler<>), typeof())
+
+builder.Services.AddValidatorsFromAssembly(
+    Lazy.Application.AssemblyReference.Assembly, 
+    includeInternalTypes: true);
 
 string connectionString = builder.Configuration.GetConnectionString("Database")!;
+
+builder.Services.AddSingleton<UpdateAuditableEntitiesInterceptor>();
 
 builder.Services.AddDbContext<LazyBlogDbContext>(
     (sp, optionsBuilder) =>
@@ -40,7 +48,7 @@ builder.Services.AddDbContext<LazyBlogDbContext>(
 builder
     .Services
     .AddControllers()
-    .AddApplicationPart(AssemblyReference.Assembly);
+    .AddApplicationPart(Lazy.Presentation.AssemblyReference.Assembly);
 
 builder.Services.AddSwaggerGen();
 
@@ -53,7 +61,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
 
 app.UseHttpsRedirection();
 
