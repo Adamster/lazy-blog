@@ -17,6 +17,9 @@
 
   <ItemGroup>
     <Folder Include="Posts\GetPostById\" />
+    <Folder Include="Posts\CreatePost\" />
+    <Folder Include="Posts\GetPublishedPosts\" />
+    <Folder Include="Posts\UpdatePost\" />
     <Folder Include="Users\Login\" />
     <Folder Include="Users\CreateUser\" />
     <Folder Include="Users\UpdateUser\" />

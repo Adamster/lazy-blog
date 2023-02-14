@@ -13,11 +13,14 @@ public sealed class Post : AggregateRoot, IAuditableEntity
         Guid id,
         Title title,
         Body body,
-        Summary summary) : base(id)
+        Summary summary,
+        Guid userId) : base(id)
     {
         Title = title;
         Body = body;
         Summary = summary;
+        UserId = userId;
+        IsPublished = true;
         //_tags.AddRange(tags);
     }
 
@@ -41,14 +44,16 @@ public sealed class Post : AggregateRoot, IAuditableEntity
         Guid id,
         Title title,
         Summary summary,
-        Body body
+        Body body,
+        Guid userId
         /*params Tag[] tags*/)
     {
         var post = new Post(
             id,
             title,
             body,
-            summary);
+            summary,
+            userId);
 
         return post;
     }
@@ -56,6 +61,12 @@ public sealed class Post : AggregateRoot, IAuditableEntity
     public void AddComment(Comment comment)
     {
         _comments.Add(comment);
-    } 
+    }
 
+    public void Update(Title title, Summary summary, Body body)
+    {
+        Title = title;
+        Summary = summary;
+        Body = body;
+    }
 }

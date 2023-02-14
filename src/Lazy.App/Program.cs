@@ -54,6 +54,8 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+CreateDbIfNotExists(app);
+
 // Configure the HTTP request pipeline.
 
 if (app.Environment.IsDevelopment())
@@ -69,3 +71,20 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+//TODO: Remove this in future
+static void CreateDbIfNotExists(WebApplication app)
+{
+    using var scope = app.Services.CreateScope();
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<LazyBlogDbContext>();
+        DbInitializer.Initialize(context);
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred creating the DB.");
+    }
+}

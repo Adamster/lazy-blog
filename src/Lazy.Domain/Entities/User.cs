@@ -52,4 +52,10 @@ public class User : AggregateRoot, IAuditableEntity
 
         return user;
     }
+
+    public void ChangeName(FirstName firstName, LastName lastName)
+    {
+        FirstName = firstName;
+        LastName = lastName;
+    }
 }
