@@ -15,4 +15,10 @@
     <ProjectReference Include="..\Lazy.Domain\Lazy.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Users\Login\" />
+    <Folder Include="Users\CreateUser\" />
+    <Folder Include="Users\UpdateUser\" />
+  </ItemGroup>
+
 </Project>

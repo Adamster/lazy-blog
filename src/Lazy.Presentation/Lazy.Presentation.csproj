@@ -16,4 +16,8 @@
       <ProjectReference Include="..\Lazy.Infrastructure\Lazy.Infrastructure.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Contracts\Users\" />
+    </ItemGroup>
+
 </Project>

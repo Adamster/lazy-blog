@@ -11,7 +11,7 @@ using Lazy.Persistence.Interceptors;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder
     .Services

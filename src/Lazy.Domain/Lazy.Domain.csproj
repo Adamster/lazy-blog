@@ -10,7 +10,6 @@
     <Folder Include="Entities\" />
     <Folder Include="Errors\" />
     <Folder Include="Shared\" />
-    <Folder Include="Repositories\" />
     <Folder Include="Primitives\" />
   </ItemGroup>
 
