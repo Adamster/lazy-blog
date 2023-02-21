@@ -1,0 +1,151 @@
+{
+	"info": {
+		"_postman_id": "5df2350a-6e74-4fe7-ba95-2d1c7687849a",
+		"name": "notlazy.blog",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_uid": "2586810-5df2350a-6e74-4fe7-ba95-2d1c7687849a"
+	},
+	"item": [
+		{
+			"name": "Author",
+			"item": [
+				{
+					"name": "Get user By Id",
+					"id": "878eab56-4a8c-4ff0-a51a-7887a144c1ca",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base-url}}/api/authors/45cdab57-73a6-44b4-9be4-5fcf798be6f7",
+							"host": [
+								"{{base-url}}"
+							],
+							"path": [
+								"api",
+								"authors",
+								"45cdab57-73a6-44b4-9be4-5fcf798be6f7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create user",
+					"id": "96468e2d-eafe-4b9d-acef-5e95c5ccba13",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"serghei.adam@notlazy.blog\",\r\n  \"firstName\": \"Serghei\",\r\n  \"lastName\": \"Adam\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base-url}}/api/users",
+							"host": [
+								"{{base-url}}"
+							],
+							"path": [
+								"api",
+								"users"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"id": "5fe8502d-8328-4b80-a18c-5d2878797c22"
+		},
+		{
+			"name": "Post",
+			"item": [
+				{
+					"name": "Get Post by Id",
+					"id": "0e62f8c8-3af8-480e-816d-1c487fd586f8",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base-url}}api/posts/88c6d42d-792f-4906-ad30-857f40f16cdc",
+							"host": [
+								"{{base-url}}api"
+							],
+							"path": [
+								"posts",
+								"88c6d42d-792f-4906-ad30-857f40f16cdc"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All posts",
+					"id": "da8ee20c-c1fa-44bd-ba8f-5c07529aba66",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base-url}}/api/posts",
+							"host": [
+								"{{base-url}}"
+							],
+							"path": [
+								"api",
+								"posts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Post",
+					"id": "4290506f-70e4-4b2b-af0a-b207f429523b",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"title\": \"а добар дан\",\r\n  \"summary\": \"добродошли\",\r\n  \"body\": \"проверяем как тут с юникодом, вроде пока неплохо, в общем тут я планирую писать повесть о том как я страдаю и пишу свой self-hosted MyPhotos, который будет точной копией Google Photos, надеюсь даже с приложениями под iOS / Android,Подписывайтесь на канал, ставьте лайки и тд и тп, всего этого тут вы не увидите ближайшие пару недель, пока я не прикручу авторизацию и какой то внятный дизайн, ах да, для истории попробуем запомнить число когда я начал этот блог, 18/01/2023, точное время 21:33 GMT+2, посмотрим как пойдет, всеми силами попытаюсь сохранить базу и не терять данные :D\",\r\n  \"userId\": \"{{my-user-id}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base-url}}/api/posts",
+							"host": [
+								"{{base-url}}"
+							],
+							"path": [
+								"api",
+								"posts"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"id": "42de4a62-d1d1-4142-ab21-d8234784be36"
+		}
+	]
+}
