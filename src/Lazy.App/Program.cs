@@ -80,6 +80,8 @@ app.MapControllers();
 
 app.Run();
 
+app.UseCors("lazy-blog");
+
 //TODO: Remove this in future
 static void CreateDbIfNotExists(WebApplication app)
 {
