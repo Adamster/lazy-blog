@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Scrutor;
 using FluentValidation;
 using Lazy.Persistence.Interceptors;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -51,6 +52,13 @@ builder
     .AddApplicationPart(Lazy.Presentation.AssemblyReference.Assembly);
 
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddCors(o => o.AddPolicy("lazy-blog", policyBuilder =>
+{
+    policyBuilder.AllowAnyOrigin()
+        .AllowAnyMethod()
+        .AllowAnyHeader();
+}));
 
 var app = builder.Build();
 
