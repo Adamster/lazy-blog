@@ -6,81 +6,106 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Scrutor;
 using FluentValidation;
+using Lazy.Domain.Entities;
+using Lazy.Domain.Entities.Identity;
 using Lazy.Persistence.Interceptors;
-using Microsoft.AspNetCore.Cors.Infrastructure;
+using Microsoft.AspNetCore.Identity;
+using Serilog;
+using AssemblyReference = Lazy.Infrastructure.AssemblyReference;
 
 
-var builder = WebApplication.CreateBuilder(args);
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateLogger();
 
-builder.Services.AddScoped<IUserRepository, UserRepository>();
+try
+{
+    var builder = WebApplication.CreateBuilder(args);
 
-builder
-    .Services
-    .Scan(
-        selector => selector
-            .FromAssemblies(
-                Lazy.Infrastructure.AssemblyReference.Assembly,
-                Lazy.Persistence.AssemblyReference.Assembly)
-            .AddClasses(false)
-            .UsingRegistrationStrategy(RegistrationStrategy.Skip)
-            .AsMatchingInterface()
-            .WithScopedLifetime());
+    builder.Services.AddScoped<IUserRepository, UserRepository>();
 
-builder.Services.AddMediatR(Lazy.Application.AssemblyReference.Assembly);
+    builder.Host.UseSerilog();
 
-builder.Services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>));
-//TODO: add after adding few commands with Domain events
-//builder.Services.Decorate(typeof(INotificationHandler<>), typeof())
+    builder
+        .Services
+        .Scan(
+            selector => selector
+                .FromAssemblies(
+                    AssemblyReference.Assembly,
+                    Lazy.Persistence.AssemblyReference.Assembly)
+                .AddClasses(false)
+                .UsingRegistrationStrategy(RegistrationStrategy.Skip)
+                .AsMatchingInterface()
+                .WithScopedLifetime());
 
-builder.Services.AddValidatorsFromAssembly(
-    Lazy.Application.AssemblyReference.Assembly, 
-    includeInternalTypes: true);
-
-string connectionString = builder.Configuration.GetConnectionString("Database")!;
-
-builder.Services.AddSingleton<UpdateAuditableEntitiesInterceptor>();
-
-builder.Services.AddDbContext<LazyBlogDbContext>(
-    (sp, optionsBuilder) =>
+    builder.Services.AddMediatR(configuration =>
     {
-        optionsBuilder.UseSqlServer(connectionString);
+        configuration.RegisterServicesFromAssembly(Lazy.Application.AssemblyReference.Assembly);
     });
 
-builder
-    .Services
-    .AddControllers()
-    .AddApplicationPart(Lazy.Presentation.AssemblyReference.Assembly);
+    builder.Services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>));
+    //TODO: add after adding few commands with Domain events
+    //builder.Services.Decorate(typeof(INotificationHandler<>), typeof())
 
-builder.Services.AddSwaggerGen();
+    builder.Services.AddValidatorsFromAssembly(
+        Lazy.Application.AssemblyReference.Assembly,
+        includeInternalTypes: true);
 
-builder.Services.AddCors(o => o.AddPolicy("lazy-blog", policyBuilder =>
-{
-    policyBuilder.AllowAnyOrigin()
-        .AllowAnyMethod()
-        .AllowAnyHeader();
-}));
+    string connectionString = builder.Configuration.GetConnectionString("Database")!;
 
-var app = builder.Build();
+    builder.Services.AddSingleton<UpdateAuditableEntitiesInterceptor>();
 
-CreateDbIfNotExists(app);
+    builder.Services.AddDbContext<LazyBlogDbContext>(
+        (sp, optionsBuilder) => { optionsBuilder.UseSqlServer(connectionString); });
+
+    builder.Services.AddIdentity<User, Role>()
+        .AddEntityFrameworkStores<LazyBlogDbContext>()
+        .AddDefaultTokenProviders();
+
+    builder
+        .Services
+        .AddControllers()
+        .AddApplicationPart(Lazy.Presentation.AssemblyReference.Assembly);
+
+    builder.Services.AddSwaggerGen();
+
+    builder.Services.AddCors(o => o.AddPolicy("lazy-blog", policyBuilder =>
+    {
+        policyBuilder.AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+    }));
+
+    var app = builder.Build();
+
+    CreateDbIfNotExists(app);
 
 // Configure the HTTP request pipeline.
 
-if (app.Environment.IsDevelopment())
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI();
+    }
+
+    app.UseHttpsRedirection();
+
+    app.UseAuthorization();
+
+    app.UseCors("lazy-blog");
+    app.MapControllers();
+
+    app.Run();
+}
+catch (Exception ex)
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    Log.Fatal(ex, "Application terminated unexpectedly");
+}
+finally
+{
+    Log.CloseAndFlush();
 }
 
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();
-
-app.UseCors("lazy-blog");
 
 //TODO: Remove this in future
 static void CreateDbIfNotExists(WebApplication app)
