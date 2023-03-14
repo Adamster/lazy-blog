@@ -34,7 +34,8 @@ public class UsersController : ApiController
         var command = new CreateUserCommand(
             request.Email,
             request.FirstName,
-            request.LastName);
+            request.LastName,
+            request.Password);
 
         Result<Guid> result = await Sender.Send(command, cancellationToken);
 
