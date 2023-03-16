@@ -25,16 +25,23 @@ internal sealed class CreatePostCommandHandler : ICommandHandler<CreatePostComma
         Result<Title> titleResult = Title.Create(request.Title);
         Result<Summary> summaryResult = Summary.Create(request.Summary);
         Result<Body> bodyResult = Body.Create(request.Body);
+        Result<Slug> slugResult = Slug.Create(request.Title);
 
         if (await _userRepository.GetByIdAsync(request.UserId, cancellationToken) is null)
         {
             return Result.Failure<Guid>(DomainErrors.User.NotFound(request.UserId));
         }
 
+        if (await _postRepository.GetBySlugAsync(slugResult.Value, cancellationToken) is not null)
+        {
+            return Result.Failure<Guid>(DomainErrors.Slug.SlugAlreadyInUse);
+        }
+
         Post post = Post.Create(
             Guid.NewGuid(),
             titleResult.Value,
             summaryResult.Value,
+            slugResult.Value,
             bodyResult.Value,
             request.UserId);
 

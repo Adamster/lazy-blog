@@ -11,4 +11,12 @@
     <ProjectReference Include="..\Lazy.Persistence\Lazy.Persistence.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Authentication\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.4" />
+  </ItemGroup>
+
 </Project>

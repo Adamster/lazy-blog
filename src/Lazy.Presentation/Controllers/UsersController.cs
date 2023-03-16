@@ -1,14 +1,17 @@
 ﻿using Lazy.Application.Users.CreateUser;
 using Lazy.Application.Users.GetUserById;
+using Lazy.Application.Users.Login;
 using Lazy.Application.Users.UpdateUser;
 using Lazy.Domain.Shared;
 using Lazy.Presentation.Abstractions;
 using Lazy.Presentation.Contracts.Users;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Lazy.Presentation.Controllers;
 
+[Authorize]
 [Route("api/users")]
 public class UsersController : ApiController
 {
@@ -16,6 +19,7 @@ public class UsersController : ApiController
     {
     }
 
+    
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetUserById(Guid id, CancellationToken cancellationToken)
     {
@@ -26,7 +30,26 @@ public class UsersController : ApiController
         return response.IsSuccess ? Ok(response.Value) : NotFound(response.Error);
     }
 
-    [HttpPost]
+    [AllowAnonymous]
+    [HttpPost("login")]
+    public async Task<IActionResult> LoginUser(
+        [FromBody] LoginRequest request,
+        CancellationToken cancellationToken)
+    {
+        var command = new LoginCommand(request.Email, request.Password);
+
+        Result<string> tokenResult = await Sender.Send(command, cancellationToken);
+
+        if (tokenResult.IsFailure)
+        {
+            return HandleFailure(tokenResult);
+        }
+
+        return Ok(tokenResult.Value);
+    }
+
+    [AllowAnonymous]
+    [HttpPost("register")]
     public async Task<IActionResult> RegisterUser(
         [FromBody] RegisterUserRequest request,
         CancellationToken cancellationToken)
@@ -34,7 +57,8 @@ public class UsersController : ApiController
         var command = new CreateUserCommand(
             request.Email,
             request.FirstName,
-            request.LastName);
+            request.LastName,
+            request.Password);
 
         Result<Guid> result = await Sender.Send(command, cancellationToken);
 

@@ -23,8 +23,10 @@ public sealed class Comment : Entity, IAuditableEntity
 
 
     public Guid PostId { get; private set; }
+    public Post Post { get; private set; }
 
     public Guid UserId { get; private set; }
+    public User User { get; private set; }
 
     public Body CommentText { get; private set; }
 

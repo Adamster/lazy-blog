@@ -22,14 +22,19 @@ internal sealed class PostConfiguration : IEntityTypeConfiguration<Post>
             .HasConversion(x => x.Value, v => Summary.Create(v).Value)
             .HasMaxLength(Summary.MaxLength);
 
+        builder.Property(x => x.Slug)
+            .HasConversion(x => x.Value, v => Slug.Create(v).Value)
+            .HasMaxLength(Slug.MaxLength);
 
         builder.Property(x => x.Body)
             .HasConversion(x => x.Value, v => Body.Create(v).Value);
 
         builder
             .HasMany(p => p.Comments)
-            .WithOne()
+            .WithOne(c => c.Post)
             .HasForeignKey(c => c.PostId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasIndex(x => x.Slug).IsUnique();
     }
 }
