@@ -16,7 +16,7 @@ namespace Lazy.Persistence.Migrations
                 type: "nvarchar(1024)",
                 maxLength: 1024,
                 nullable: false,
-                defaultValue: "");
+                defaultValueSql: "NEWID()");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Posts_Slug",

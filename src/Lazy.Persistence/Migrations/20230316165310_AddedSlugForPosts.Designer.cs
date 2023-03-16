@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Lazy.Persistence.Migrations
 {
     [DbContext(typeof(LazyBlogDbContext))]
-    [Migration("20230316165121_SlugDefaultValueForExistingPosts")]
-    partial class SlugDefaultValueForExistingPosts
+    [Migration("20230316165310_AddedSlugForPosts")]
+    partial class AddedSlugForPosts
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
