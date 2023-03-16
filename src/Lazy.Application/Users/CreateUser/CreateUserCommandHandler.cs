@@ -1,9 +1,12 @@
-﻿using Lazy.Application.Abstractions.Messaging;
+﻿using System.Security.Cryptography;
+using System.Text;
+using Lazy.Application.Abstractions.Messaging;
 using Lazy.Domain.Entities;
 using Lazy.Domain.Errors;
 using Lazy.Domain.Repositories;
 using Lazy.Domain.Shared;
 using Lazy.Domain.ValueObjects;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.Identity;
 
 namespace Lazy.Application.Users.CreateUser;
@@ -12,16 +15,17 @@ internal sealed class CreateUserCommandHandler : ICommandHandler<CreateUserComma
 {
     private readonly IUserRepository _userRepository;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly UserManager<User> _userManager;
+    private readonly IPasswordHasher<User> _passwordHasher;
+
 
     public CreateUserCommandHandler(
         IUserRepository userRepository,
-        IUnitOfWork unitOfWork, 
-        UserManager<User> userManager)
+        IUnitOfWork unitOfWork,
+        IPasswordHasher<User> passwordHasher)
     {
         _userRepository = userRepository;
         _unitOfWork = unitOfWork;
-        _userManager = userManager;
+        _passwordHasher = passwordHasher;
     }
 
     public async Task<Result<Guid>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
@@ -47,9 +51,12 @@ internal sealed class CreateUserCommandHandler : ICommandHandler<CreateUserComma
             firstNameResult.Value,
             lastNameResult.Value);
 
-        await _userManager.CreateAsync(user, request.Password);
+        user.PasswordHash = _passwordHasher.HashPassword(user, request.Password);
+
+        _userRepository.Add(user);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return user.Id;
     }
+
 }

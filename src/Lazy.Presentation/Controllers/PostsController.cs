@@ -1,15 +1,18 @@
 ﻿using Lazy.Application.Posts.CreatePost;
 using Lazy.Application.Posts.GetPostById;
+using Lazy.Application.Posts.GetPostBySlug;
 using Lazy.Application.Posts.GetPublishedPosts;
 using Lazy.Application.Posts.UpdatePost;
 using Lazy.Domain.Shared;
 using Lazy.Presentation.Abstractions;
 using Lazy.Presentation.Contracts.Posts;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Lazy.Presentation.Controllers;
 
+[Authorize]
 [Route("api/posts")]
 public class PostsController : ApiController
 {
@@ -27,6 +30,7 @@ public class PostsController : ApiController
         return response.IsSuccess ? Ok(response.Value) : NotFound(response.Error);
     }
 
+    [AllowAnonymous]
     [HttpGet]
     public async Task<IActionResult> GetPosts(int offset, CancellationToken cancellationToken)
     {
@@ -39,6 +43,16 @@ public class PostsController : ApiController
         }
 
         return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
+    }
+    [AllowAnonymous]
+    [HttpGet("{slug}")]
+    public async Task<IActionResult> GetPostBySlug(GetPostBySlugRequest request, CancellationToken cancellationToken)
+    {
+        var query = new GetPostBySlugQuery(request.Slug);
+
+        Result<PostDetailedResponse> response = await Sender.Send(query, cancellationToken);
+
+        return response.IsSuccess ? Ok(response.Value) : NotFound(response.Error);
     }
 
     [HttpPost]

@@ -41,12 +41,12 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
 
         builder
             .HasMany(u => u.Posts)
-            .WithOne()
+            .WithOne(p => p.User)
             .HasForeignKey(p => p.UserId);
 
         builder
             .HasMany(u => u.Comments)
-            .WithOne()
+            .WithOne(c => c.User)
             .HasForeignKey(c => c.UserId)
             .OnDelete(DeleteBehavior.Restrict);
 

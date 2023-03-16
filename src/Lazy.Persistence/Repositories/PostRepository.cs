@@ -1,5 +1,6 @@
 ﻿using Lazy.Domain.Entities;
 using Lazy.Domain.Repositories;
+using Lazy.Domain.ValueObjects.Post;
 using Microsoft.EntityFrameworkCore;
 
 namespace Lazy.Persistence.Repositories;
@@ -18,6 +19,11 @@ public class PostRepository : IPostRepository
             .Set<Post>()
             .FirstOrDefaultAsync(post => post.Id == postId, cancellationToken);
 
+    public async Task<Post?> GetBySlugAsync(Slug slug, CancellationToken cancellationToken) =>
+        await _dbContext
+            .Set<Post>()
+            .FirstOrDefaultAsync(post => post.Slug == slug, cancellationToken);
+
     public async Task<IList<Post>> GetPosts(int offset, CancellationToken cancellationToken)
     {
         List<Post> posts = await _dbContext.Set<Post>()
@@ -25,6 +31,8 @@ public class PostRepository : IPostRepository
             .OrderByDescending(p => p.CreatedOnUtc)
             .Skip(offset)
             .Take(PostPageSize)
+            .AsNoTracking()
+            .Include(x => x.User)
             .ToListAsync(cancellationToken);
 
         return posts;

@@ -1,4 +1,5 @@
 ﻿using Lazy.Application.Abstractions.Messaging;
+using Lazy.Application.Users.GetUserById;
 using Lazy.Domain.Repositories;
 using Lazy.Domain.Shared;
 
@@ -24,6 +25,7 @@ public class GetPublishedPostsQueryHandler : IQueryHandler<GetPublishedPostsQuer
                     p.Title.Value,
                     p.Summary.Value,
                     p.Body.Value,
+                    new UserResponse(p.UserId, p.User.Email.Value, p.User.FirstName.Value, p.User.LastName.Value),
                     p.CreatedOnUtc))
             .ToList();
 

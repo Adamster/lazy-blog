@@ -26,6 +26,10 @@ public static class DomainErrors
         public static readonly Func<Guid, Error> NotFound = id => new Error(
             "Post.NotFound",
             $"The post with the identifier {id} was not found.");
+
+        public static readonly Func<Domain.ValueObjects.Post.Slug, Error> SlugNotFound = slug => new Error(
+            "Post.NotFound",
+            $"The post with the slug {slug} was not found.");
     }
 
     public static class Email
@@ -81,6 +85,21 @@ public static class DomainErrors
         public static readonly Error TooLong = new(
             "Summary.TooLong",
             "Summary is too long");
+    }
+
+    public static class Slug
+    {
+        public static readonly Error Empty = new(
+            "Slug.Empty",
+            "Slug is empty");
+
+        public static Error TooLong = new(
+            "Slug.TooLong",
+            "Slug value is too long");
+
+        public static readonly Error SlugAlreadyInUse = new(
+            "Slug.SlugAlreadyInUse",
+            "The specified slug is already in use");
     }
 
     public static class FirstName

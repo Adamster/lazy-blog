@@ -6,10 +6,13 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Scrutor;
 using FluentValidation;
+using Lazy.App.OptionsSetup;
 using Lazy.Domain.Entities;
 using Lazy.Domain.Entities.Identity;
 using Lazy.Persistence.Interceptors;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using AssemblyReference = Lazy.Infrastructure.AssemblyReference;
 
@@ -23,6 +26,8 @@ try
     var builder = WebApplication.CreateBuilder(args);
 
     builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+    builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 
     builder.Host.UseSerilog();
 
@@ -58,10 +63,6 @@ try
     builder.Services.AddDbContext<LazyBlogDbContext>(
         (sp, optionsBuilder) => { optionsBuilder.UseSqlServer(connectionString); });
 
-    builder.Services.AddIdentity<User, Role>()
-        .AddEntityFrameworkStores<LazyBlogDbContext>()
-        .AddDefaultTokenProviders();
-
     builder
         .Services
         .AddControllers()
@@ -76,6 +77,12 @@ try
             .AllowAnyHeader();
     }));
 
+    builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer();
+
+    builder.Services.ConfigureOptions<JwtOptionsSetup>();
+    builder.Services.ConfigureOptions<JwtBearerOptionsSetup>();
+
     var app = builder.Build();
 
     CreateDbIfNotExists(app);
@@ -89,6 +96,8 @@ try
     }
 
     app.UseHttpsRedirection();
+
+    app.UseAuthentication();
 
     app.UseAuthorization();
 

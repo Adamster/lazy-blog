@@ -28,7 +28,11 @@ internal sealed class GetUserByIdQueryHandler : IQueryHandler<GetUserByIdQuery, 
                 $"The author with Id {request.UserId} was not found."));
         }
 
-        var response = new UserResponse(user.Id, user.Email.Value);
+        var response = new UserResponse(
+            user.Id,
+            user.Email.Value,
+            user.FirstName.Value, 
+            user.LastName.Value);
 
         return response;
     }
