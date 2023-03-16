@@ -46,9 +46,9 @@ public class PostsController : ApiController
     }
     [AllowAnonymous]
     [HttpGet("{slug}")]
-    public async Task<IActionResult> GetPostBySlug(GetPostBySlugRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetPostBySlug(string slug, CancellationToken cancellationToken)
     {
-        var query = new GetPostBySlugQuery(request.Slug);
+        var query = new GetPostBySlugQuery(slug);
 
         Result<PostDetailedResponse> response = await Sender.Send(query, cancellationToken);
 

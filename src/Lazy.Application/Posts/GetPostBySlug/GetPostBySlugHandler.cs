@@ -33,7 +33,7 @@ public class GetPostBySlugHandler : IQueryHandler<GetPostBySlugQuery, PostDetail
                 DomainErrors.Post.SlugNotFound(slugResult.Value));
         }
 
-        var author = $"{post.User.FirstName} {post.User.LastName}";
+        var author = $"{post.User.FirstName.Value} {post.User.LastName.Value}";
         var postResponse = new PostDetailedResponse
         (
             post.Title.Value,

@@ -22,6 +22,7 @@ public class PostRepository : IPostRepository
     public async Task<Post?> GetBySlugAsync(Slug slug, CancellationToken cancellationToken) =>
         await _dbContext
             .Set<Post>()
+            .Include(p => p.User)
             .FirstOrDefaultAsync(post => post.Slug == slug, cancellationToken);
 
     public async Task<IList<Post>> GetPosts(int offset, CancellationToken cancellationToken)
