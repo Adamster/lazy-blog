@@ -24,7 +24,7 @@ public class GetPublishedPostsQueryHandler : IQueryHandler<GetPublishedPostsQuer
                     p.Id,
                     p.Title.Value,
                     p.Summary.Value,
-                    p.Body.Value,
+                    p.Slug.Value,
                     new UserResponse(p.UserId, p.User.Email.Value, p.User.FirstName.Value, p.User.LastName.Value),
                     p.CreatedOnUtc))
             .ToList();

@@ -6,6 +6,6 @@ public record PublishedPostResponse(
     Guid Id, 
     string Title,
     string Summary,
-    string Body,
+    string Slug,
     UserResponse Author,
     DateTime CreateAtUtc);
