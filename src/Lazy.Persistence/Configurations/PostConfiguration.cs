@@ -24,7 +24,8 @@ internal sealed class PostConfiguration : IEntityTypeConfiguration<Post>
 
         builder.Property(x => x.Slug)
             .HasConversion(x => x.Value, v => Slug.Create(v).Value)
-            .HasMaxLength(Slug.MaxLength);
+            .HasMaxLength(Slug.MaxLength)
+            .HasDefaultValueSql("NEWID()");
 
         builder.Property(x => x.Body)
             .HasConversion(x => x.Value, v => Body.Create(v).Value);
