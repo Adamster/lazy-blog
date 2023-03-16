@@ -29,11 +29,13 @@ public class UpdatePostCommandHandler : ICommandHandler<UpdatePostCommand>
         Result<Title> titleResult = Title.Create(request.Title);
         Result<Summary> summaryResult = Summary.Create(request.Summary);
         Result<Body> bodyResult = Body.Create(request.Body);
+        Result<Slug> slugResult = Slug.Create(request.Slug);
 
         post.Update(
             titleResult.Value,
             summaryResult.Value,
-            bodyResult.Value);
+            bodyResult.Value,
+            slugResult.Value);
 
         _postRepository.Update(post);
 

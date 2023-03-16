@@ -1,3 +1,3 @@
 ﻿namespace Lazy.Presentation.Contracts.Posts;
 
-public record UpdatePostRequest(string Title, string Summary, string Body);
+public record UpdatePostRequest(string Title, string Summary, string Body, string Slug);
