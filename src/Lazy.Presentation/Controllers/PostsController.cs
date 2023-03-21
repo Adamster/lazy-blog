@@ -19,7 +19,8 @@ public class PostsController : ApiController
     public PostsController(ISender sender) : base(sender)
     {
     }
-
+    
+    [AllowAnonymous]
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetPostById(Guid id, CancellationToken cancellationToken)
     {
