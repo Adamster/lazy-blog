@@ -71,10 +71,11 @@ public sealed class Post : AggregateRoot, IAuditableEntity
         _comments.Add(comment);
     }
 
-    public void Update(Title title, Summary summary, Body body)
+    public void Update(Title title, Summary summary, Body body, Slug slug)
     {
         Title = title;
         Summary = summary;
         Body = body;
+        Slug = slug;
     }
 }
