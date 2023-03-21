@@ -1,4 +1,5 @@
 ﻿using Lazy.Application.Abstractions.Messaging;
+using Lazy.Application.Users.GetUserById;
 using Lazy.Domain.Entities;
 using Lazy.Domain.Errors;
 using Lazy.Domain.Repositories;
@@ -38,7 +39,7 @@ public class GetPostBySlugHandler : IQueryHandler<GetPostBySlugQuery, PostDetail
         (
             post.Title.Value,
             post.Summary.Value,
-            author,
+            new UserResponse(post.User),
             post.Body.Value,
             post.CreatedOnUtc
         );
