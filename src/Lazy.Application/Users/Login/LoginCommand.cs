@@ -2,4 +2,4 @@
 
 namespace Lazy.Application.Users.Login;
 
-public record LoginCommand(string Email, string Password) : ICommand<string>;
+public record LoginCommand(string Email, string Password) : ICommand<LoginResponse>;

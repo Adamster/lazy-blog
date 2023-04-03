@@ -1,5 +1,6 @@
 ﻿using Lazy.Application.Abstractions;
 using Lazy.Application.Abstractions.Messaging;
+using Lazy.Application.Users.GetUserById;
 using Lazy.Domain.Entities;
 using Lazy.Domain.Errors;
 using Lazy.Domain.Repositories;
@@ -9,7 +10,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Lazy.Application.Users.Login;
 
-public class LoginCommandHandler : ICommandHandler<LoginCommand, string>
+public class LoginCommandHandler : ICommandHandler<LoginCommand, LoginResponse>
 {
     private readonly IUserRepository _userRepository;
     private readonly IJwtProvider _jwtProvider;
@@ -25,7 +26,7 @@ public class LoginCommandHandler : ICommandHandler<LoginCommand, string>
         _passwordHasher = passwordHasher;
     }
 
-    public async Task<Result<string>> Handle(
+    public async Task<Result<LoginResponse>> Handle(
         LoginCommand request, 
         CancellationToken cancellationToken)
     {
@@ -37,7 +38,7 @@ public class LoginCommandHandler : ICommandHandler<LoginCommand, string>
 
         if (user is null)
         {
-            return Result.Failure<string>(DomainErrors.User.InvalidCredentials);
+            return Result.Failure<LoginResponse>(DomainErrors.User.InvalidCredentials);
         }
 
         var signInResult = _passwordHasher
@@ -45,11 +46,11 @@ public class LoginCommandHandler : ICommandHandler<LoginCommand, string>
 
         if (signInResult == PasswordVerificationResult.Failed)
         {
-            return Result.Failure<string>(DomainErrors.User.InvalidCredentials);
+            return Result.Failure<LoginResponse>(DomainErrors.User.InvalidCredentials);
         }
         
         string token = _jwtProvider.Generate(user);
 
-        return token;
+        return new LoginResponse(token, new UserResponse(user));
     }
 }
