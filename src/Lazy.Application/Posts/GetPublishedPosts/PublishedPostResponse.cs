@@ -8,4 +8,4 @@ public record PublishedPostResponse(
     string Summary,
     string Slug,
     UserResponse Author,
-    DateTime CreateAtUtc);
+    DateTime CreatedAtUtc);

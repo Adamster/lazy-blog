@@ -1,8 +1,10 @@
-﻿namespace Lazy.Application.Posts.GetPostBySlug;
+﻿using Lazy.Application.Users.GetUserById;
+
+namespace Lazy.Application.Posts.GetPostBySlug;
 
 public record PostDetailedResponse(
     string Title,
     string Summary,
-    string Author,
+    UserResponse Author,
     string Body,
     DateTime CreatedAtUtc);

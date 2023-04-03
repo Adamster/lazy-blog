@@ -19,7 +19,7 @@ public class UsersController : ApiController
     {
     }
 
-    
+  
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetUserById(Guid id, CancellationToken cancellationToken)
     {
@@ -38,14 +38,9 @@ public class UsersController : ApiController
     {
         var command = new LoginCommand(request.Email, request.Password);
 
-        Result<string> tokenResult = await Sender.Send(command, cancellationToken);
+        Result<LoginResponse> tokenResult = await Sender.Send(command, cancellationToken);
 
-        if (tokenResult.IsFailure)
-        {
-            return HandleFailure(tokenResult);
-        }
-
-        return Ok(tokenResult.Value);
+        return tokenResult.IsFailure ? HandleFailure(tokenResult) : Ok(tokenResult.Value);
     }
 
     [AllowAnonymous]
