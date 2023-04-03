@@ -48,6 +48,11 @@ public static class StringExtensions
         // Replace all spaces with the hyphen.  
         output = Regex.Replace(output, @"\s", "-");
 
+        if (string.IsNullOrEmpty(output))
+        {
+            output = Path.GetRandomFileName();
+        }
+
         // Return the slug.  
         return output;
     }
