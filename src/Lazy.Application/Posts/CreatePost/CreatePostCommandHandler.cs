@@ -1,6 +1,7 @@
 ﻿using Lazy.Application.Abstractions.Messaging;
 using Lazy.Domain.Entities;
 using Lazy.Domain.Errors;
+using Lazy.Domain.Extensions;
 using Lazy.Domain.Repositories;
 using Lazy.Domain.Shared;
 using Lazy.Domain.ValueObjects.Post;
@@ -25,7 +26,7 @@ internal sealed class CreatePostCommandHandler : ICommandHandler<CreatePostComma
         Result<Title> titleResult = Title.Create(request.Title);
         Result<Summary> summaryResult = Summary.Create(request.Summary);
         Result<Body> bodyResult = Body.Create(request.Body);
-        Result<Slug> slugResult = Slug.Create(request.Title);
+        Result<Slug> slugResult = Slug.Create(request.Title.Slugify());
 
         if (await _userRepository.GetByIdAsync(request.UserId, cancellationToken) is null)
         {

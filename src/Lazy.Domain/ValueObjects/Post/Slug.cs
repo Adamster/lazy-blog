@@ -23,7 +23,7 @@ public class Slug : ValueObject
                 DomainErrors.Slug.Empty)
             .Ensure(s => s.Length <= MaxLength,
                 DomainErrors.Slug.TooLong)
-            .Map(s => new Slug(s.Slugify()));
+            .Map(s => new Slug(s));
 
     public override IEnumerable<object> GetAtomicValues()
     {
