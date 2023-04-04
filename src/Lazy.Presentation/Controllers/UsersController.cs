@@ -1,4 +1,5 @@
-﻿using Lazy.Application.Users.CreateUser;
+﻿using Lazy.Application.Posts.GetPostByUserId;
+using Lazy.Application.Users.CreateUser;
 using Lazy.Application.Users.GetUserById;
 using Lazy.Application.Users.Login;
 using Lazy.Application.Users.UpdateUser;
@@ -19,7 +20,7 @@ public class UsersController : ApiController
     {
     }
 
-  
+    [AllowAnonymous]
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetUserById(Guid id, CancellationToken cancellationToken)
     {
@@ -89,5 +90,19 @@ public class UsersController : ApiController
         }
 
         return NoContent();
+    }
+
+    [AllowAnonymous]
+    [HttpGet("{id:guid}/posts")]
+    public async Task<IActionResult> GetPostByUserId(
+        Guid id,
+        [FromQuery] int offset, 
+        CancellationToken cancellationToken)
+    {
+        var query = new GetPostByUserIdQuery(id, offset);
+
+        var response = await Sender.Send(query, cancellationToken);
+
+        return response.IsSuccess ? Ok(response.Value) : NotFound(response.Error);
     }
 }

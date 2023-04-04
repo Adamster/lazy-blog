@@ -1,6 +1,8 @@
 ﻿using Lazy.Application.Posts.CreatePost;
 using Lazy.Application.Posts.GetPostById;
 using Lazy.Application.Posts.GetPostBySlug;
+using Lazy.Application.Posts.GetPostByUserId;
+using Lazy.Application.Posts.GetPostByUserName;
 using Lazy.Application.Posts.GetPublishedPosts;
 using Lazy.Application.Posts.UpdatePost;
 using Lazy.Domain.Shared;
@@ -54,6 +56,20 @@ public class PostsController : ApiController
         Result<PostDetailedResponse> response = await Sender.Send(query, cancellationToken);
 
         return response.IsSuccess ? Ok(response.Value) : NotFound(response.Error);
+    }
+    [AllowAnonymous]
+    [HttpGet("{userName}/posts")]
+    public async Task<IActionResult> GetPostByUserName(
+        string userName,
+        [FromQuery]int offset,
+        CancellationToken cancellationToken)
+    {
+        var query = new GetPostByUserNameQuery(userName, offset);
+
+        var response = await Sender.Send(query, cancellationToken);
+
+        return response.IsSuccess ? Ok(response.Value) : NotFound(response.Error);
+
     }
 
     [HttpPost]

@@ -31,4 +31,10 @@ public class UserRepository : IUserRepository
 
     public void Update(User user) =>
         _dbContext.Set<User>().Update(user);
+
+    public async Task<User?> GetByUsernameAsync(string userName, CancellationToken cancellationToken) =>
+        await _dbContext
+            .Set<User>()
+            .FirstOrDefaultAsync(user => user.UserName == userName, cancellationToken);
+
 }

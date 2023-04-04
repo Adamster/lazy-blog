@@ -44,4 +44,32 @@ public class PostRepository : IPostRepository
 
     public void Update(Post post) =>
         _dbContext.Set<Post>().Update(post);
+
+    public async Task<IList<Post>> GetPostsByUserIdAsync(Guid userId, int offset, CancellationToken cancellationToken)
+    {
+        List<Post> posts = await _dbContext.Set<Post>()
+            .Where(p => p.UserId == userId)
+            .OrderByDescending(p => p.CreatedOnUtc)
+            .Skip(offset)
+            .Take(PostPageSize)
+            .AsNoTracking()
+            .Include(x => x.User)
+            .ToListAsync(cancellationToken);
+
+        return posts;
+    }
+
+    public async Task<IList<Post>> GetPostsByUserNameAsync(string userName, int offset, CancellationToken cancellationToken)
+    {
+        List<Post> posts = await _dbContext.Set<Post>()
+            .Where(p => p.User.UserName == userName)
+            .OrderByDescending(p => p.CreatedOnUtc)
+            .Skip(offset)
+            .Take(PostPageSize)
+            .AsNoTracking()
+            .Include(x => x.User)
+            .ToListAsync(cancellationToken);
+
+        return posts;   
+    }
 }

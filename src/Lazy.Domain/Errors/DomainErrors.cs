@@ -29,7 +29,7 @@ public static class DomainErrors
 
         public static readonly Func<Domain.ValueObjects.Post.Slug, Error> SlugNotFound = slug => new Error(
             "Post.NotFound",
-            $"The post with the slug {slug} was not found.");
+            $"The post with the slug {slug.Value} was not found.");
     }
 
     public static class Email

@@ -14,4 +14,5 @@ public interface IUserRepository
     void Add(User user);
 
     void Update(User user);
+    Task<User?> GetByUsernameAsync(string userName, CancellationToken cancellationToken);
 }

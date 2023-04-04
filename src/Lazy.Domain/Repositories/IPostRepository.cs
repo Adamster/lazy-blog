@@ -14,4 +14,8 @@ public interface IPostRepository
     void Add(Post post);
 
     void Update(Post post);
+
+    Task<IList<Post>> GetPostsByUserIdAsync(Guid userId, int offset, CancellationToken cancellationToken);
+
+    Task<IList<Post>> GetPostsByUserNameAsync(string userName, int offset, CancellationToken cancellationToken);
 }
