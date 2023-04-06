@@ -1,9 +1,5 @@
-﻿namespace Lazy.Application.Posts.GetPostByUserId;
+﻿using Lazy.Application.Users.GetUserById;
 
-public record UserPostResponse(
-    Guid PostId,
-    string Title,
-    string Summary,
-    string Slug,
-    bool IsPublished,
-    DateTime CreatedAtUtc);
+namespace Lazy.Application.Posts.GetPostByUserId;
+
+public record UserPostResponse(UserResponse User, List<UserPostDetails> PostItems);

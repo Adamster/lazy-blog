@@ -66,7 +66,7 @@ public class PostsController : ApiController
     {
         var query = new GetPostByUserNameQuery(userName, offset);
 
-        var response = await Sender.Send(query, cancellationToken);
+        Result<UserPostResponse> response = await Sender.Send(query, cancellationToken);
 
         return response.IsSuccess ? Ok(response.Value) : NotFound(response.Error);
 

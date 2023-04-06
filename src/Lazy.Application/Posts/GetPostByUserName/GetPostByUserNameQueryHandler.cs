@@ -1,11 +1,12 @@
 ﻿using Lazy.Application.Abstractions.Messaging;
 using Lazy.Application.Posts.GetPostByUserId;
+using Lazy.Application.Users.GetUserById;
 using Lazy.Domain.Repositories;
 using Lazy.Domain.Shared;
 
 namespace Lazy.Application.Posts.GetPostByUserName;
 
-public record GetPostByUserNameQueryHandler : IQueryHandler<GetPostByUserNameQuery, List<UserPostResponse>>
+public record GetPostByUserNameQueryHandler : IQueryHandler<GetPostByUserNameQuery, UserPostResponse>
 {
     private readonly IPostRepository _postRepository;
     private readonly IUserRepository _userRepository;
@@ -18,22 +19,22 @@ public record GetPostByUserNameQueryHandler : IQueryHandler<GetPostByUserNameQue
         _userRepository = userRepository;
     }
 
-    public async Task<Result<List<UserPostResponse>>> Handle(GetPostByUserNameQuery request, CancellationToken cancellationToken)
+    public async Task<Result<UserPostResponse>> Handle(GetPostByUserNameQuery request, CancellationToken cancellationToken)
     {
         var user = await _userRepository.GetByUsernameAsync(request.UserName, cancellationToken);
 
         if (user is null)
         {
-            return Result.Failure<List<UserPostResponse>>(new Error(
+            return Result.Failure<UserPostResponse>(new Error(
                 "User.NotFound",
                 $"The user with Username {request.UserName} was not found."));
         }
 
         var posts = await _postRepository.GetPostsByUserNameAsync(request.UserName, request.Offset, cancellationToken);
 
-        List<UserPostResponse> response = posts
+        List<UserPostDetails> postsDetails = posts
             .Select(p =>
-                new UserPostResponse(
+                new UserPostDetails(
                     p.Id,
                     p.Title.Value,
                     p.Summary.Value,
@@ -42,6 +43,7 @@ public record GetPostByUserNameQueryHandler : IQueryHandler<GetPostByUserNameQue
                     p.CreatedOnUtc))
             .ToList();
 
+        var response = new UserPostResponse(new UserResponse(user), postsDetails);
         return response;
     }
 }
