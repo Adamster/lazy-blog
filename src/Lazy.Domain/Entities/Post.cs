@@ -15,14 +15,15 @@ public sealed class Post : AggregateRoot, IAuditableEntity
         Body body,
         Summary summary,
         Slug slug,
-        Guid userId) : base(id)
+        Guid userId, 
+        bool isPublished = true) : base(id)
     {
         Title = title;
         Body = body;
         Summary = summary;
         UserId = userId;
         Slug = slug;
-        IsPublished = true;
+        IsPublished = isPublished;
         //_tags.AddRange(tags);
     }
 
@@ -30,7 +31,7 @@ public sealed class Post : AggregateRoot, IAuditableEntity
 
     public Body Body { get; private set; }
 
-    public Summary Summary { get;  private set; }
+    public Summary Summary { get; private set; }
 
     public Slug Slug { get; private set; }
 
@@ -52,18 +53,18 @@ public sealed class Post : AggregateRoot, IAuditableEntity
         Summary summary,
         Slug slug,
         Body body,
-        Guid userId
+        Guid userId,
+        bool isPublished
         /*params Tag[] tags*/)
     {
-
-         
         var post = new Post(
             id,
             title,
             body,
             summary,
             slug,
-            userId);
+            userId,
+            isPublished);
 
         return post;
     }

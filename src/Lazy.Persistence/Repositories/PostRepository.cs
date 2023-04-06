@@ -34,6 +34,7 @@ public class PostRepository : IPostRepository
             .Take(PostPageSize)
             .AsNoTracking()
             .Include(x => x.User)
+            .Include(x => x.Comments)
             .ToListAsync(cancellationToken);
 
         return posts;

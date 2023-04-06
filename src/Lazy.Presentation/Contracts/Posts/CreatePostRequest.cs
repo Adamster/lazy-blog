@@ -1,3 +1,3 @@
 ﻿namespace Lazy.Presentation.Contracts.Posts;
 
-public record CreatePostRequest(string Title, string Summary, string Body, Guid UserId);
+public record CreatePostRequest(string Title, string Summary, string Body, Guid UserId, bool IsPublished = true);

@@ -81,6 +81,7 @@ public class PostsController : ApiController
             request.Title,
             request.Summary,
             request.Body,
+            request.IsPublished,
             request.UserId);
 
         Result<Guid> result = await Sender.Send(command, cancellationToken);

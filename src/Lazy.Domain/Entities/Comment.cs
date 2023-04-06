@@ -5,6 +5,8 @@ namespace Lazy.Domain.Entities;
 
 public sealed class Comment : Entity, IAuditableEntity
 {
+    public const int MaxLength = 4000;
+
     public Comment(
         Guid id,
         Post post,
@@ -14,6 +16,8 @@ public sealed class Comment : Entity, IAuditableEntity
     {
         PostId = post.Id;
         UserId = user.Id;
+        Post = post;
+        User = user;
         CommentText = commentText;
     }
 
@@ -32,4 +36,14 @@ public sealed class Comment : Entity, IAuditableEntity
 
     public DateTime CreatedOnUtc { get; set; }
     public DateTime? UpdatedOnUtc { get; set; }
+
+
+    public static Comment Create(
+        Post post,
+        User user,
+        Body commentText)
+    {
+        var comment = new Comment(Guid.NewGuid(), post, user, commentText);
+        return comment;
+    }
 }

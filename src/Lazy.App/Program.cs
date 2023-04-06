@@ -8,11 +8,9 @@ using Scrutor;
 using FluentValidation;
 using Lazy.App.OptionsSetup;
 using Lazy.Domain.Entities;
-using Lazy.Domain.Entities.Identity;
 using Lazy.Persistence.Interceptors;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using AssemblyReference = Lazy.Infrastructure.AssemblyReference;
 
@@ -24,7 +22,7 @@ Log.Logger = new LoggerConfiguration()
 try
 {
     var builder = WebApplication.CreateBuilder(args);
-
+    
     builder.Services.AddScoped<IUserRepository, UserRepository>();
 
     builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();

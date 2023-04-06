@@ -8,4 +8,6 @@ public record PublishedPostResponse(
     string Summary,
     string Slug,
     UserResponse Author,
+    int Views,
+    int Comments,
     DateTime CreatedAtUtc);
