@@ -2,4 +2,4 @@
 
 namespace Lazy.Application.Users.UpdateUser;
 
-public record UpdateUserCommand(Guid Id, string FirstName, string LastName) : ICommand;
+public record UpdateUserCommand(Guid Id, string FirstName, string LastName, string Username) : ICommand;

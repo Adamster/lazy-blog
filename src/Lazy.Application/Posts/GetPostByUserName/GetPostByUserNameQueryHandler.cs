@@ -3,10 +3,11 @@ using Lazy.Application.Posts.GetPostByUserId;
 using Lazy.Application.Users.GetUserById;
 using Lazy.Domain.Repositories;
 using Lazy.Domain.Shared;
+using Lazy.Domain.ValueObjects.User;
 
 namespace Lazy.Application.Posts.GetPostByUserName;
 
-public record GetPostByUserNameQueryHandler : IQueryHandler<GetPostByUserNameQuery, UserPostResponse>
+public class GetPostByUserNameQueryHandler : IQueryHandler<GetPostByUserNameQuery, UserPostResponse>
 {
     private readonly IPostRepository _postRepository;
     private readonly IUserRepository _userRepository;
@@ -21,7 +22,8 @@ public record GetPostByUserNameQueryHandler : IQueryHandler<GetPostByUserNameQue
 
     public async Task<Result<UserPostResponse>> Handle(GetPostByUserNameQuery request, CancellationToken cancellationToken)
     {
-        var user = await _userRepository.GetByUsernameAsync(request.UserName, cancellationToken);
+        var userNameResult = UserName.Create(request.UserName);
+        var user = await _userRepository.GetByUsernameAsync(userNameResult.Value, cancellationToken);
 
         if (user is null)
         {
@@ -30,7 +32,7 @@ public record GetPostByUserNameQueryHandler : IQueryHandler<GetPostByUserNameQue
                 $"The user with Username {request.UserName} was not found."));
         }
 
-        var posts = await _postRepository.GetPostsByUserNameAsync(request.UserName, request.Offset, cancellationToken);
+        var posts = await _postRepository.GetPostsByUserNameAsync(userNameResult.Value, request.Offset, cancellationToken);
 
         List<UserPostDetails> postsDetails = posts
             .Select(p =>

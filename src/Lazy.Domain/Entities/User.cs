@@ -1,7 +1,7 @@
 ﻿using Lazy.Domain.DomainEvents;
 using Lazy.Domain.Entities.Identity;
 using Lazy.Domain.Primitives;
-using Lazy.Domain.ValueObjects;
+using Lazy.Domain.ValueObjects.User;
 using Microsoft.AspNetCore.Identity;
 
 namespace Lazy.Domain.Entities;
@@ -15,7 +15,7 @@ public sealed class User : IdentityUser<Guid>, IAuditableEntity
     private readonly List<UserToken> _tokens = new();
     private readonly List<UserRole> _userRoles = new();
 
-    private User(Guid id, Email email, FirstName firstName, LastName lastName, string userName)
+    private User(Guid id, Email email, FirstName firstName, LastName lastName, UserName userName)
         : base(email.Value)
     {
         Id = id;
@@ -30,6 +30,8 @@ public sealed class User : IdentityUser<Guid>, IAuditableEntity
     }
 
     public new Email Email { get; private set; }
+
+    public new UserName UserName { get; private set; }
 
     public FirstName FirstName { get; set; }
 
@@ -54,10 +56,9 @@ public sealed class User : IdentityUser<Guid>, IAuditableEntity
         Guid id,
         Email email,
         FirstName firstName,
-        LastName lastName)
+        LastName lastName,
+        UserName userName)
     {
-        string userName = email.Value.Split('@').First();
-
         var user = new User(
             id,
             email, 
@@ -68,9 +69,10 @@ public sealed class User : IdentityUser<Guid>, IAuditableEntity
         return user;
     }
 
-    public void ChangeName(FirstName firstName, LastName lastName)
+    public void ChangeName(FirstName firstName, LastName lastName, UserName userName)
     {
         FirstName = firstName;
         LastName = lastName;
+        UserName = userName;
     }
 }

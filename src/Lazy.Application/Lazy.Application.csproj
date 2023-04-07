@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <Folder Include="Comments\GetCommentById\" />
+    <Folder Include="Comments\UpdateComment\" />
     <Folder Include="Posts\GetPostById\" />
     <Folder Include="Posts\CreatePost\" />
     <Folder Include="Posts\GetPublishedPosts\" />

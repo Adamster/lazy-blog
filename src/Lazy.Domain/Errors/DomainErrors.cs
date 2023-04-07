@@ -109,8 +109,27 @@ public static class DomainErrors
             "First name is empty");
         
         public static readonly Error TooLong = new(
-            "LastName.TooLong",
+            "FirstName.TooLong",
             "FirstName name is too long");
+    }
+
+    public static class UserName
+    {
+        public static readonly Error Empty = new(
+            "UserName.Empty",
+            "User name is empty");
+        
+        public static readonly Error TooLong = new(
+            "UserName.TooLong",
+            "User name is too long");
+
+        public static readonly Error UserNameAlreadyInUse = new(
+            "User.UserNameAlreadyInUse",
+            "The specified username is already in use");
+
+        public static readonly Func<string, Error> NotFound = username => new Error(
+            "User.NotFound",
+            $"The member with the username {username} was not found.");
     }
     
     public static class LastName
@@ -122,5 +141,16 @@ public static class DomainErrors
         public static readonly Error TooLong = new(
             "LastName.TooLong",
             "Last name is too long");
+    }
+
+    public static class Comment    
+    {
+        public static readonly Func<Guid, Error> NotFound = id => new Error(
+            "Comment.NotFound",
+            $"The comment with the id {id} was not found.");
+
+        public static readonly Error UnauthorizedCommentUpdate = new(
+            "Comment.NotAuthorizedUpdate",
+            "Comment can be updated only by comment author");
     }
 }

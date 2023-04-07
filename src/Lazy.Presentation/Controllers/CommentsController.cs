@@ -1,6 +1,8 @@
 ﻿using Lazy.Application.Comments;
 using Lazy.Application.Comments.AddComment;
 using Lazy.Application.Comments.GetCommentById;
+using Lazy.Application.Comments.UpdateComment;
+using Lazy.Domain.Shared;
 using Lazy.Presentation.Abstractions;
 using Lazy.Presentation.Contracts.Comments;
 using MediatR;
@@ -10,7 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Lazy.Presentation.Controllers;
 
 
-//[Authorize]
+[Authorize]
 [Route("api/comments")]
 public class CommentsController : ApiController
 {
@@ -48,5 +50,23 @@ public class CommentsController : ApiController
             nameof(GetCommentById),
             new { id = result.Value },
             result.Value);
+    }
+
+    [HttpPut]
+    public async Task<IActionResult> UpdateComment([FromBody] UpdateCommentRequest request, CancellationToken cancellationToken)
+    {
+        var command = new UpdateCommentCommand(
+            request.UserId,
+            request.CommentId,
+            request.CommentText);
+
+        Result result = await Sender.Send(command, cancellationToken);
+
+        if (result.IsFailure)
+        {
+            return HandleFailure(result);
+        }
+
+        return NoContent();
     }
 }

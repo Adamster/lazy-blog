@@ -33,7 +33,7 @@ internal sealed class GetUserByIdQueryHandler : IQueryHandler<GetUserByIdQuery, 
             user.Email.Value,
             user.FirstName.Value, 
             user.LastName.Value,
-            user.UserName);
+            user.UserName.Value);
 
         return response;
     }

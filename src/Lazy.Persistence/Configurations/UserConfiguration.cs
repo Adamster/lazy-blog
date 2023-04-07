@@ -1,5 +1,5 @@
 ﻿using Lazy.Domain.Entities;
-using Lazy.Domain.ValueObjects;
+using Lazy.Domain.ValueObjects.User;
 using Lazy.Persistence.Constants;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -38,6 +38,10 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
             .Property(x => x.LastName)
             .HasConversion(x => x.Value, v => LastName.Create(v).Value)
             .HasMaxLength(LastName.MaxLength);
+
+        builder.Property(x => x.UserName)
+            .HasConversion(x => x.Value, v => UserName.Create(v).Value)
+            .HasMaxLength(UserName.MaxLength);
 
         builder
             .HasMany(u => u.Posts)
@@ -78,6 +82,7 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
             .IsRequired();
 
         builder.HasIndex(x => x.Email).IsUnique();
+        builder.HasIndex(x => x.UserName).IsUnique();
 
     }
 }

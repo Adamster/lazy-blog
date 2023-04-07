@@ -46,4 +46,9 @@ public sealed class Comment : Entity, IAuditableEntity
         var comment = new Comment(Guid.NewGuid(), post, user, commentText);
         return comment;
     }
+
+    public void Update(Body value)
+    {
+        CommentText = value;
+    }
 }

@@ -1,6 +1,6 @@
 ﻿using Lazy.Domain.Entities;
 using Lazy.Domain.Repositories;
-using Lazy.Domain.ValueObjects;
+using Lazy.Domain.ValueObjects.User;
 using Microsoft.EntityFrameworkCore;
 
 namespace Lazy.Persistence.Repositories;
@@ -32,7 +32,7 @@ public class UserRepository : IUserRepository
     public void Update(User user) =>
         _dbContext.Set<User>().Update(user);
 
-    public async Task<User?> GetByUsernameAsync(string userName, CancellationToken cancellationToken) =>
+    public async Task<User?> GetByUsernameAsync(UserName userName, CancellationToken cancellationToken) =>
         await _dbContext
             .Set<User>()
             .FirstOrDefaultAsync(user => user.UserName == userName, cancellationToken);

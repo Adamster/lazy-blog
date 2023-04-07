@@ -1,5 +1,5 @@
 ﻿using Lazy.Domain.Entities;
-using Lazy.Domain.ValueObjects;
+using Lazy.Domain.ValueObjects.User;
 
 namespace Lazy.Domain.Repositories;
 
@@ -14,5 +14,5 @@ public interface IUserRepository
     void Add(User user);
 
     void Update(User user);
-    Task<User?> GetByUsernameAsync(string userName, CancellationToken cancellationToken);
+    Task<User?> GetByUsernameAsync(UserName userName, CancellationToken cancellationToken);
 }

@@ -1,4 +1,5 @@
-﻿using Lazy.Application.Posts.CreatePost;
+﻿using Lazy.Application.Comments.GetCommentByPostSlug;
+using Lazy.Application.Posts.CreatePost;
 using Lazy.Application.Posts.GetPostById;
 using Lazy.Application.Posts.GetPostBySlug;
 using Lazy.Application.Posts.GetPostByUserId;
@@ -57,6 +58,18 @@ public class PostsController : ApiController
 
         return response.IsSuccess ? Ok(response.Value) : NotFound(response.Error);
     }
+
+    [AllowAnonymous]
+    [HttpGet("{id:guid}/comments")]
+    public async Task<IActionResult> GetCommentForPostBySlug(Guid id, CancellationToken cancellationToken)
+    {
+        var query = new GetCommentByPostIdQuery(id);
+
+        var response = await Sender.Send(query, cancellationToken);
+
+        return response.IsSuccess ? Ok(response.Value) : NotFound(response.Error);
+    }
+
     [AllowAnonymous]
     [HttpGet("{userName}/posts")]
     public async Task<IActionResult> GetPostByUserName(
