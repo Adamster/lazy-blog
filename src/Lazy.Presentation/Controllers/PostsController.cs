@@ -134,7 +134,7 @@ public class PostsController : ApiController
         return NoContent();
     }
 
-    [HttpPut("{id:guid}/view")]
+    [HttpPut("{id:guid}/count-view")]
     [AllowAnonymous]
     public async Task<IActionResult> AddView(Guid id, CancellationToken cancellationToken)
     {
