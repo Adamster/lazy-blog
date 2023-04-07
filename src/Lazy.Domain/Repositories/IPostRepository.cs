@@ -1,5 +1,6 @@
 ﻿using Lazy.Domain.Entities;
 using Lazy.Domain.ValueObjects.Post;
+using Lazy.Domain.ValueObjects.User;
 
 namespace Lazy.Domain.Repositories;
 
@@ -17,5 +18,5 @@ public interface IPostRepository
 
     Task<IList<Post>> GetPostsByUserIdAsync(Guid userId, int offset, CancellationToken cancellationToken);
 
-    Task<IList<Post>> GetPostsByUserNameAsync(string userName, int offset, CancellationToken cancellationToken);
+    Task<IList<Post>> GetPostsByUserNameAsync(UserName userName, int offset, CancellationToken cancellationToken);
 }

@@ -1,4 +1,5 @@
 ﻿using Lazy.Application.Posts.GetPostByUserId;
+using Lazy.Application.Users.CheckIfUserNameIsUnique;
 using Lazy.Application.Users.CreateUser;
 using Lazy.Application.Users.GetUserById;
 using Lazy.Application.Users.Login;
@@ -32,6 +33,23 @@ public class UsersController : ApiController
     }
 
     [AllowAnonymous]
+    [HttpGet("{username}/available")]
+    public async Task<IActionResult> CheckIfUserNameIsAvailable(string username, CancellationToken cancellationToken)
+    {
+        var query = new CheckIfUserNameIsUnique(username);
+
+        var result = await Sender.Send(query, cancellationToken);
+
+        if (result.IsFailure)
+        {
+           return HandleFailure(result);
+        }
+
+        return Ok(result.Value);
+    }
+
+
+    [AllowAnonymous]
     [HttpPost("login")]
     public async Task<IActionResult> LoginUser(
         [FromBody] LoginRequest request,
@@ -54,7 +72,8 @@ public class UsersController : ApiController
             request.Email,
             request.FirstName,
             request.LastName,
-            request.Password);
+            request.Password,
+            request.UserName);
 
         Result<Guid> result = await Sender.Send(command, cancellationToken);
 
@@ -78,7 +97,8 @@ public class UsersController : ApiController
         var command = new UpdateUserCommand(
             id,
             request.FirstName,
-            request.LastName);
+            request.LastName,
+            request.Username);
 
         Result result = await Sender.Send(
             command,

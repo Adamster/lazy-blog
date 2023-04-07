@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using Lazy.Domain.ValueObjects;
+using Lazy.Domain.ValueObjects.User;
 
 namespace Lazy.Application.Users.CreateUser;
 

@@ -1,6 +1,7 @@
 ﻿using Lazy.Domain.Entities;
 using Lazy.Domain.Repositories;
 using Lazy.Domain.ValueObjects.Post;
+using Lazy.Domain.ValueObjects.User;
 using Microsoft.EntityFrameworkCore;
 
 namespace Lazy.Persistence.Repositories;
@@ -60,7 +61,7 @@ public class PostRepository : IPostRepository
         return posts;
     }
 
-    public async Task<IList<Post>> GetPostsByUserNameAsync(string userName, int offset, CancellationToken cancellationToken)
+    public async Task<IList<Post>> GetPostsByUserNameAsync(UserName userName, int offset, CancellationToken cancellationToken)
     {
         List<Post> posts = await _dbContext.Set<Post>()
             .Where(p => p.User.UserName == userName)

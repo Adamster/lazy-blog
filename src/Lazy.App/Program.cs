@@ -57,6 +57,7 @@ try
     string connectionString = builder.Configuration.GetConnectionString("Database")!;
 
     builder.Services.AddSingleton<UpdateAuditableEntitiesInterceptor>();
+    builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
     builder.Services.AddDbContext<LazyBlogDbContext>(
         (sp, optionsBuilder) => { optionsBuilder.UseSqlServer(connectionString); });

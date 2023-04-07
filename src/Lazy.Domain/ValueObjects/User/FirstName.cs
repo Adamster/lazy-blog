@@ -2,7 +2,7 @@ using Lazy.Domain.Errors;
 using Lazy.Domain.Primitives;
 using Lazy.Domain.Shared;
 
-namespace Lazy.Domain.ValueObjects;
+namespace Lazy.Domain.ValueObjects.User;
 
 public sealed class FirstName : ValueObject
 {
@@ -16,7 +16,7 @@ public sealed class FirstName : ValueObject
     private FirstName()
     {
     }
-    
+
     public string Value { get; private set; }
 
 

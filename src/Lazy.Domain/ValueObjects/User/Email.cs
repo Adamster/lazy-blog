@@ -2,7 +2,7 @@
 using Lazy.Domain.Primitives;
 using Lazy.Domain.Shared;
 
-namespace Lazy.Domain.ValueObjects
+namespace Lazy.Domain.ValueObjects.User
 {
     public sealed class Email : ValueObject
     {
@@ -26,7 +26,7 @@ namespace Lazy.Domain.ValueObjects
                 .Ensure(e => e.Split('@').Length == 2,
                     DomainErrors.Email.InvalidFormat)
                 .Map(e => new Email(e));
-        
+
         public override IEnumerable<object> GetAtomicValues()
         {
             yield return Value;

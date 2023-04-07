@@ -5,7 +5,7 @@ using Lazy.Domain.Entities;
 using Lazy.Domain.Errors;
 using Lazy.Domain.Repositories;
 using Lazy.Domain.Shared;
-using Lazy.Domain.ValueObjects;
+using Lazy.Domain.ValueObjects.User;
 using Microsoft.AspNetCore.Identity;
 
 namespace Lazy.Application.Users.Login;

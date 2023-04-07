@@ -2,17 +2,17 @@ using Lazy.Domain.Errors;
 using Lazy.Domain.Primitives;
 using Lazy.Domain.Shared;
 
-namespace Lazy.Domain.ValueObjects;
+namespace Lazy.Domain.ValueObjects.User;
 
 public class LastName : ValueObject
 {
     public const int MaxLength = 50;
-    
+
     private LastName(string value)
     {
         Value = value;
     }
-    
+
     private LastName()
     {
     }
@@ -32,7 +32,7 @@ public class LastName : ValueObject
 
         return new LastName(lastName);
     }
-    
+
     public override IEnumerable<object> GetAtomicValues()
     {
         yield return Value;
