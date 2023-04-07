@@ -1,4 +1,6 @@
-﻿using Lazy.Application.Comments.GetCommentByPostSlug;
+﻿using System.Net;
+using Lazy.Application.Comments.GetCommentById;
+using Lazy.Application.Comments.GetCommentByPostSlug;
 using Lazy.Application.Posts.AddPostView;
 using Lazy.Application.Posts.CreatePost;
 using Lazy.Application.Posts.GetPostById;
@@ -12,6 +14,7 @@ using Lazy.Presentation.Abstractions;
 using Lazy.Presentation.Contracts.Posts;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Lazy.Presentation.Controllers;
@@ -26,6 +29,8 @@ public class PostsController : ApiController
     
     [AllowAnonymous]
     [HttpGet("{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Result<PostResponse>))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetPostById(Guid id, CancellationToken cancellationToken)
     {
         var query = new GetPostByIdQuery(id);
@@ -37,6 +42,8 @@ public class PostsController : ApiController
 
     [AllowAnonymous]
     [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Result<List<PublishedPostResponse>>))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetPosts(int offset, CancellationToken cancellationToken)
     {
         var query = new GetPublishedPostsQuery(offset);
@@ -49,8 +56,11 @@ public class PostsController : ApiController
 
         return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
     }
+
     [AllowAnonymous]
     [HttpGet("{slug}")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Result<PostDetailedResponse>))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetPostBySlug(string slug, CancellationToken cancellationToken)
     {
         var query = new GetPostBySlugQuery(slug);
@@ -62,17 +72,21 @@ public class PostsController : ApiController
 
     [AllowAnonymous]
     [HttpGet("{id:guid}/comments")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Result<List<CommentResponse>>))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetCommentForPostBySlug(Guid id, CancellationToken cancellationToken)
     {
         var query = new GetCommentByPostIdQuery(id);
 
-        var response = await Sender.Send(query, cancellationToken);
+        Result<List<CommentResponse>> response = await Sender.Send(query, cancellationToken);
 
         return response.IsSuccess ? Ok(response.Value) : NotFound(response.Error);
     }
 
     [AllowAnonymous]
     [HttpGet("{userName}/posts")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Result<UserPostResponse>))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetPostByUserName(
         string userName,
         [FromQuery]int offset,
@@ -87,6 +101,8 @@ public class PostsController : ApiController
     }
 
     [HttpPost]
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(Guid))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> CreatePost(
         [FromBody]CreatePostRequest request, 
         CancellationToken cancellationToken)
@@ -112,6 +128,8 @@ public class PostsController : ApiController
     }
 
     [HttpPut("{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> UpdatePost(
         Guid id,
         [FromBody] UpdatePostRequest request, 
@@ -136,6 +154,8 @@ public class PostsController : ApiController
 
     [HttpPut("{id:guid}/count-view")]
     [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> AddView(Guid id, CancellationToken cancellationToken)
     {
         var command = new AddPostViewCommand(id);
