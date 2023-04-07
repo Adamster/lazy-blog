@@ -72,8 +72,8 @@ public class UsersController : ApiController
             request.Email,
             request.FirstName,
             request.LastName,
-            request.Password,
-            request.UserName);
+            request.UserName,
+            request.Password);
 
         Result<Guid> result = await Sender.Send(command, cancellationToken);
 
