@@ -1,4 +1,5 @@
 ﻿using Lazy.Application.Comments.GetCommentByPostSlug;
+using Lazy.Application.Posts.AddPostView;
 using Lazy.Application.Posts.CreatePost;
 using Lazy.Application.Posts.GetPostById;
 using Lazy.Application.Posts.GetPostBySlug;
@@ -122,6 +123,22 @@ public class PostsController : ApiController
             request.Summary,
             request.Body,
             request.Slug);
+
+        Result result = await Sender.Send(command, cancellationToken);
+
+        if (result.IsFailure)
+        {
+            return HandleFailure(result);
+        }
+
+        return NoContent();
+    }
+
+    [HttpPut("{id:guid}/view")]
+    [AllowAnonymous]
+    public async Task<IActionResult> AddView(Guid id, CancellationToken cancellationToken)
+    {
+        var command = new AddPostViewCommand(id);
 
         Result result = await Sender.Send(command, cancellationToken);
 

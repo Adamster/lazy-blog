@@ -37,6 +37,8 @@ public sealed class Post : AggregateRoot, IAuditableEntity
 
     public bool IsPublished { get; private set; }
 
+    public long Views { get; private set; }
+
     public Guid UserId { get; private set; }
 
     public User User { get; private set; }
@@ -69,9 +71,14 @@ public sealed class Post : AggregateRoot, IAuditableEntity
         return post;
     }
 
-    public void AddComment(Comment comment)
+    public void AddView()
     {
-        _comments.Add(comment);
+        if (!IsPublished)
+        {
+            return;
+        }
+
+        Views++;
     }
 
     public void Update(Title title, Summary summary, Body body, Slug slug)
