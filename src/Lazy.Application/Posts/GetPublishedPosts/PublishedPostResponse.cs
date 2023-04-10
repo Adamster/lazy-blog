@@ -3,12 +3,12 @@
 namespace Lazy.Application.Posts.GetPublishedPosts;
 
 public record PublishedPostResponse(
-    Guid Id, 
+    Guid Id,
     string Title,
     string Summary,
     string Slug,
     UserResponse Author,
-    int Views,
+    long Views,
     int Comments,
     string? CoverUrl,
     DateTime CreatedAtUtc);
