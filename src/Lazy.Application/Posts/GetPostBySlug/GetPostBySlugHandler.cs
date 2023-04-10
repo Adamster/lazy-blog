@@ -40,6 +40,7 @@ public class GetPostBySlugHandler : IQueryHandler<GetPostBySlugQuery, PostDetail
             post.Summary.Value,
             new UserResponse(post.User),
             post.Body.Value,
+            post.CoverUrl,
             post.CreatedOnUtc
         );
 

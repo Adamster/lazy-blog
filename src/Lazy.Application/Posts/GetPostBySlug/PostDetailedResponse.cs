@@ -7,4 +7,5 @@ public record PostDetailedResponse(
     string Summary,
     UserResponse Author,
     string Body,
+    string? CoverUrl,
     DateTime CreatedAtUtc);

@@ -40,6 +40,7 @@ public class GetPostByIdQueryHandler : IQueryHandler<GetPostByUserIdQuery, UserP
                    p.Summary.Value,
                    p.Slug.Value,
                    p.IsPublished,
+                   p.CoverUrl,
                    p.CreatedOnUtc))
            .ToList();
 

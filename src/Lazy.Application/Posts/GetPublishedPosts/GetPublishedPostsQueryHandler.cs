@@ -28,6 +28,7 @@ public class GetPublishedPostsQueryHandler : IQueryHandler<GetPublishedPostsQuer
                     new UserResponse(p.UserId, p.User.Email.Value, p.User.FirstName.Value, p.User.LastName.Value, p.User.UserName.Value),
                     0,
                     p.Comments.Count,
+                    p.CoverUrl,
                     p.CreatedOnUtc))
             .ToList();
 

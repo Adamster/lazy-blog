@@ -45,7 +45,8 @@ internal sealed class CreatePostCommandHandler : ICommandHandler<CreatePostComma
             slugResult.Value,
             bodyResult.Value,
             request.UserId,
-            request.IsPublished);
+            request.IsPublished,
+            request.CoverUrl);
 
         _postRepository.Add(post);
 

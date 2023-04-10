@@ -10,4 +10,5 @@ public record PublishedPostResponse(
     UserResponse Author,
     int Views,
     int Comments,
+    string? CoverUrl,
     DateTime CreatedAtUtc);

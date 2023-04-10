@@ -7,4 +7,5 @@ public record CreatePostCommand(
     string Summary,
     string Body,
     bool IsPublished,
+    string? CoverUrl,
     Guid UserId) : ICommand<Guid>;

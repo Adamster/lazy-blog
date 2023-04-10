@@ -6,4 +6,5 @@ public record UserPostDetails(
     string Summary,
     string Slug,
     bool IsPublished,
+    string? CoverUrl,
     DateTime CreatedAtUtc);
