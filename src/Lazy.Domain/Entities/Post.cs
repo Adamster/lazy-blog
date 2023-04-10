@@ -15,8 +15,9 @@ public sealed class Post : AggregateRoot, IAuditableEntity
         Body body,
         Summary summary,
         Slug slug,
-        Guid userId, 
-        bool isPublished = true) : base(id)
+        Guid userId,
+        bool isPublished = true,
+        string? coverUrl = null) : base(id)
     {
         Title = title;
         Body = body;
@@ -24,6 +25,7 @@ public sealed class Post : AggregateRoot, IAuditableEntity
         UserId = userId;
         Slug = slug;
         IsPublished = isPublished;
+        CoverUrl = coverUrl ?? string.Empty;
         //_tags.AddRange(tags);
     }
 
@@ -36,6 +38,8 @@ public sealed class Post : AggregateRoot, IAuditableEntity
     public Slug Slug { get; private set; }
 
     public bool IsPublished { get; private set; }
+
+    public string? CoverUrl { get; private set; }
 
     public long Views { get; private set; }
 
@@ -56,7 +60,8 @@ public sealed class Post : AggregateRoot, IAuditableEntity
         Slug slug,
         Body body,
         Guid userId,
-        bool isPublished
+        bool isPublished,
+        string? coverUrl = null
         /*params Tag[] tags*/)
     {
         var post = new Post(
@@ -66,7 +71,8 @@ public sealed class Post : AggregateRoot, IAuditableEntity
             summary,
             slug,
             userId,
-            isPublished);
+            isPublished,
+            coverUrl);
 
         return post;
     }
@@ -81,11 +87,12 @@ public sealed class Post : AggregateRoot, IAuditableEntity
         Views++;
     }
 
-    public void Update(Title title, Summary summary, Body body, Slug slug)
+    public void Update(Title title, Summary summary, Body body, Slug slug, string? coverUrl)
     {
         Title = title;
         Summary = summary;
         Body = body;
         Slug = slug;
+        CoverUrl = coverUrl ?? string.Empty;
     }
 }

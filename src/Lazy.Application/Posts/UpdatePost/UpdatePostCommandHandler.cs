@@ -35,7 +35,8 @@ public class UpdatePostCommandHandler : ICommandHandler<UpdatePostCommand>
             titleResult.Value,
             summaryResult.Value,
             bodyResult.Value,
-            slugResult.Value);
+            slugResult.Value,
+            request.CoverUrl);
 
         _postRepository.Update(post);
 

@@ -1,5 +1,4 @@
-﻿using System.Net;
-using Lazy.Application.Comments.GetCommentById;
+﻿using Lazy.Application.Comments.GetCommentById;
 using Lazy.Application.Comments.GetCommentByPostSlug;
 using Lazy.Application.Posts.AddPostView;
 using Lazy.Application.Posts.CreatePost;
@@ -140,7 +139,8 @@ public class PostsController : ApiController
             request.Title,
             request.Summary,
             request.Body,
-            request.Slug);
+            request.Slug,
+            request.CoverUrl);
 
         Result result = await Sender.Send(command, cancellationToken);
 

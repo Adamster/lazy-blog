@@ -1,4 +1,5 @@
 ﻿using Lazy.Application.Abstractions.Messaging;
+using Lazy.Domain.Entities;
 using Lazy.Domain.Repositories;
 using Lazy.Domain.Shared;
 
@@ -15,7 +16,7 @@ public class GetPostByIdQueryHandler : IQueryHandler<GetPostByIdQuery, PostRespo
 
     public async Task<Result<PostResponse>> Handle(GetPostByIdQuery request, CancellationToken cancellationToken)
     {
-        var post = await _postRepository.GetByIdAsync(request.PostId,
+        Post? post = await _postRepository.GetByIdAsync(request.PostId,
             cancellationToken);
 
         if (post is null)
@@ -29,7 +30,8 @@ public class GetPostByIdQueryHandler : IQueryHandler<GetPostByIdQuery, PostRespo
             post.Id,
             post.Title.Value, 
             post.Summary.Value,
-            post.Body.Value);
+            post.Body.Value,
+            post.CoverUrl);
 
         return response;
     }

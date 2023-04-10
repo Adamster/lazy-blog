@@ -4,4 +4,5 @@ public record PostResponse(
     Guid Id,
     string Title,
     string Summary,
-    string Body);
+    string Body,
+    string? CoverUrl);
