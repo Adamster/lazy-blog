@@ -26,7 +26,7 @@ public class GetPublishedPostsQueryHandler : IQueryHandler<GetPublishedPostsQuer
                     p.Summary.Value,
                     p.Slug.Value,
                     new UserResponse(p.UserId, p.User.Email.Value, p.User.FirstName.Value, p.User.LastName.Value, p.User.UserName.Value),
-                    0,
+                    p.Views,
                     p.Comments.Count,
                     p.CoverUrl,
                     p.CreatedOnUtc))
