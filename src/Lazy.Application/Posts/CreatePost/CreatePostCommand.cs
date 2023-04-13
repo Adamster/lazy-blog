@@ -4,7 +4,7 @@ namespace Lazy.Application.Posts.CreatePost;
 
 public record CreatePostCommand(
     string Title,
-    string Summary,
+    string? Summary,
     string Body,
     bool IsPublished,
     string? CoverUrl,

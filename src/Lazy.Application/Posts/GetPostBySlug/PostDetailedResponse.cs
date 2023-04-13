@@ -7,6 +7,7 @@ public record PostDetailedResponse(
     string Title,
     string Summary,
     UserResponse Author,
+    string Slug,
     string Body,
     string? CoverUrl,
     long Views,
