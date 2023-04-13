@@ -115,7 +115,7 @@ public class PostsController : ApiController
             request.CoverUrl,
             request.UserId);
 
-        Result<Guid> result = await Sender.Send(command, cancellationToken);
+        Result<PostCreatedResponse> result = await Sender.Send(command, cancellationToken);
 
         if (result.IsFailure)
         {

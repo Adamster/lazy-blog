@@ -8,4 +8,4 @@ public record CreatePostCommand(
     string Body,
     bool IsPublished,
     string? CoverUrl,
-    Guid UserId) : ICommand<Guid>;
+    Guid UserId) : ICommand<PostCreatedResponse>;

@@ -8,7 +8,7 @@ using Lazy.Domain.ValueObjects.Post;
 
 namespace Lazy.Application.Posts.CreatePost;
 
-internal sealed class CreatePostCommandHandler : ICommandHandler<CreatePostCommand, Guid>
+internal sealed class CreatePostCommandHandler : ICommandHandler<CreatePostCommand, PostCreatedResponse>
 {
     private readonly IPostRepository _postRepository;
     private readonly IUnitOfWork _unitOfWork;
@@ -21,7 +21,7 @@ internal sealed class CreatePostCommandHandler : ICommandHandler<CreatePostComma
         _userRepository = userRepository;
     }
 
-    public async Task<Result<Guid>> Handle(CreatePostCommand request, CancellationToken cancellationToken)
+    public async Task<Result<PostCreatedResponse>> Handle(CreatePostCommand request, CancellationToken cancellationToken)
     {
         Result<Title> titleResult = Title.Create(request.Title);
         Result<Summary> summaryResult = Summary.Create(request.Summary);
@@ -30,12 +30,12 @@ internal sealed class CreatePostCommandHandler : ICommandHandler<CreatePostComma
 
         if (await _userRepository.GetByIdAsync(request.UserId, cancellationToken) is null)
         {
-            return Result.Failure<Guid>(DomainErrors.User.NotFound(request.UserId));
+            return Result.Failure<PostCreatedResponse>(DomainErrors.User.NotFound(request.UserId));
         }
 
         if (await _postRepository.GetBySlugAsync(slugResult.Value, cancellationToken) is not null)
         {
-            return Result.Failure<Guid>(DomainErrors.Slug.SlugAlreadyInUse);
+            return Result.Failure<PostCreatedResponse>(DomainErrors.Slug.SlugAlreadyInUse);
         }
 
         Post post = Post.Create(
@@ -52,6 +52,6 @@ internal sealed class CreatePostCommandHandler : ICommandHandler<CreatePostComma
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return post.Id;
+        return new PostCreatedResponse(post.Id, post.Slug.Value);
     }
 }
