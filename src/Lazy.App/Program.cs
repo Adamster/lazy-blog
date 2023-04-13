@@ -7,7 +7,9 @@ using Microsoft.EntityFrameworkCore;
 using Scrutor;
 using FluentValidation;
 using Lazy.App.OptionsSetup;
+using Lazy.Application.Abstractions.Authorization;
 using Lazy.Domain.Entities;
+using Lazy.Infrastructure.Authorization;
 using Lazy.Persistence.Interceptors;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -58,6 +60,7 @@ try
 
     builder.Services.AddSingleton<UpdateAuditableEntitiesInterceptor>();
     builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+    builder.Services.AddSingleton<ICurrentUserContext, CurrentUserContext>();
 
     builder.Services.AddDbContext<LazyBlogDbContext>(
         (sp, optionsBuilder) => { optionsBuilder.UseSqlServer(connectionString); });

@@ -13,7 +13,7 @@ public sealed class Post : AggregateRoot, IAuditableEntity
         Guid id,
         Title title,
         Body body,
-        Summary summary,
+        Summary? summary,
         Slug slug,
         Guid userId,
         bool isPublished = true,
@@ -33,7 +33,7 @@ public sealed class Post : AggregateRoot, IAuditableEntity
 
     public Body Body { get; private set; }
 
-    public Summary Summary { get; private set; }
+    public Summary? Summary { get; private set; }
 
     public Slug Slug { get; private set; }
 
@@ -56,7 +56,7 @@ public sealed class Post : AggregateRoot, IAuditableEntity
     public static Post Create(
         Guid id,
         Title title,
-        Summary summary,
+        Summary? summary,
         Slug slug,
         Body body,
         Guid userId,
@@ -87,7 +87,7 @@ public sealed class Post : AggregateRoot, IAuditableEntity
         Views++;
     }
 
-    public void Update(Title title, Summary summary, Body body, Slug slug, string? coverUrl)
+    public void Update(Title title, Summary? summary, Body body, Slug slug, string? coverUrl)
     {
         Title = title;
         Summary = summary;

@@ -75,4 +75,6 @@ public class PostRepository : IPostRepository
 
         return posts;   
     }
+
+    public void Delete(Post post) => _dbContext.Set<Post>().Remove(post);
 }

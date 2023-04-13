@@ -2,6 +2,7 @@
 using Lazy.Application.Comments.GetCommentByPostSlug;
 using Lazy.Application.Posts.AddPostView;
 using Lazy.Application.Posts.CreatePost;
+using Lazy.Application.Posts.DeletePost;
 using Lazy.Application.Posts.GetPostById;
 using Lazy.Application.Posts.GetPostBySlug;
 using Lazy.Application.Posts.GetPostByUserId;
@@ -142,6 +143,23 @@ public class PostsController : ApiController
             request.Body,
             request.Slug,
             request.CoverUrl);
+
+        Result result = await Sender.Send(command, cancellationToken);
+
+        if (result.IsFailure)
+        {
+            return HandleFailure(result);
+        }
+
+        return NoContent();
+    }
+
+    [HttpDelete("{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> DeletePost(Guid id, CancellationToken cancellationToken)
+    {
+        var command = new DeletePostCommand(id);
 
         Result result = await Sender.Send(command, cancellationToken);
 

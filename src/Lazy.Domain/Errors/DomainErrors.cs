@@ -30,6 +30,10 @@ public static class DomainErrors
         public static readonly Func<Domain.ValueObjects.Post.Slug, Error> SlugNotFound = slug => new Error(
             "Post.NotFound",
             $"The post with the slug {slug.Value} was not found.");
+
+        public static readonly Error UnauthorizedPostAccess = new(
+            "Post.NotAuthorized",
+            "Post can be updated only by post author");
     }
 
     public static class Email

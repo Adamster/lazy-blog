@@ -1,4 +1,5 @@
-﻿using Lazy.Application.Abstractions.Messaging;
+﻿using Lazy.Application.Abstractions.Authorization;
+using Lazy.Application.Abstractions.Messaging;
 using Lazy.Domain.Errors;
 using Lazy.Domain.Repositories;
 using Lazy.Domain.Shared;
@@ -9,11 +10,16 @@ namespace Lazy.Application.Posts.UpdatePost;
 public class UpdatePostCommandHandler : ICommandHandler<UpdatePostCommand>
 {
     private readonly IPostRepository _postRepository;
+    private readonly ICurrentUserContext _currentUserContext;
     private readonly IUnitOfWork _unitOfWork;
 
-    public UpdatePostCommandHandler(IPostRepository postRepository, IUnitOfWork unitOfWork)
+    public UpdatePostCommandHandler(
+        IPostRepository postRepository, 
+        ICurrentUserContext currentUserContext,
+        IUnitOfWork unitOfWork)
     {
         _postRepository = postRepository;
+        _currentUserContext = currentUserContext;
         _unitOfWork = unitOfWork;
     }
 
@@ -24,6 +30,11 @@ public class UpdatePostCommandHandler : ICommandHandler<UpdatePostCommand>
         if (post is null)
         {
             return Result.Failure(DomainErrors.Post.NotFound(request.Id));
+        }
+
+        if (!_currentUserContext.IsCurrentUser(post.UserId))
+        {
+            return Result.Failure(DomainErrors.Post.UnauthorizedPostAccess);
         }
 
         Result<Title> titleResult = Title.Create(request.Title);

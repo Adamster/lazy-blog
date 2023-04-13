@@ -16,6 +16,8 @@ public interface IPostRepository
 
     void Update(Post post);
 
+    void Delete(Post post);
+
     Task<IList<Post>> GetPostsByUserIdAsync(Guid userId, int offset, CancellationToken cancellationToken);
 
     Task<IList<Post>> GetPostsByUserNameAsync(UserName userName, int offset, CancellationToken cancellationToken);
