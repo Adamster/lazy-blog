@@ -3,6 +3,7 @@
 public record PostResponse(
     Guid Id,
     string Title,
-    string Summary,
+    string? Summary,
     string Body,
+    string Slug,
     string? CoverUrl);

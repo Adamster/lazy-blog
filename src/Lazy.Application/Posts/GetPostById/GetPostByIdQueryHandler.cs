@@ -29,8 +29,9 @@ public class GetPostByIdQueryHandler : IQueryHandler<GetPostByIdQuery, PostRespo
         var response = new PostResponse(
             post.Id,
             post.Title.Value, 
-            post.Summary.Value,
+            post.Summary?.Value,
             post.Body.Value,
+            post.Slug.Value,
             post.CoverUrl);
 
         return response;
