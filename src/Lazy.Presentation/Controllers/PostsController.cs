@@ -124,7 +124,7 @@ public class PostsController : ApiController
 
         return CreatedAtAction(
             nameof(GetPostById),
-            new {id = result.Value},
+            new {id = result.Value.Id},
             result.Value);
     }
 
