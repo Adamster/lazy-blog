@@ -29,6 +29,7 @@ public class CommentRepository : ICommentRepository
     public async Task<List<Comment>> GetAllAsync(Guid postId, CancellationToken cancellationToken = default)
     {
         List<Comment> comments = await _dbContext.Set<Comment>()
+            .OrderByDescending(x => x.CreatedOnUtc)
             .Where(c => c.PostId == postId)
             .Include(x => x.User)
             .AsNoTracking()

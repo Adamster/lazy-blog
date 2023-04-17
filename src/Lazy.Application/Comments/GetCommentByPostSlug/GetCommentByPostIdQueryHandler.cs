@@ -1,5 +1,6 @@
 ﻿using Lazy.Application.Abstractions.Messaging;
 using Lazy.Application.Comments.GetCommentById;
+using Lazy.Application.Users.GetUserById;
 using Lazy.Domain.Entities;
 using Lazy.Domain.Errors;
 using Lazy.Domain.Repositories;
@@ -37,7 +38,7 @@ public class GetCommentByPostIdQueryHandler : IQueryHandler<GetCommentByPostIdQu
                     c => new CommentResponse
                     (
                         c.Id, 
-                        c.User.UserName.Value, 
+                        new UserResponse(c.User),
                         tmpAvatarUrl, 
                         c.CommentText.Value, 
                         c.CreatedOnUtc))

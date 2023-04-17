@@ -11,6 +11,6 @@ public class UpdateCommentCommandValidator : AbstractValidator<UpdateCommentComm
 
         RuleFor(x => x.UserId).NotEmpty();
 
-        RuleFor(x => x.CommentText).NotEmpty().MaximumLength(Comment.MaxLength);
+        RuleFor(x => x.Body).NotEmpty().MaximumLength(Comment.MaxLength);
     }
 }

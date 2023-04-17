@@ -1,4 +1,5 @@
 ﻿using Lazy.Application.Abstractions.Messaging;
+using Lazy.Application.Users.GetUserById;
 using Lazy.Domain.Errors;
 using Lazy.Domain.Repositories;
 using Lazy.Domain.Shared;
@@ -23,7 +24,7 @@ public class GetCommentByIdQueryHandler : IQueryHandler<GetCommentByIdQuery, Com
             return Result.Failure<CommentResponse>(DomainErrors.Comment.NotFound(request.CommentId));
         }
 
-        return new CommentResponse(comment.Id, comment.User.UserName.Value,
+        return new CommentResponse(comment.Id, new UserResponse(comment.User),
             "https://metro.co.uk/wp-content/uploads/2015/06/ad_174020392-e1487698550420.jpg", //temp solution :D
             comment.CommentText.Value,
             comment.CreatedOnUtc);

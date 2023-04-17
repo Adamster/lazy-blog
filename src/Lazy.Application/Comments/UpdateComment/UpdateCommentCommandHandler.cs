@@ -36,7 +36,7 @@ public class UpdateCommentCommandHandler : ICommandHandler<UpdateCommentCommand>
             return Result.Failure(DomainErrors.User.NotFound(request.UserId));
         }
 
-        var bodyUpdateResult = Body.Create(request.CommentText);
+        var bodyUpdateResult = Body.Create(request.Body);
 
         Claim currentUserClaim = _httpContextAccessor.HttpContext.User.Claims.Single(c => c.Type == ClaimTypes.NameIdentifier);
       

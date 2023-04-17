@@ -2,4 +2,4 @@
 
 namespace Lazy.Application.Comments.UpdateComment;
 
-public record UpdateCommentCommand(Guid UserId, Guid CommentId, string CommentText) : ICommand;
+public record UpdateCommentCommand(Guid UserId, Guid CommentId, string Body) : ICommand;

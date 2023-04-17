@@ -37,7 +37,7 @@ public class CommentsController : ApiController
         var command = new AddCommentCommand(
             request.PostId,
             request.UserId,
-            request.CommentText);
+            request.Body);
 
         var result = await Sender.Send(command, cancellationToken);
 
@@ -58,7 +58,7 @@ public class CommentsController : ApiController
         var command = new UpdateCommentCommand(
             request.UserId,
             request.CommentId,
-            request.CommentText);
+            request.Body);
 
         Result result = await Sender.Send(command, cancellationToken);
 

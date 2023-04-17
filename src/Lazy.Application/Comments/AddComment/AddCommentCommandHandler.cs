@@ -49,7 +49,7 @@ public class AddCommentCommandHandler : ICommandHandler<AddCommentCommand, Guid>
             return Result.Failure<Guid>(DomainErrors.Post.NotFound(request.PostId));
         }
 
-        Result<Body> commentBody = Body.Create(request.CommentText);
+        Result<Body> commentBody = Body.Create(request.Body);
 
         var comment = Comment.Create(post, user, commentBody.Value);
         _commentRepository.Add(comment);
