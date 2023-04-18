@@ -1,5 +1,6 @@
 ﻿using Lazy.Application.Comments;
 using Lazy.Application.Comments.AddComment;
+using Lazy.Application.Comments.DeleteComment;
 using Lazy.Application.Comments.GetCommentById;
 using Lazy.Application.Comments.UpdateComment;
 using Lazy.Domain.Shared;
@@ -7,6 +8,7 @@ using Lazy.Presentation.Abstractions;
 using Lazy.Presentation.Contracts.Comments;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Lazy.Presentation.Controllers;
@@ -20,7 +22,7 @@ public class CommentsController : ApiController
     {
     }
 
-    [HttpGet]
+    [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetCommentById(Guid id, CancellationToken cancellationToken)
     {
         var query = new GetCommentByIdQuery(id);
@@ -68,5 +70,23 @@ public class CommentsController : ApiController
         }
 
         return NoContent();
+    }
+
+    [HttpDelete("{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> DeleteComment(Guid id, CancellationToken cancellationToken)
+    {
+        var command = new DeleteCommentCommand(id);
+
+        Result result = await Sender.Send(command, cancellationToken);
+
+        if (result.IsFailure)
+        {
+            return HandleFailure(result);
+        }
+
+        return NoContent();
+
     }
 }
