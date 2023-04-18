@@ -11,6 +11,6 @@ public class AddCommentCommandValidator : AbstractValidator<AddCommentCommand>
 
         RuleFor(x => x.PostId).NotEmpty();
 
-        RuleFor(x => x.CommentText).NotEmpty().MaximumLength(Comment.MaxLength);
+        RuleFor(x => x.Body).NotEmpty().MaximumLength(Comment.MaxLength);
     }
 }

@@ -1,9 +1,11 @@
-﻿namespace Lazy.Application.Comments.GetCommentById;
+﻿using Lazy.Application.Users.GetUserById;
+
+namespace Lazy.Application.Comments.GetCommentById;
 
 public record CommentResponse(
-    Guid CommentId,
-    string Username,
+    Guid Id,
+    UserResponse User,
     string UserAvatarUrl,
-    string CommentText,
+    string Body,
     DateTime CreatedAtUtc
 );

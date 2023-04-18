@@ -1,3 +1,3 @@
 ﻿namespace Lazy.Presentation.Contracts.Comments;
 
-public record UpdateCommentRequest(Guid UserId, Guid CommentId, string CommentText);
+public record UpdateCommentRequest(Guid UserId, Guid CommentId, string Body);
