@@ -3,7 +3,7 @@
 public record UserPostItem(
     Guid Id,
     string Title,
-    string Summary,
+    string? Summary,
     string Slug,
     long Views,
     int Comments,

@@ -40,7 +40,7 @@ public class GetPostByUserNameQueryHandler : IQueryHandler<GetPostByUserNameQuer
                 new UserPostItem(
                     p.Id,
                     p.Title.Value,
-                    p.Summary.Value,
+                    p.Summary?.Value,
                     p.Slug.Value,
                     p.Views,
                     p.Comments.Count,
