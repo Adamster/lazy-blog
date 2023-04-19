@@ -5,6 +5,7 @@ using Lazy.Domain.Extensions;
 using Lazy.Domain.Repositories;
 using Lazy.Domain.Shared;
 using Lazy.Domain.ValueObjects.Post;
+using SlugGenerator;
 
 namespace Lazy.Application.Posts.CreatePost;
 
@@ -26,20 +27,23 @@ internal sealed class CreatePostCommandHandler : ICommandHandler<CreatePostComma
         Result<Title> titleResult = Title.Create(request.Title);
         Result<Summary> summaryResult = Summary.Create(request.Summary);
         Result<Body> bodyResult = Body.Create(request.Body);
-        Result<Slug> slugResult = Slug.Create(request.Title.Slugify());
 
         if (await _userRepository.GetByIdAsync(request.UserId, cancellationToken) is null)
         {
             return Result.Failure<PostCreatedResponse>(DomainErrors.User.NotFound(request.UserId));
         }
 
+        Result<Slug> slugResult = Slug.Create(request.Title.Slugify());
+
+        Guid postId = Guid.NewGuid();
+
         if (await _postRepository.GetBySlugAsync(slugResult.Value, cancellationToken) is not null)
         {
-            return Result.Failure<PostCreatedResponse>(DomainErrors.Slug.SlugAlreadyInUse);
+            slugResult = Slug.Create($"{postId.ToByteArray().GetHashCode()}-{slugResult.Value.Value}");
         }
 
         Post post = Post.Create(
-            Guid.NewGuid(),
+            postId,
             titleResult.Value,
             summaryResult.Value,
             slugResult.Value,

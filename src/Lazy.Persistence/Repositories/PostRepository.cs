@@ -26,7 +26,7 @@ public class PostRepository : IPostRepository
             .Include(p => p.User)
             .FirstOrDefaultAsync(post => post.Slug == slug, cancellationToken);
 
-    public async Task<IList<Post>> GetPosts(int offset, CancellationToken cancellationToken)
+    public async Task<IList<Post>> GetPostsAsync(int offset, CancellationToken cancellationToken)
     {
         List<Post> posts = await _dbContext.Set<Post>()
             .Where(p => p.IsPublished)

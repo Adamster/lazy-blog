@@ -10,7 +10,7 @@ public interface IPostRepository
 
     Task<Post?> GetBySlugAsync(Slug slug, CancellationToken cancellationToken);
 
-    Task<IList<Post>> GetPosts(int offset, CancellationToken cancellationToken);
+    Task<IList<Post>> GetPostsAsync(int offset, CancellationToken cancellationToken);
 
     void Add(Post post);
 

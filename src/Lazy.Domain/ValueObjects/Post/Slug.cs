@@ -1,5 +1,4 @@
 ﻿using Lazy.Domain.Errors;
-using Lazy.Domain.Extensions;
 using Lazy.Domain.Primitives;
 using Lazy.Domain.Shared;
 
