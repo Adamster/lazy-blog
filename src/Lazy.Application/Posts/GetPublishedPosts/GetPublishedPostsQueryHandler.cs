@@ -25,9 +25,12 @@ public class GetPublishedPostsQueryHandler : IQueryHandler<GetPublishedPostsQuer
                     p.Title.Value,
                     p.Summary?.Value,
                     p.Slug.Value,
-                    new UserResponse(p.UserId, p.User.Email.Value, p.User.FirstName.Value, p.User.LastName.Value, p.User.UserName.Value),
+                    new UserResponse(p.UserId, p.User.Email.Value, p.User.FirstName.Value, p.User.LastName.Value,
+                        p.User.UserName.Value),
                     p.Views,
                     p.Comments.Count,
+                    p.Rating,
+                    p.User.PostVotes.FirstOrDefault(u => u.PostId == p.Id)?.VoteDirection,
                     p.CoverUrl,
                     p.CreatedOnUtc))
             .ToList();

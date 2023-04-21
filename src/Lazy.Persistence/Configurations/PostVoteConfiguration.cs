@@ -16,6 +16,7 @@ public class PostVoteConfiguration : IEntityTypeConfiguration<PostVote>
         builder.HasKey(p => p.Id);
 
         builder.Property(p => p.VoteDirection)
-            .HasConversion(new EnumToStringConverter<VoteDirection>());
+            .HasConversion(v => v.ToString(),
+                v => (VoteDirection) Enum.Parse(typeof(VoteDirection), v));
     }
 }

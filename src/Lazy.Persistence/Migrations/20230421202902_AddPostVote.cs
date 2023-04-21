@@ -25,7 +25,7 @@ namespace Lazy.Persistence.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     PostId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    VoteDirection = table.Column<int>(type: "int", nullable: false),
+                    VoteDirection = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedOnUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedOnUtc = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },

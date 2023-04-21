@@ -33,15 +33,17 @@ public class GetPostByIdQueryHandler : IQueryHandler<GetPostByUserIdQuery, UserP
         var posts = await _postRepository
            .GetPostsByUserIdAsync(request.UserId, request.Offset, cancellationToken);
 
-       var postDetails = posts
-           .Select(p =>
-               new UserPostItem(
-                   p.Id,
-                   p.Title.Value,
-                   p.Summary.Value,
-                   p.Slug.Value,
-                   p.Views,
-                   p.Comments.Count,
+        var postDetails = posts
+            .Select(p =>
+                new UserPostItem(
+                    p.Id,
+                    p.Title.Value,
+                    p.Summary?.Value,
+                    p.Slug.Value,
+                    p.Views,
+                    p.Comments.Count,
+                    p.Rating,
+                    p.User.PostVotes.FirstOrDefault(u => u.PostId == p.Id)?.VoteDirection,
                    p.CoverUrl,
                    p.IsPublished,
                    p.CreatedOnUtc))

@@ -261,8 +261,9 @@ namespace Lazy.Persistence.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("VoteDirection")
-                        .HasColumnType("int");
+                    b.Property<string>("VoteDirection")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

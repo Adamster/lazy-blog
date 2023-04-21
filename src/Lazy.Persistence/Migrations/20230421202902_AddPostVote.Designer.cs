@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Lazy.Persistence.Migrations
 {
     [DbContext(typeof(LazyBlogDbContext))]
-    [Migration("20230421134442_AddPostVote")]
+    [Migration("20230421202902_AddPostVote")]
     partial class AddPostVote
     {
         /// <inheritdoc />
@@ -264,8 +264,9 @@ namespace Lazy.Persistence.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("VoteDirection")
-                        .HasColumnType("int");
+                    b.Property<string>("VoteDirection")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

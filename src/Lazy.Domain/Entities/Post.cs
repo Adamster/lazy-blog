@@ -98,13 +98,28 @@ public sealed class Post : AggregateRoot, IAuditableEntity
         CoverUrl = coverUrl ?? string.Empty;
     }
 
-    public void UpVote()
+    private void UpVote()
     {
         Rating++;
     }
 
-    public void DownVote()
+    private void DownVote()
     {
         Rating--;
+    }
+
+    public void Vote(VoteDirection postVoteVoteDirection)
+    {
+        switch (postVoteVoteDirection)
+        {
+            case VoteDirection.Up:
+                UpVote();
+                break;
+            case VoteDirection.Down:
+                DownVote();
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(postVoteVoteDirection), postVoteVoteDirection, null);
+        }
     }
 }
