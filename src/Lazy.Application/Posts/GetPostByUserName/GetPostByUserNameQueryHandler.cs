@@ -44,6 +44,8 @@ public class GetPostByUserNameQueryHandler : IQueryHandler<GetPostByUserNameQuer
                     p.Slug.Value,
                     p.Views,
                     p.Comments.Count,
+                    p.Rating,
+                    p.User.PostVotes.FirstOrDefault(u => u.PostId == p.Id)?.VoteDirection,
                     p.CoverUrl,
                     p.IsPublished,
                     p.CreatedOnUtc))
