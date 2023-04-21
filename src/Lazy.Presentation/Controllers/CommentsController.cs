@@ -10,6 +10,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace Lazy.Presentation.Controllers;
 
@@ -18,7 +19,10 @@ namespace Lazy.Presentation.Controllers;
 [Route("api/comments")]
 public class CommentsController : ApiController
 {
-    public CommentsController(ISender sender) : base(sender)
+    public CommentsController(
+        ISender sender,
+        ILogger<CommentsController> logger) 
+        : base(sender, logger)
     {
     }
 

@@ -14,6 +14,7 @@ public sealed class User : IdentityUser<Guid>, IAuditableEntity
     private readonly List<UserLogin> _logins = new ();
     private readonly List<UserToken> _tokens = new();
     private readonly List<UserRole> _userRoles = new();
+    private readonly List<PostVote> _postVotes = new();
 
     private User(Guid id, Email email, FirstName firstName, LastName lastName, UserName userName)
         : base(email.Value)
@@ -39,6 +40,8 @@ public sealed class User : IdentityUser<Guid>, IAuditableEntity
 
     public IReadOnlyCollection<Post> Posts => _posts;
     public IReadOnlyCollection<Comment> Comments => _comments;
+
+    public IReadOnlyCollection<PostVote> PostVotes => _postVotes;
 
     public IReadOnlyCollection<UserClaim> Claims => _claims;
 

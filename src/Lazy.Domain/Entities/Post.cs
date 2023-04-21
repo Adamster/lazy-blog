@@ -43,6 +43,8 @@ public sealed class Post : AggregateRoot, IAuditableEntity
 
     public long Views { get; private set; }
 
+    public int Rating { get; private set; }
+
     public Guid UserId { get; private set; }
 
     public User User { get; private set; }
@@ -94,5 +96,15 @@ public sealed class Post : AggregateRoot, IAuditableEntity
         Body = body;
         Slug = slug;
         CoverUrl = coverUrl ?? string.Empty;
+    }
+
+    public void UpVote()
+    {
+        Rating++;
+    }
+
+    public void DownVote()
+    {
+        Rating--;
     }
 }

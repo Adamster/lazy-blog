@@ -1,6 +1,7 @@
 ﻿using Lazy.Application.Comments.GetCommentById;
 using Lazy.Application.Comments.GetCommentByPostSlug;
 using Lazy.Application.Posts.AddPostView;
+using Lazy.Application.Posts.AddPostVote;
 using Lazy.Application.Posts.CreatePost;
 using Lazy.Application.Posts.DeletePost;
 using Lazy.Application.Posts.GetPostById;
@@ -10,12 +11,14 @@ using Lazy.Application.Posts.GetPostByUserName;
 using Lazy.Application.Posts.GetPublishedPosts;
 using Lazy.Application.Posts.UpdatePost;
 using Lazy.Domain.Shared;
+using Lazy.Domain.ValueObjects.Post;
 using Lazy.Presentation.Abstractions;
 using Lazy.Presentation.Contracts.Posts;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace Lazy.Presentation.Controllers;
 
@@ -23,7 +26,9 @@ namespace Lazy.Presentation.Controllers;
 [Route("api/posts")]
 public class PostsController : ApiController
 {
-    public PostsController(ISender sender) : base(sender)
+    public PostsController(ISender sender,
+        ILogger<PostsController> logger) 
+        : base(sender, logger)
     {
     }
     
@@ -180,6 +185,26 @@ public class PostsController : ApiController
         var command = new AddPostViewCommand(id);
 
         Result result = await Sender.Send(command, cancellationToken);
+
+        if (result.IsFailure)
+        {
+            return HandleFailure(result);
+        }
+
+        return NoContent();
+    }
+
+    [HttpPut("{id:guid}/vote")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    
+    public async Task<IActionResult> VotePost(Guid id,
+        VoteDirection direction, 
+        CancellationToken cancellationToken)
+    {
+        var command = new AddPostVoteCommand(id, direction);
+
+        var result = await Sender.Send(command, cancellationToken);
 
         if (result.IsFailure)
         {

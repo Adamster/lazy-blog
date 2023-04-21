@@ -10,6 +10,7 @@ using Lazy.Presentation.Contracts.Users;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace Lazy.Presentation.Controllers;
 
@@ -17,7 +18,10 @@ namespace Lazy.Presentation.Controllers;
 [Route("api/users")]
 public class UsersController : ApiController
 {
-    public UsersController(ISender sender) : base(sender)
+    public UsersController(
+        ISender sender, 
+        ILogger<UsersController> logger)
+        : base(sender, logger)
     {
     }
 

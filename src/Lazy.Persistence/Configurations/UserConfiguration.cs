@@ -55,6 +55,12 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
             .OnDelete(DeleteBehavior.Restrict);
 
         builder
+            .HasMany(u => u.PostVotes)
+            .WithOne(pv => pv.User)
+            .HasForeignKey(pv => pv.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder
             .HasMany(e => e.Claims)
             .WithOne(c => c.User)
             .HasForeignKey(uc => uc.UserId)

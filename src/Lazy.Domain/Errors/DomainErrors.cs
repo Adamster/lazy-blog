@@ -34,6 +34,10 @@ public static class DomainErrors
         public static readonly Error UnauthorizedPostAccess = new(
             "Post.NotAuthorized",
             "Post can be updated only by post author");
+
+        public static readonly Error PostAlreadyVoted = new(
+            "Post.AlreadyVoted",
+            "Post can be voted only once");
     }
 
     public static class Email
