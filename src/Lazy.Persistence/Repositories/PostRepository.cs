@@ -31,7 +31,7 @@ public class PostRepository : IPostRepository
         List<Post> posts = await _dbContext.Set<Post>()
             .Where(p => p.IsPublished)
             .OrderByDescending(p => p.CreatedOnUtc)
-            .Skip(offset)
+            .Skip(offset) 
             .Take(PostPageSize)
             .AsNoTracking()
             .Include(x => x.User)

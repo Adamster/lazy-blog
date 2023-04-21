@@ -3,4 +3,6 @@
 public interface ICurrentUserContext
 {
     bool IsCurrentUser(Guid  userId);
+
+    Guid GetCurrentUserId();
 }

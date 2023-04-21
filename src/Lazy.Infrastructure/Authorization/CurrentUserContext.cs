@@ -34,4 +34,25 @@ public sealed class CurrentUserContext : ICurrentUserContext
         return currentUserClaim.Value == userId.ToString();
 
     }
+
+    public Guid GetCurrentUserId()
+    {
+        if (_httpContextAccessor == null)
+        {
+            throw new NullReferenceException($"{nameof(_httpContextAccessor)} is null");
+        }
+
+        if (_httpContextAccessor.HttpContext == null)
+        {
+            throw new NullReferenceException($"{nameof(_httpContextAccessor.HttpContext)} is null");
+        }
+
+        Claim currentUserClaim = _httpContextAccessor
+            .HttpContext
+            .User
+            .Claims
+            .Single(c => c.Type == ClaimTypes.NameIdentifier);
+
+        return new Guid(currentUserClaim.Value);
+    }
 }

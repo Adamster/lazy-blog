@@ -1,7 +1,9 @@
 ﻿using Lazy.Domain.Entities;
+using Lazy.Domain.ValueObjects.Post;
 using Lazy.Persistence.Constants;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Lazy.Persistence.Configurations;
 
@@ -11,11 +13,9 @@ public class PostVoteConfiguration : IEntityTypeConfiguration<PostVote>
     {
         builder.ToTable(TableNames.PostVotes);
 
-        builder.HasKey(p => new
-        {
-            p.UserId, p.PostId
-        });
+        builder.HasKey(p => p.Id);
 
-        builder.Property(p => p.VoteDirection);
+        builder.Property(p => p.VoteDirection)
+            .HasConversion(new EnumToStringConverter<VoteDirection>());
     }
 }
