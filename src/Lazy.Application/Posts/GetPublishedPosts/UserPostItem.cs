@@ -1,4 +1,6 @@
-﻿namespace Lazy.Application.Posts.GetPublishedPosts;
+﻿using Lazy.Domain.ValueObjects.Post;
+
+namespace Lazy.Application.Posts.GetPublishedPosts;
 
 public record UserPostItem(
     Guid Id,
@@ -7,6 +9,8 @@ public record UserPostItem(
     string Slug,
     long Views,
     int Comments,
+    int Rating,
+    VoteDirection? VoteDirection,
     string? CoverUrl,
     bool IsPublished,
     DateTime CreatedAtUtc);

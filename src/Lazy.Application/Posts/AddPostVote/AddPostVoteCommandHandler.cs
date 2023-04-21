@@ -54,6 +54,16 @@ public class AddPostVoteCommandHandler : ICommandHandler<AddPostVoteCommand>
 
         if (postVote is not null)
         {
+            if (postVote.VoteDirection != request.Direction)
+            {
+                post.Vote(request.Direction);
+                _postRepository.Update(post);
+                _postVoteRepository.Delete(postVote);
+
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
+                return Result.Success();
+            }
+
             bool successUpdate = postVote.Update(request.Direction);
             if (!successUpdate)
             {

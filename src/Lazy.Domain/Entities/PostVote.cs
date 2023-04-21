@@ -32,17 +32,7 @@ public class PostVote : Entity, IAuditableEntity
 
     public static PostVote Create(Post post, User currentUser, VoteDirection direction)
     {
-        switch (direction)
-        {
-            case VoteDirection.Up:
-                post.UpVote();
-                break;
-            case VoteDirection.Down:
-                post.DownVote();
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(direction), direction, null);
-        }
+        post.Vote(direction);
 
         var postVote = new PostVote(Guid.NewGuid(), post, currentUser, direction);
         return postVote;
@@ -55,17 +45,7 @@ public class PostVote : Entity, IAuditableEntity
             return false;
         }
         
-        switch (direction)
-        {
-            case VoteDirection.Up:
-                Post.UpVote();
-                break;
-            case VoteDirection.Down:
-                Post.DownVote();
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(direction), direction, null);
-        }
+        Post.Vote(direction);
 
         VoteDirection = direction;
 

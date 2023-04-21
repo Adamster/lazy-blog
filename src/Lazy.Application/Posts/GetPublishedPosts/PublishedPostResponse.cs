@@ -1,4 +1,5 @@
 ﻿using Lazy.Application.Users.GetUserById;
+using Lazy.Domain.ValueObjects.Post;
 
 namespace Lazy.Application.Posts.GetPublishedPosts;
 
@@ -10,5 +11,7 @@ public record PublishedPostResponse(
     UserResponse Author,
     long Views,
     int Comments,
+    int Rating,
+    VoteDirection? VoteDirection,
     string? CoverUrl,
     DateTime CreatedAtUtc);
