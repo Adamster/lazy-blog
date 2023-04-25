@@ -89,13 +89,14 @@ public sealed class Post : AggregateRoot, IAuditableEntity
         Views++;
     }
 
-    public void Update(Title title, Summary? summary, Body body, Slug slug, string? coverUrl)
+    public void Update(Title title, Summary? summary, Body body, Slug slug, string? coverUrl, bool isPublished)
     {
         Title = title;
         Summary = summary;
         Body = body;
         Slug = slug;
         CoverUrl = coverUrl ?? string.Empty;
+        IsPublished = isPublished;
     }
 
     private void UpVote()
@@ -121,5 +122,15 @@ public sealed class Post : AggregateRoot, IAuditableEntity
             default:
                 throw new ArgumentOutOfRangeException(nameof(postVoteVoteDirection), postVoteVoteDirection, null);
         }
+    }
+
+    public void Hide()
+    {
+        IsPublished = false;
+    }
+
+    public void Publish()
+    {
+        IsPublished = true;
     }
 }

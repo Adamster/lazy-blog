@@ -9,6 +9,8 @@ using Lazy.Application.Posts.GetPostBySlug;
 using Lazy.Application.Posts.GetPostByUserId;
 using Lazy.Application.Posts.GetPostByUserName;
 using Lazy.Application.Posts.GetPublishedPosts;
+using Lazy.Application.Posts.HidePost;
+using Lazy.Application.Posts.PublishPost;
 using Lazy.Application.Posts.UpdatePost;
 using Lazy.Domain.Shared;
 using Lazy.Domain.ValueObjects.Post;
@@ -147,7 +149,8 @@ public class PostsController : ApiController
             request.Summary,
             request.Body,
             request.Slug,
-            request.CoverUrl);
+            request.CoverUrl,
+            request.IsPublished);
 
         Result result = await Sender.Send(command, cancellationToken);
 
@@ -213,4 +216,35 @@ public class PostsController : ApiController
 
         return NoContent();
     }
+
+    [HttpPut("{id:guid}/publish")]
+    public async Task<IActionResult> PublishPost(Guid id, CancellationToken cancellationToken)
+    {
+        var command = new PublishPostCommand(id);
+        var result = await Sender.Send(command, cancellationToken);
+
+        if (result.IsFailure)
+        {
+            return HandleFailure(result);
+        }
+
+        return NoContent();
+    }
+
+    [HttpPut("{id:guid}/hide")]
+    public async Task<IActionResult> HidePost(Guid id, CancellationToken cancellationToken)
+    {
+        var command = new HidePostCommand(id);
+
+        var result = await Sender.Send(command, cancellationToken);
+
+        if (result.IsFailure)
+        {
+            return HandleFailure(result);
+        }
+
+        return NoContent();
+    }
+
+    
 }
