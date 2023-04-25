@@ -38,11 +38,12 @@ public class GetPostBySlugHandler : IQueryHandler<GetPostBySlugQuery, PostDetail
         (
             post.Id,
             post.Title.Value,
-            post.Summary.Value,
+            post.Summary?.Value,
             new UserResponse(post.User),
             post.Slug.Value,
             post.Body.Value,
             post.CoverUrl,
+            post.Rating,
             post.Views,
             post.CreatedOnUtc
         );

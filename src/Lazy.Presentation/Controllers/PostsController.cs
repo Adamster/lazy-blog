@@ -128,8 +128,8 @@ public class PostsController : ApiController
         }
 
         return CreatedAtAction(
-            nameof(GetPostById),
-            new {id = result.Value.Id},
+            nameof(GetPostBySlug),
+            new {slug = result.Value.Slug},
             result.Value);
     }
 
