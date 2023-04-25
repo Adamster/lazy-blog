@@ -3,27 +3,27 @@ using Lazy.Application.Abstractions.Messaging;
 using Lazy.Domain.Errors;
 using Lazy.Domain.Repositories;
 using Lazy.Domain.Shared;
-using Lazy.Domain.ValueObjects.Post;
 
-namespace Lazy.Application.Posts.UpdatePost;
+namespace Lazy.Application.Posts.PublishPost;
 
-public class UpdatePostCommandHandler : ICommandHandler<UpdatePostCommand>
+public class PublishPostCommandHandler : ICommandHandler<PublishPostCommand>
 {
-    private readonly IPostRepository _postRepository;
     private readonly ICurrentUserContext _currentUserContext;
+    private readonly IPostRepository _postRepository;
     private readonly IUnitOfWork _unitOfWork;
 
-    public UpdatePostCommandHandler(
-        IPostRepository postRepository, 
+
+    public PublishPostCommandHandler(
         ICurrentUserContext currentUserContext,
+        IPostRepository postRepository,
         IUnitOfWork unitOfWork)
     {
-        _postRepository = postRepository;
         _currentUserContext = currentUserContext;
+        _postRepository = postRepository;
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<Result> Handle(UpdatePostCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(PublishPostCommand request, CancellationToken cancellationToken)
     {
         var post = await _postRepository.GetByIdAsync(request.Id, cancellationToken);
 
@@ -37,23 +37,8 @@ public class UpdatePostCommandHandler : ICommandHandler<UpdatePostCommand>
             return Result.Failure(DomainErrors.Post.UnauthorizedPostAccess);
         }
 
-        Result<Title> titleResult = Title.Create(request.Title);
-        Result<Summary> summaryResult = Summary.Create(request.Summary);
-        Result<Body> bodyResult = Body.Create(request.Body);
-        Result<Slug> slugResult = Slug.Create(request.Slug);
-
-        post.Update(
-            titleResult.Value,
-            summaryResult.Value,
-            bodyResult.Value,
-            slugResult.Value,
-            request.CoverUrl,
-            request.IsPublished);
-
-        _postRepository.Update(post);
-
+        post.Publish();
         await _unitOfWork.SaveChangesAsync(cancellationToken);
-
         return Result.Success();
     }
 }
