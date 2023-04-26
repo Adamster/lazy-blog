@@ -65,6 +65,9 @@ try
     builder.Services.AddDbContext<LazyBlogDbContext>(
         (sp, optionsBuilder) => { optionsBuilder.UseSqlServer(connectionString); });
 
+    builder.Services.AddDefaultIdentity<User>()
+        .AddEntityFrameworkStores<LazyBlogDbContext>();
+
     builder
         .Services
         .AddControllers()

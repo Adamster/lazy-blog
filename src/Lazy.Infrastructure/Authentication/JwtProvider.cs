@@ -21,6 +21,7 @@ public sealed class JwtProvider : IJwtProvider
     {
         var claims = new Claim[]
         {
+            new (JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new (JwtRegisteredClaimNames.Sub, user.Id.ToString()),
             new (JwtRegisteredClaimNames.Email, user.Email.Value),
             new (JwtRegisteredClaimNames.Name, $"{user.FirstName.Value} {user.LastName.Value}")

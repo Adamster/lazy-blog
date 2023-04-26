@@ -24,6 +24,7 @@ public sealed class User : IdentityUser<Guid>, IAuditableEntity
         FirstName = firstName;
         LastName = lastName;
         UserName = userName;
+        CreatedOnUtc = DateTime.UtcNow;
     }
 
     private User()

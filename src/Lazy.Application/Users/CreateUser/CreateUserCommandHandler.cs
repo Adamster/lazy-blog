@@ -5,6 +5,7 @@ using Lazy.Domain.Repositories;
 using Lazy.Domain.Shared;
 using Lazy.Domain.ValueObjects.User;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 
 namespace Lazy.Application.Users.CreateUser;
 
@@ -12,17 +13,20 @@ internal sealed class CreateUserCommandHandler : ICommandHandler<CreateUserComma
 {
     private readonly IUserRepository _userRepository;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IPasswordHasher<User> _passwordHasher;
+    private readonly UserManager<User> _userManager;
+    private readonly ILogger<CreateUserCommandHandler> _logger;
 
 
     public CreateUserCommandHandler(
         IUserRepository userRepository,
-        IUnitOfWork unitOfWork,
-        IPasswordHasher<User> passwordHasher)
+        IUnitOfWork unitOfWork, 
+        UserManager<User> userManager,
+        ILogger<CreateUserCommandHandler> logger)
     {
         _userRepository = userRepository;
         _unitOfWork = unitOfWork;
-        _passwordHasher = passwordHasher;
+        _userManager = userManager;
+        _logger = logger;
     }
 
     public async Task<Result<Guid>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
@@ -55,11 +59,17 @@ internal sealed class CreateUserCommandHandler : ICommandHandler<CreateUserComma
             lastNameResult.Value,
             userNameResult.Value);
 
-        user.PasswordHash = _passwordHasher.HashPassword(user, request.Password);
 
-        _userRepository.Add(user);
+        IdentityResult newUser = await _userManager.CreateAsync(user, request.Password);
+        if (!newUser.Succeeded)
+        {
+            var error = newUser.Errors.First();
+            return Result.Failure<Guid>(new Error(error.Code, error.Description));
+        }
+
+        _logger.LogInformation($"New user with email {user.Email} registered");
+
         await _unitOfWork.SaveChangesAsync(cancellationToken);
-
         return user.Id;
     }
 
