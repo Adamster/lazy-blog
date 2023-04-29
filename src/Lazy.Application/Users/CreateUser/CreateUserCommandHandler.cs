@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Lazy.Application.Users.CreateUser;
 
-internal sealed class CreateUserCommandHandler : ICommandHandler<CreateUserCommand, Guid>
+internal sealed class CreateUserCommandHandler : ICommandHandler<CreateUserCommand, CreateUserResponse>
 {
     private readonly IUserRepository _userRepository;
     private readonly IUnitOfWork _unitOfWork;
@@ -29,13 +29,13 @@ internal sealed class CreateUserCommandHandler : ICommandHandler<CreateUserComma
         _logger = logger;
     }
 
-    public async Task<Result<Guid>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
+    public async Task<Result<CreateUserResponse>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
         Result<Email> emailResult = Email.Create(request.Email);
 
         if (emailResult.IsFailure)
         {
-            return Result.Failure<Guid>(emailResult.Error);
+            return Result.Failure<CreateUserResponse>(emailResult.Error);
         }
 
         Result<FirstName> firstNameResult = FirstName.Create(request.FirstName);
@@ -44,12 +44,12 @@ internal sealed class CreateUserCommandHandler : ICommandHandler<CreateUserComma
 
         if (!await _userRepository.IsEmailUniqueAsync(emailResult.Value, cancellationToken))
         {
-            return Result.Failure<Guid>(DomainErrors.User.EmailAlreadyInUse);
+            return Result.Failure<CreateUserResponse>(DomainErrors.User.EmailAlreadyInUse);
         }
 
         if (await _userRepository.GetByUsernameAsync(userNameResult.Value, cancellationToken) is not null)
         {
-            return Result.Failure<Guid>(DomainErrors.UserName.UserNameAlreadyInUse);
+            return Result.Failure<CreateUserResponse>(DomainErrors.UserName.UserNameAlreadyInUse);
         }
 
         var user = User.Create(
@@ -64,13 +64,14 @@ internal sealed class CreateUserCommandHandler : ICommandHandler<CreateUserComma
         if (!newUser.Succeeded)
         {
             var error = newUser.Errors.First();
-            return Result.Failure<Guid>(new Error(error.Code, error.Description));
+            return Result.Failure<CreateUserResponse>(new Error(error.Code, error.Description));
         }
 
         _logger.LogInformation($"New user with email {user.Email} registered");
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
-        return user.Id;
+        
+        return new CreateUserResponse(user.Id, user.CreatedOnUtc);
     }
 
 }

@@ -79,7 +79,7 @@ public class UsersController : ApiController
             request.UserName,
             request.Password);
 
-        Result<Guid> result = await Sender.Send(command, cancellationToken);
+        Result<CreateUserResponse> result = await Sender.Send(command, cancellationToken);
 
         if (result.IsFailure)
         {
@@ -88,7 +88,7 @@ public class UsersController : ApiController
 
         return CreatedAtAction(
             nameof(GetUserById),
-            new { id = result.Value },
+            new { id = result.Value.Id },
             result.Value);
     }
 

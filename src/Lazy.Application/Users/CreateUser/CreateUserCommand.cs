@@ -7,4 +7,5 @@ public record CreateUserCommand(
     string FirstName,
     string LastName,
     string UserName,
-    string Password) : ICommand<Guid>;
+    string Password) : ICommand<CreateUserResponse>;
+
