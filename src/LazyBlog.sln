@@ -6,18 +6,21 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{180E7DC2-A3AD-45FB-9E11-82B5F933A276}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3F899574-E7BF-471D-8181-2C0B8C7344D7}"
+	ProjectSection(SolutionItems) = preProject
+		Dockerfile = Dockerfile
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lazy.Domain", "Lazy.Domain\Lazy.Domain.csproj", "{AE9005FE-1652-4BA0-BB8B-375F6CDD7F48}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lazy.Domain", "Lazy.Domain\Lazy.Domain.csproj", "{AE9005FE-1652-4BA0-BB8B-375F6CDD7F48}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lazy.Infrastructure", "Lazy.Infrastructure\Lazy.Infrastructure.csproj", "{F112CD64-D30C-48CF-A437-3D90315A1C24}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lazy.Infrastructure", "Lazy.Infrastructure\Lazy.Infrastructure.csproj", "{F112CD64-D30C-48CF-A437-3D90315A1C24}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lazy.Persistence", "Lazy.Persistence\Lazy.Persistence.csproj", "{2A4CF1D1-682B-4E4A-8427-5A902691CDA1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lazy.Persistence", "Lazy.Persistence\Lazy.Persistence.csproj", "{2A4CF1D1-682B-4E4A-8427-5A902691CDA1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lazy.App", "Lazy.App\Lazy.App.csproj", "{3A69C477-8872-48F1-AF92-5C1765ED7E4C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lazy.App", "Lazy.App\Lazy.App.csproj", "{3A69C477-8872-48F1-AF92-5C1765ED7E4C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lazy.Application", "Lazy.Application\Lazy.Application.csproj", "{0A5A7376-E677-4F7C-945B-92C4F7169CCB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lazy.Application", "Lazy.Application\Lazy.Application.csproj", "{0A5A7376-E677-4F7C-945B-92C4F7169CCB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lazy.Presentation", "Lazy.Presentation\Lazy.Presentation.csproj", "{78F70E3B-33DE-4C91-B8DB-0E39AD74640A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lazy.Presentation", "Lazy.Presentation\Lazy.Presentation.csproj", "{78F70E3B-33DE-4C91-B8DB-0E39AD74640A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
