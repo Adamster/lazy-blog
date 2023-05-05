@@ -17,8 +17,12 @@ using Serilog;
 using AssemblyReference = Lazy.Infrastructure.AssemblyReference;
 
 
+string lazyCorsPolicyName = "lazy-blog";
+var today = DateTime.Today;
 Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Debug()
     .WriteTo.Console()
+    .WriteTo.File($"Logs\\{today.Year}\\{today.Month}\\{today.Day}\\Logs.log")
     .CreateLogger();
 
 try
@@ -75,9 +79,11 @@ try
 
     builder.Services.AddSwaggerGen();
 
-    builder.Services.AddCors(o => o.AddPolicy("lazy-blog", policyBuilder =>
+    builder.Services.AddCors(o => o.AddPolicy(lazyCorsPolicyName, policyBuilder =>
     {
-        policyBuilder.AllowAnyOrigin()
+        policyBuilder
+            .WithOrigins("http://localhost:3000")
+            .AllowAnyOrigin()
             .AllowAnyMethod()
             .AllowAnyHeader();
     }));
@@ -94,11 +100,9 @@ try
 
 // Configure the HTTP request pipeline.
 
-    if (app.Environment.IsDevelopment())
-    {
-        app.UseSwagger();
-        app.UseSwaggerUI();
-    }
+    app.UseSwagger();
+    app.UseSwaggerUI();
+    
 
     app.UseHttpsRedirection();
 
@@ -106,7 +110,7 @@ try
 
     app.UseAuthorization();
 
-    app.UseCors("lazy-blog");
+    app.UseCors(lazyCorsPolicyName);
     app.MapControllers();
 
     app.Run();
