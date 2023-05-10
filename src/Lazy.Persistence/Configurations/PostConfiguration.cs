@@ -34,7 +34,7 @@ internal sealed class PostConfiguration : IEntityTypeConfiguration<Post>
             .HasMany(p => p.Comments)
             .WithOne(c => c.Post)
             .HasForeignKey(c => c.PostId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasIndex(x => x.Slug).IsUnique();
     }
