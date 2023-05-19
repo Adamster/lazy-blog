@@ -11,6 +11,7 @@ namespace Lazy.Infrastructure.Authentication;
 public sealed class JwtProvider : IJwtProvider
 {
     private readonly JwtOptions _options;
+    private const int TokenLifeTimeInMinutes = 10;
 
     public JwtProvider(IOptions<JwtOptions> options)
     {
@@ -37,12 +38,37 @@ public sealed class JwtProvider : IJwtProvider
             _options.Audience,
             claims,
             null,
-            DateTime.UtcNow.AddHours(24*7),
+            DateTime.UtcNow.AddMinutes(TokenLifeTimeInMinutes),
             signingCredentials);
 
         string tokenValue = new JwtSecurityTokenHandler()
             .WriteToken(token);
 
         return tokenValue;
+    }
+
+    public ClaimsPrincipal? GetPrincipalFromToken(string token)
+    {
+        var tokenHandler = new JwtSecurityTokenHandler();
+
+        try
+        {
+            var principal = tokenHandler.ValidateToken(token,
+                new TokenValidationParameters(), //TODO: inject from DI
+                out var validatedToken);
+
+            return IsJwtWithValidSecurityAlgorithm(validatedToken) ? principal : null;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    private bool IsJwtWithValidSecurityAlgorithm(SecurityToken validatedToken)
+    {
+        return (validatedToken is JwtSecurityToken jwtSecurityToken) &&
+               jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256,
+                   StringComparison.InvariantCultureIgnoreCase);
     }
 }

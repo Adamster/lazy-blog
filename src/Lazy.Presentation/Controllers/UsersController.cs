@@ -3,6 +3,7 @@ using Lazy.Application.Users.CheckIfUserNameIsUnique;
 using Lazy.Application.Users.CreateUser;
 using Lazy.Application.Users.GetUserById;
 using Lazy.Application.Users.Login;
+using Lazy.Application.Users.RefreshToken;
 using Lazy.Application.Users.UpdateUser;
 using Lazy.Domain.Shared;
 using Lazy.Presentation.Abstractions;
@@ -64,6 +65,19 @@ public class UsersController : ApiController
         Result<LoginResponse> tokenResult = await Sender.Send(command, cancellationToken);
 
         return tokenResult.IsFailure ? HandleFailure(tokenResult) : Ok(tokenResult.Value);
+    }
+
+    [HttpPost("refresh")]
+    public async Task<IActionResult> RefreshToken(
+        [FromBody] RefreshTokenRequest request,
+        CancellationToken cancellationToken)
+    {
+        var command = new RefreshTokenCommand(request.Token, request.RefreshToken);
+
+        var result = await Sender.Send(command, cancellationToken);
+
+        return result.IsFailure ? HandleFailure(result) : Ok(result);
+
     }
 
     [AllowAnonymous]
