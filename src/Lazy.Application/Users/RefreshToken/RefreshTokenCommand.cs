@@ -3,4 +3,4 @@ using Lazy.Application.Users.Login;
 
 namespace Lazy.Application.Users.RefreshToken;
 
-public record RefreshTokenCommand(string Token, string RefreshToken) : ICommand<LoginResponse>;
+public record RefreshTokenCommand(string AccessToken, string RefreshToken) : ICommand<LoginResponse>;

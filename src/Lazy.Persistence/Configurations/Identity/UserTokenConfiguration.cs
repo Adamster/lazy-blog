@@ -11,7 +11,7 @@ public class UserTokenConfiguration : IEntityTypeConfiguration<UserToken>
     {
         builder.ToTable(TableNames.Tokens);
 
-        builder.HasKey(x => new { x.UserId, x.LoginProvider, x.Name });
+        builder.HasKey(x => new { x.Value, x.LoginProvider, x.Name });
 
         builder.Property(x => x.JwtId);
         builder.Property(x => x.ExpiryDate);

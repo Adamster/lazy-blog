@@ -72,11 +72,11 @@ public class UsersController : ApiController
         [FromBody] RefreshTokenRequest request,
         CancellationToken cancellationToken)
     {
-        var command = new RefreshTokenCommand(request.Token, request.RefreshToken);
+        var command = new RefreshTokenCommand(request.AccessToken, request.RefreshToken);
 
         var result = await Sender.Send(command, cancellationToken);
 
-        return result.IsFailure ? HandleFailure(result) : Ok(result);
+        return result.IsFailure ? HandleFailure(result) : Ok(result.Value);
 
     }
 

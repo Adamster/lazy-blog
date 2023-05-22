@@ -5,8 +5,8 @@ using Lazy.Application.Abstractions;
 using Lazy.Application.Users.RefreshToken;
 using Lazy.Domain.Entities;
 using Lazy.Domain.Entities.Identity;
-using Lazy.Domain.Repositories;
 using Lazy.Domain.Repositories.Identity;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
@@ -15,17 +15,17 @@ namespace Lazy.Infrastructure.Authentication;
 public sealed class JwtProvider : IJwtProvider
 {
     private readonly IUserTokenRepository _userTokenRepository;
-    private readonly IUnitOfWork _unitOfWork;
     private readonly JwtOptions _options;
+    private readonly JwtBearerOptions _jwtBearerOptions;
     private const int TokenLifeTimeInMinutes = 10;
     
 
     public JwtProvider(IOptions<JwtOptions> options,
-        IUserTokenRepository userTokenRepository,
-        IUnitOfWork unitOfWork)
+        IUserTokenRepository userTokenRepository, 
+        IOptions<JwtBearerOptions> jwtBearerOptions)
     {
         _userTokenRepository = userTokenRepository;
-        _unitOfWork = unitOfWork;
+        _jwtBearerOptions = jwtBearerOptions.Value;
         _options = options.Value;
     }
 
@@ -58,7 +58,6 @@ public sealed class JwtProvider : IJwtProvider
         var userToken = new UserToken(token.Id, user);
 
         await _userTokenRepository.AddAsync(userToken, cancellationToken);
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return new TokenResponse(tokenValue, userToken.Value!);
     }
@@ -70,7 +69,7 @@ public sealed class JwtProvider : IJwtProvider
         try
         {
             var principal = tokenHandler.ValidateToken(token,
-                new TokenValidationParameters(), //TODO: inject from DI
+                _jwtBearerOptions.TokenValidationParameters,
                 out var validatedToken);
 
             return IsJwtWithValidSecurityAlgorithm(validatedToken) ? principal : null;
@@ -112,7 +111,7 @@ public sealed class JwtProvider : IJwtProvider
     {
         var userIdValue = validatedToken
             .Claims
-            .Single(x => x.Type == JwtRegisteredClaimNames.Sub)
+            .Single(x => x.Type == ClaimTypes.NameIdentifier)
             .Value;
         var userId = Guid.Parse(userIdValue);
 

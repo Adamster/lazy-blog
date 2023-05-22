@@ -1,6 +1,4 @@
-﻿using System.Numerics;
-using System.Security.Claims;
-using Lazy.Application.Abstractions;
+﻿using Lazy.Application.Abstractions;
 using Lazy.Application.Abstractions.Messaging;
 using Lazy.Application.Users.GetUserById;
 using Lazy.Application.Users.Login;
@@ -33,7 +31,7 @@ public class RefreshTokenCommandHandler : ICommandHandler<RefreshTokenCommand, L
 
     public async Task<Result<LoginResponse>> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
     {
-        var validatedToken = _jwtProvider.GetPrincipalFromToken(request.Token);
+        var validatedToken = _jwtProvider.GetPrincipalFromToken(request.AccessToken);
 
         if (validatedToken == null)
         {
@@ -75,7 +73,6 @@ public class RefreshTokenCommandHandler : ICommandHandler<RefreshTokenCommand, L
         storedRefreshToken.UseToken();
         _userTokenRepository.Update(storedRefreshToken);
 
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         Guid userId = _jwtProvider.GetUserIdFromToken(validatedToken);
         var user = await _userRepository.GetByIdAsync(userId, cancellationToken);
@@ -92,6 +89,7 @@ public class RefreshTokenCommandHandler : ICommandHandler<RefreshTokenCommand, L
             tokenResponse.RefreshToken,
             new UserResponse(user));
 
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
         return response;
     }
 }

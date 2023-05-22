@@ -20,6 +20,10 @@ public class UserToken : IdentityUserToken<Guid>
         LoginProvider = LazyProviderName;
     }
 
+    public UserToken()
+    {
+    }
+
     public virtual User User { get; set; }
 
     public DateTime ExpiryDate { get; private set; }

@@ -16,16 +16,19 @@ public class LoginCommandHandler : ICommandHandler<LoginCommand, LoginResponse>
     private readonly IUserRepository _userRepository;
     private readonly IJwtProvider _jwtProvider;
     private readonly SignInManager<User> _signInManager;
+    private readonly IUnitOfWork _unitOfWork;
 
 
     public LoginCommandHandler(
         IUserRepository userRepository,
         IJwtProvider jwtProvider,
-        SignInManager<User> signInManager)
+        SignInManager<User> signInManager,
+        IUnitOfWork unitOfWork)
     {
         _userRepository = userRepository;
         _jwtProvider = jwtProvider;
         _signInManager = signInManager;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<Result<LoginResponse>> Handle(
@@ -54,6 +57,8 @@ public class LoginCommandHandler : ICommandHandler<LoginCommand, LoginResponse>
         }
 
         TokenResponse tokenResponse = await _jwtProvider.GenerateAsync(user, cancellationToken);
+
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return new LoginResponse(
             tokenResponse.AccessToken,
