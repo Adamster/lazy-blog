@@ -21,6 +21,38 @@ public static class DomainErrors
             "The provided credentials are invalid");
     }
 
+    public static class UserToken
+    {
+        public static readonly Error InvalidToken = new(
+            "UserToken.InvalidToken",
+            "The provided token is invalid");
+
+        public static readonly Error ExpiredRefreshToken = new(
+            "UserToken.ExpiredToken",
+            "The provided token is expired");
+
+        public static readonly Error AccessTokenNotExpired = new(
+            "UserToken.AccessTokenNotExpired",
+            "The provided access token isn't expired yet");
+
+        public static readonly Error NotFound = new(
+            "UserToken.NotFound",
+            "The provided token doesn't exists");
+
+        public static readonly Error Invalidated = new(
+            "UserToken.Invalidated",
+            "The provided token is invalidated");
+
+        public static readonly Error IsUsed = new(
+            "UserToken.IsUsed",
+            "The provided token is already used");
+
+
+        public static readonly Error NotMatched = new(
+            "UserToken.IsUsed",
+            "The provided token doesn't match with access token");
+    }
+
     public static class Post
     {
         public static readonly Func<Guid, Error> NotFound = id => new Error(

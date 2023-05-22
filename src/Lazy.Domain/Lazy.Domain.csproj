@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <Folder Include="Errors\" />
+    <Folder Include="Repositories\Identity\" />
     <Folder Include="Shared\" />
     <Folder Include="Primitives\" />
   </ItemGroup>

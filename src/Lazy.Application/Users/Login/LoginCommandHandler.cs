@@ -1,6 +1,7 @@
 ﻿using Lazy.Application.Abstractions;
 using Lazy.Application.Abstractions.Messaging;
 using Lazy.Application.Users.GetUserById;
+using Lazy.Application.Users.RefreshToken;
 using Lazy.Domain.Entities;
 using Lazy.Domain.Errors;
 using Lazy.Domain.Repositories;
@@ -52,8 +53,11 @@ public class LoginCommandHandler : ICommandHandler<LoginCommand, LoginResponse>
             return Result.Failure<LoginResponse>(DomainErrors.User.InvalidCredentials);
         }
 
-        string token = _jwtProvider.Generate(user);
+        TokenResponse tokenResponse = await _jwtProvider.GenerateAsync(user, cancellationToken);
 
-        return new LoginResponse(token, new UserResponse(user));
+        return new LoginResponse(
+            tokenResponse.AccessToken,
+            tokenResponse.RefreshToken,
+            new UserResponse(user));
     }
 }

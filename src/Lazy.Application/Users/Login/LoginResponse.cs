@@ -2,4 +2,4 @@
 
 namespace Lazy.Application.Users.Login;
 
-public record LoginResponse(string Token, string RefreshToken, UserResponse User);
+public record LoginResponse(string AccessToken, string RefreshToken, UserResponse User);
