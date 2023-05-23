@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Lazy.Domain.Entities.Identity;
 
-public class UserToken : IdentityUserToken<Guid>
+public class UserToken : IdentityUserToken<Guid>, IAuditableEntity
 {
     private const int RefreshTokenLifeTimeInMonths = 6;
     private const string LazyBlogToken = nameof(LazyBlogToken);
