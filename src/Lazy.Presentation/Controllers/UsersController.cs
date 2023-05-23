@@ -67,6 +67,7 @@ public class UsersController : ApiController
         return tokenResult.IsFailure ? HandleFailure(tokenResult) : Ok(tokenResult.Value);
     }
 
+    [AllowAnonymous]
     [HttpPost("refresh")]
     public async Task<IActionResult> RefreshToken(
         [FromBody] RefreshTokenRequest request,
