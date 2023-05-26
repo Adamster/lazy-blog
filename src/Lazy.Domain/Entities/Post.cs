@@ -7,7 +7,7 @@ namespace Lazy.Domain.Entities;
 public sealed class Post : AggregateRoot, IAuditableEntity
 {
     private readonly List<Comment> _comments = new();
-    //private readonly List<Tag> _tags = new();
+    private readonly List<Tag> _tags = new();
 
     public Post(
         Guid id,
@@ -16,6 +16,7 @@ public sealed class Post : AggregateRoot, IAuditableEntity
         Summary? summary,
         Slug slug,
         Guid userId,
+        List<Tag> tags,
         bool isPublished = true,
         string? coverUrl = null) : base(id)
     {
@@ -26,7 +27,11 @@ public sealed class Post : AggregateRoot, IAuditableEntity
         Slug = slug;
         IsPublished = isPublished;
         CoverUrl = coverUrl ?? string.Empty;
-        //_tags.AddRange(tags);
+        _tags.AddRange(tags);
+    }
+
+    private Post()
+    {
     }
 
     public Title Title { get; private set; }
@@ -53,7 +58,7 @@ public sealed class Post : AggregateRoot, IAuditableEntity
     public DateTime? UpdatedOnUtc { get; set; }
     public IReadOnlyCollection<Comment> Comments => _comments;
 
-    //public IReadOnlyCollection<Tag> Tags => _tags;
+    public IReadOnlyCollection<Tag> Tags => _tags;
 
     public static Post Create(
         Guid id,
@@ -63,8 +68,8 @@ public sealed class Post : AggregateRoot, IAuditableEntity
         Body body,
         Guid userId,
         bool isPublished,
-        string? coverUrl = null
-        /*params Tag[] tags*/)
+        List<Tag> tags,
+        string? coverUrl = null )
     {
         var post = new Post(
             id,
@@ -73,6 +78,7 @@ public sealed class Post : AggregateRoot, IAuditableEntity
             summary,
             slug,
             userId,
+            tags,
             isPublished,
             coverUrl);
 
@@ -89,7 +95,13 @@ public sealed class Post : AggregateRoot, IAuditableEntity
         Views++;
     }
 
-    public void Update(Title title, Summary? summary, Body body, Slug slug, string? coverUrl, bool isPublished)
+    public void Update(Title title,
+        Summary? summary, 
+        Body body,
+        Slug slug, 
+        string? coverUrl,
+        List<Tag> tags,
+        bool isPublished)
     {
         Title = title;
         Summary = summary;
@@ -97,6 +109,9 @@ public sealed class Post : AggregateRoot, IAuditableEntity
         Slug = slug;
         CoverUrl = coverUrl ?? string.Empty;
         IsPublished = isPublished;
+
+        _tags.Clear();
+        _tags.AddRange(tags);
     }
 
     private void UpVote()

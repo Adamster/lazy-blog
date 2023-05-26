@@ -12,6 +12,8 @@ public interface IPostRepository
 
     Task<IList<Post>> GetPostsAsync(int offset, CancellationToken cancellationToken);
 
+    Task<IList<Post>> GetPostsByTagAsync(Tag tag, CancellationToken cancellationToken);
+
     void Add(Post post);
 
     void Update(Post post);

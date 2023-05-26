@@ -75,6 +75,11 @@ public static class DomainErrors
         public static readonly Error TooLong = new(
             "Tag.TooLong",
             "Tag is too long");
+
+        public static readonly Func<string, Error> NotFound = value => new Error(
+            "Tag.NotFound",
+            $"The tag with the value {value} was not found.");
+
     }
 
     public static class Body

@@ -5,7 +5,6 @@ using Lazy.Domain.Extensions;
 using Lazy.Domain.Repositories;
 using Lazy.Domain.Shared;
 using Lazy.Domain.ValueObjects.Post;
-using SlugGenerator;
 
 namespace Lazy.Application.Posts.CreatePost;
 
@@ -27,6 +26,7 @@ internal sealed class CreatePostCommandHandler : ICommandHandler<CreatePostComma
         Result<Title> titleResult = Title.Create(request.Title);
         Result<Summary> summaryResult = Summary.Create(request.Summary);
         Result<Body> bodyResult = Body.Create(request.Body);
+        List<Tag> tags = CreateTags(request.Tags);
 
         if (await _userRepository.GetByIdAsync(request.UserId, cancellationToken) is null)
         {
@@ -50,6 +50,7 @@ internal sealed class CreatePostCommandHandler : ICommandHandler<CreatePostComma
             bodyResult.Value,
             request.UserId,
             request.IsPublished,
+            tags,
             request.CoverUrl);
 
         _postRepository.Add(post);
@@ -57,5 +58,22 @@ internal sealed class CreatePostCommandHandler : ICommandHandler<CreatePostComma
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return new PostCreatedResponse(post.Id, post.Slug.Value);
+    }
+
+    private List<Tag> CreateTags(List<string> requestTags)
+    {
+        var tags = new List<Tag>();
+        if (!requestTags.Any())
+        {
+            return tags;
+        }
+       
+        foreach (var requestTag in requestTags)
+        {
+            var tagResult = Tag.Create(requestTag);
+           tags.Add(tagResult.Value);
+        }
+
+        return tags;
     }
 }

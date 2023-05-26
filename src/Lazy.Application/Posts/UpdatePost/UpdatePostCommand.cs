@@ -1,4 +1,5 @@
 ﻿using Lazy.Application.Abstractions.Messaging;
+using Lazy.Application.Tags.SearchTag;
 
 namespace Lazy.Application.Posts.UpdatePost;
 public record UpdatePostCommand(
@@ -8,4 +9,5 @@ public record UpdatePostCommand(
     string Body,
     string Slug,
     string? CoverUrl,
+    List<TagResponse> Tags,
     bool IsPublished) : ICommand;

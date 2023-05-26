@@ -6,6 +6,7 @@ using Lazy.Application.Posts.CreatePost;
 using Lazy.Application.Posts.DeletePost;
 using Lazy.Application.Posts.GetPostById;
 using Lazy.Application.Posts.GetPostBySlug;
+using Lazy.Application.Posts.GetPostByTag;
 using Lazy.Application.Posts.GetPostByUserId;
 using Lazy.Application.Posts.GetPostByUserName;
 using Lazy.Application.Posts.GetPublishedPosts;
@@ -54,6 +55,23 @@ public class PostsController : ApiController
     public async Task<IActionResult> GetPosts(int offset, CancellationToken cancellationToken)
     {
         var query = new GetPublishedPostsQuery(offset);
+        Result<List<PublishedPostResponse>> result = await Sender.Send(query, cancellationToken);
+
+        if (result.IsFailure)
+        {
+            return HandleFailure(result);
+        }
+
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
+    }
+
+    [AllowAnonymous]
+    [HttpGet("{tag}")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Result<List<PublishedPostResponse>>))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetPosts(string tag, CancellationToken cancellationToken)
+    {
+        var query = new GetPostByTagQuery(tag);
         Result<List<PublishedPostResponse>> result = await Sender.Send(query, cancellationToken);
 
         if (result.IsFailure)
@@ -119,6 +137,7 @@ public class PostsController : ApiController
             request.Summary,
             request.Body,
             request.IsPublished,
+            request.Tags,
             request.CoverUrl,
             request.UserId);
 

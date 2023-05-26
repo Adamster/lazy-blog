@@ -1,25 +1,38 @@
 ﻿using Lazy.Application.Abstractions.Messaging;
+using Lazy.Application.Posts.GetPublishedPosts;
 using Lazy.Application.Tags.SearchTag;
 using Lazy.Application.Users.GetUserById;
+using Lazy.Domain.Entities;
+using Lazy.Domain.Errors;
 using Lazy.Domain.Repositories;
 using Lazy.Domain.Shared;
 
-namespace Lazy.Application.Posts.GetPublishedPosts;
+namespace Lazy.Application.Posts.GetPostByTag;
 
-public class GetPublishedPostsQueryHandler : IQueryHandler<GetPublishedPostsQuery, List<PublishedPostResponse>>
+public class GetPostByTagQueryHandler : IQueryHandler<GetPostByTagQuery,List<PublishedPostResponse>>
 {
     private readonly IPostRepository _postRepository;
+    private readonly ITagRepository _tagRepository;
 
-    public GetPublishedPostsQueryHandler(IPostRepository postRepository)
+    public GetPostByTagQueryHandler(IPostRepository postRepository,
+        ITagRepository tagRepository)
     {
         _postRepository = postRepository;
+        _tagRepository = tagRepository;
     }
 
-    public async Task<Result<List<PublishedPostResponse>>> Handle(GetPublishedPostsQuery request, CancellationToken cancellationToken)
-    {
-        var posts = await _postRepository.GetPostsAsync(request.Offset, cancellationToken);
 
-        List<PublishedPostResponse> response = posts
+    public async Task<Result<List<PublishedPostResponse>>> Handle(GetPostByTagQuery request, CancellationToken cancellationToken)
+    {
+        Tag? tag = _tagRepository.GetTagByValue(request.Tag);
+        if (tag is null)
+        {
+            return Result.Failure<List<PublishedPostResponse>>(DomainErrors.Tag.NotFound(request.Tag));
+        }
+
+        IList<Post> posts = await _postRepository.GetPostsByTagAsync(tag, cancellationToken);
+
+        var response = posts
             .Select(p =>
                 new PublishedPostResponse(
                     p.Id,
