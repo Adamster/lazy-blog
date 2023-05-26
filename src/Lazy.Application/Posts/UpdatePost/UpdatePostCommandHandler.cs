@@ -1,5 +1,6 @@
 ﻿using Lazy.Application.Abstractions.Authorization;
 using Lazy.Application.Abstractions.Messaging;
+using Lazy.Domain.Entities;
 using Lazy.Domain.Errors;
 using Lazy.Domain.Repositories;
 using Lazy.Domain.Shared;
@@ -10,17 +11,20 @@ namespace Lazy.Application.Posts.UpdatePost;
 public class UpdatePostCommandHandler : ICommandHandler<UpdatePostCommand>
 {
     private readonly IPostRepository _postRepository;
+    private readonly ITagRepository _tagRepository;
     private readonly ICurrentUserContext _currentUserContext;
     private readonly IUnitOfWork _unitOfWork;
 
     public UpdatePostCommandHandler(
         IPostRepository postRepository, 
         ICurrentUserContext currentUserContext,
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork, 
+        ITagRepository tagRepository)
     {
         _postRepository = postRepository;
         _currentUserContext = currentUserContext;
         _unitOfWork = unitOfWork;
+        _tagRepository = tagRepository;
     }
 
     public async Task<Result> Handle(UpdatePostCommand request, CancellationToken cancellationToken)
@@ -41,6 +45,29 @@ public class UpdatePostCommandHandler : ICommandHandler<UpdatePostCommand>
         Result<Summary> summaryResult = Summary.Create(request.Summary);
         Result<Body> bodyResult = Body.Create(request.Body);
         Result<Slug> slugResult = Slug.Create(request.Slug);
+
+
+        List<Guid> tagIds = request.Tags
+            .Where(x => x.TagId != Guid.Empty)
+            .Select(x => x.TagId)
+            .ToList();
+
+        List<Tag> existingTags =
+           await _tagRepository.GetTagByIdsAsync(tagIds, cancellationToken);
+
+
+        foreach (var existingTag in existingTags)
+        {
+            foreach (var tagUpdateRequest in request.Tags)
+            {
+                if (tagUpdateRequest.TagId == existingTag.Id)
+                {
+                    existingTag.Update(tagUpdateRequest.Tag);
+                }
+            }
+        }
+        
+        
 
         post.Update(
             titleResult.Value,

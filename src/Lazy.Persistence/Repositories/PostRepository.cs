@@ -37,6 +37,23 @@ public class PostRepository : IPostRepository
             .Include(x => x.User)
             .ThenInclude(u => u.PostVotes)
             .Include(x => x.Comments)
+            .Include(x => x.Tags)
+            .ToListAsync(cancellationToken);
+
+        return posts;
+    }
+
+    public async Task<IList<Post>> GetPostsByTagAsync(Tag tag, CancellationToken cancellationToken)
+    {
+        List<Post> posts = await _dbContext.Set<Post>()
+            .AsNoTracking()
+            .Include(x => x.Tags)
+            .Where(p => p.IsPublished)
+            .Where(p => p.Tags.Contains(tag))
+            .OrderByDescending(p => p.CreatedOnUtc)
+            .Include(x => x.User)
+            .ThenInclude(u => u.PostVotes)
+            .Include(x => x.Comments)
             .ToListAsync(cancellationToken);
 
         return posts;

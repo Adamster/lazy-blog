@@ -36,6 +36,11 @@ internal sealed class PostConfiguration : IEntityTypeConfiguration<Post>
             .HasForeignKey(c => c.PostId)
             .OnDelete(DeleteBehavior.Cascade);
 
+
+        builder
+            .HasMany(p => p.Tags)
+            .WithMany(t => t.Posts);
+
         builder.HasIndex(x => x.Slug).IsUnique();
     }
 }

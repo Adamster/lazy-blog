@@ -29,10 +29,6 @@ try
 {
     var builder = WebApplication.CreateBuilder(args);
     
-    builder.Services.AddScoped<IUserRepository, UserRepository>();
-
-    builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
-
     builder.Host.UseSerilog();
 
     builder

@@ -2,13 +2,17 @@
 using Lazy.Domain.Primitives;
 using Lazy.Domain.Shared;
 
-namespace Lazy.Domain.ValueObjects.Post;
+namespace Lazy.Domain.Entities;
 
-public class Tag : ValueObject
+public class Tag : Entity
 {
+    private readonly List<Post> _posts = new();
+
     public const int MaxLength = 50;
 
     public string Value { get; private set; }
+
+    public IReadOnlyCollection<Post> Posts => _posts;
 
     private Tag()
     {
@@ -25,8 +29,12 @@ public class Tag : ValueObject
                 DomainErrors.Tag.TooLong)
             .Map(t => new Tag(t));
 
-    public override IEnumerable<object> GetAtomicValues()
+    public void Update(string tag)
     {
-        yield return Value;
+        var newTag = Create(tag);
+        if (newTag.IsSuccess)
+        {
+            Value = tag;
+        }
     }
 }
