@@ -29,12 +29,12 @@ public class UpdateAuditableEntitiesInterceptor : SaveChangesInterceptor
         {
             if (entityEntry.State == EntityState.Added)
             {
-                entityEntry.Property(a=> a.CreatedOnUtc).CurrentValue = DateTime.UtcNow;
+                entityEntry.Property(a => a.CreatedOnUtc).CurrentValue = DateTime.UtcNow;
             }
 
             if (entityEntry.State == EntityState.Modified)
             {
-                entityEntry.Property(a=>a.UpdatedOnUtc).CurrentValue = DateTime.UtcNow;
+                entityEntry.Property(a => a.UpdatedOnUtc).CurrentValue = DateTime.UtcNow;
             }
         }
         

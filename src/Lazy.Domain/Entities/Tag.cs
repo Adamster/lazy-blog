@@ -4,7 +4,7 @@ using Lazy.Domain.Shared;
 
 namespace Lazy.Domain.Entities;
 
-public class Tag : Entity
+public class Tag : Entity, IAuditableEntity
 {
     private readonly List<Post> _posts = new();
 
@@ -37,4 +37,12 @@ public class Tag : Entity
             Value = tag;
         }
     }
+
+    public void Update(Tag tag)
+    {
+        Value = tag.Value;
+    }
+
+    public DateTime CreatedOnUtc { get; set; }
+    public DateTime? UpdatedOnUtc { get; set; }
 }

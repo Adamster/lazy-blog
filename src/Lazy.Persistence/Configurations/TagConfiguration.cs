@@ -14,7 +14,10 @@ public class TagConfiguration : IEntityTypeConfiguration<Tag>
         builder.HasKey(p => p.Id);
 
         builder.Property(t => t.Value).HasMaxLength(Tag.MaxLength);
-            
+
+        builder.Property(x => x.CreatedOnUtc)
+            .HasDefaultValueSql("GETDATE()");
+        builder.Property(x => x.UpdatedOnUtc);
 
         builder
             .HasMany(t => t.Posts)

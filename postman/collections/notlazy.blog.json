@@ -1,20 +1,15 @@
 {
 	"info": {
-		"_postman_id": "5df2350a-6e74-4fe7-ba95-2d1c7687849a",
+		"_postman_id": "15157415-af88-44a7-96f2-b1c6368965a1",
 		"name": "notlazy.blog",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_uid": "2586810-5df2350a-6e74-4fe7-ba95-2d1c7687849a"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "Author",
+			"name": "User",
 			"item": [
 				{
 					"name": "Get user By Id",
-					"id": "878eab56-4a8c-4ff0-a51a-7887a144c1ca",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -34,10 +29,6 @@
 				},
 				{
 					"name": "Create user",
-					"id": "96468e2d-eafe-4b9d-acef-5e95c5ccba13",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -62,19 +53,82 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"adam.serghei@gmail.com\",\r\n  \"password\": \"Password1!\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base-url}}/api/users/login",
+							"host": [
+								"{{base-url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJjNDJkNTBlYS0zNzIzLTRlNjUtOWJhMy0xNDJjN2UwNDAxYWEiLCJzdWIiOiJlNDhlNzE0MC1iMDQzLTQzNWYtOWU0Zi0xOGJlZTA2MGY5YmMiLCJlbWFpbCI6ImFkYW0uc2VyZ2hlaUBnbWFpbC5jb20iLCJuYW1lIjoiU2VyZ2hlaSBBZGFtIiwiZXhwIjoxNjg0NzY3NjI3LCJpc3MiOiJMYXp5LUJsb2ctc3VwZXItc2VjcmV0LWlzc3VlciIsImF1ZCI6IkxhenktYmxvZy1zdXBlci1zZWNyZXQtYXVkaWVuY2UifQ.-gQB9jShRE3EcyWxVlM8drd8rhsfw--d18CNc-VDUzQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Token\" : \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJjNDJkNTBlYS0zNzIzLTRlNjUtOWJhMy0xNDJjN2UwNDAxYWEiLCJzdWIiOiJlNDhlNzE0MC1iMDQzLTQzNWYtOWU0Zi0xOGJlZTA2MGY5YmMiLCJlbWFpbCI6ImFkYW0uc2VyZ2hlaUBnbWFpbC5jb20iLCJuYW1lIjoiU2VyZ2hlaSBBZGFtIiwiZXhwIjoxNjg0NzY3NjI3LCJpc3MiOiJMYXp5LUJsb2ctc3VwZXItc2VjcmV0LWlzc3VlciIsImF1ZCI6IkxhenktYmxvZy1zdXBlci1zZWNyZXQtYXVkaWVuY2UifQ.-gQB9jShRE3EcyWxVlM8drd8rhsfw--d18CNc-VDUzQ\",\r\n    \"RefreshToken\" : \"2ab3f4f0-1b3c-492a-b919-6c2d8da8323a\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:7298/api/users/refresh",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7298",
+							"path": [
+								"api",
+								"users",
+								"refresh"
+							]
+						}
+					},
+					"response": []
 				}
-			],
-			"id": "5fe8502d-8328-4b80-a18c-5d2878797c22"
+			]
 		},
 		{
 			"name": "Post",
 			"item": [
 				{
 					"name": "Get Post by Id",
-					"id": "0e62f8c8-3af8-480e-816d-1c487fd586f8",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -92,11 +146,27 @@
 					"response": []
 				},
 				{
-					"name": "Get All posts",
-					"id": "da8ee20c-c1fa-44bd-ba8f-5c07529aba66",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
+					"name": "Get Post by Tag",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base-url}}/api/posts/t/",
+							"host": [
+								"{{base-url}}"
+							],
+							"path": [
+								"api",
+								"posts",
+								"t",
+								""
+							]
+						}
 					},
+					"response": []
+				},
+				{
+					"name": "Get All posts",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -115,16 +185,22 @@
 				},
 				{
 					"name": "Create Post",
-					"id": "4290506f-70e4-4b2b-af0a-b207f429523b",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiMGZkZTgxOC02ZWE4LTRiZDktYmM5Mi1lODI0YmI3OTFlMzgiLCJzdWIiOiJlNDhlNzE0MC1iMDQzLTQzNWYtOWU0Zi0xOGJlZTA2MGY5YmMiLCJlbWFpbCI6ImFkYW0uc2VyZ2hlaUBnbWFpbC5jb20iLCJuYW1lIjoiU2VyZ2hlaSBBZGFtIiwiZXhwIjoxNjg2MTQ4OTU1LCJpc3MiOiJMYXp5LUJsb2ctc3VwZXItc2VjcmV0LWlzc3VlciIsImF1ZCI6IkxhenktYmxvZy1zdXBlci1zZWNyZXQtYXVkaWVuY2UifQ.hXfJkDqQjdHUNHsDYtjsC8ZXf37R5zG_tfj9TUu26y4",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"title\": \"а добар дан\",\r\n  \"summary\": \"добродошли\",\r\n  \"body\": \"проверяем как тут с юникодом, вроде пока неплохо, в общем тут я планирую писать повесть о том как я страдаю и пишу свой self-hosted MyPhotos, который будет точной копией Google Photos, надеюсь даже с приложениями под iOS / Android,Подписывайтесь на канал, ставьте лайки и тд и тп, всего этого тут вы не увидите ближайшие пару недель, пока я не прикручу авторизацию и какой то внятный дизайн, ах да, для истории попробуем запомнить число когда я начал этот блог, 18/01/2023, точное время 21:33 GMT+2, посмотрим как пойдет, всеми силами попытаюсь сохранить базу и не терять данные :D\",\r\n  \"userId\": \"{{my-user-id}}\"\r\n}",
+							"raw": "{\r\n  \"title\": \"Test post 3\",\r\n  \"summary\": \"test summary\",\r\n  \"body\": \"string\",\r\n  \"userId\": \"C724BE4C-D5E1-48C9-B98A-E02A2CDE49E1\",\r\n  \"coverUrl\": \"https://www.blogtyrant.com/wp-content/uploads/2017/02/how-to-write-a-good-blog-post.png\",\r\n  \"isPublished\": true,\r\n  \"tags\": [\r\n    {\r\n      \"tag\": \"Formula 1\"\r\n    },\r\n     {\r\n      \"tag\": \"Formula 2\"\r\n    },\r\n    {\r\n      \"tag\": \"USELESS CONTENT\"\r\n    }\r\n  ]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -132,10 +208,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{base-url}}/api/posts",
+							"raw": "https://localhost:7298/api/posts",
+							"protocol": "https",
 							"host": [
-								"{{base-url}}"
+								"localhost"
 							],
+							"port": "7298",
 							"path": [
 								"api",
 								"posts"
@@ -143,9 +221,174 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Post Vote",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:7298/api/posts/9FC45FF7-7D3C-4018-A5FC-1F3650241DAB/vote?direction=Up",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7298",
+							"path": [
+								"api",
+								"posts",
+								"9FC45FF7-7D3C-4018-A5FC-1F3650241DAB",
+								"vote"
+							],
+							"query": [
+								{
+									"key": "direction",
+									"value": "Up"
+								}
+							]
+						}
+					},
+					"response": []
 				}
 			],
-			"id": "42de4a62-d1d1-4142-ab21-d8234784be36"
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjNzI0YmU0Yy1kNWUxLTQ4YzktYjk4YS1lMDJhMmNkZTQ5ZTEiLCJlbWFpbCI6InN0cmluZ0Bxd2VxLnEiLCJuYW1lIjoic3RyaW5nIHN0cmluZyIsImV4cCI6MTY4MzAyODEwNywiaXNzIjoiTGF6eS1CbG9nLXN1cGVyLXNlY3JldC1pc3N1ZXIiLCJhdWQiOiJMYXp5LWJsb2ctc3VwZXItc2VjcmV0LWF1ZGllbmNlIn0.RJ9cqdigb77R1p7tYbuKRyUk4_V6pwdilC54_0gHNVQ",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Tag",
+			"item": [
+				{
+					"name": "Search Tags",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:7298/api/tags/us",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "7298",
+							"path": [
+								"api",
+								"tags",
+								"us"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Tag",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{base-url}}/api/tags/E2198D83-7CE2-48F6-FF02-08DB611A6C40?tag=qewrq",
+							"host": [
+								"{{base-url}}"
+							],
+							"path": [
+								"api",
+								"tags",
+								"E2198D83-7CE2-48F6-FF02-08DB611A6C40"
+							],
+							"query": [
+								{
+									"key": "tag",
+									"value": "qewrq"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJhNjgwMjJlNC0yOWViLTQ5ZjEtYjVhZi1jZTA1Y2ZlNjMyNjEiLCJzdWIiOiJlNDhlNzE0MC1iMDQzLTQzNWYtOWU0Zi0xOGJlZTA2MGY5YmMiLCJlbWFpbCI6ImFkYW0uc2VyZ2hlaUBnbWFpbC5jb20iLCJuYW1lIjoiU2VyZ2hlaSBBZGFtIiwiZXhwIjoxNjg2MTUwNzM1LCJpc3MiOiJMYXp5LUJsb2ctc3VwZXItc2VjcmV0LWlzc3VlciIsImF1ZCI6IkxhenktYmxvZy1zdXBlci1zZWNyZXQtYXVkaWVuY2UifQ.muNY9ep0ovWVkvX89Qp5bsPVACflHaJw_c-aufwweqM",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base-url",
+			"value": "https://localhost:7298",
+			"type": "default"
 		}
 	]
 }

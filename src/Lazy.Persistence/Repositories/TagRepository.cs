@@ -17,7 +17,7 @@ public class TagRepository : ITagRepository
     {
         return _dbContext.Set<Tag>()
             .AsNoTracking()
-            .Where(x => EF.Functions.FreeText(x.Value, searchTerm))
+            .Where(x => x.Value.Contains(searchTerm))
             .ToListAsync(cancellationToken);
     }
 

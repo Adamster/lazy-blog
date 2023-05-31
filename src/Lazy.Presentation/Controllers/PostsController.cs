@@ -66,7 +66,7 @@ public class PostsController : ApiController
     }
 
     [AllowAnonymous]
-    [HttpGet("{tag}")]
+    [HttpGet("t/{tag}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Result<List<PublishedPostResponse>>))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetPosts(string tag, CancellationToken cancellationToken)
@@ -169,6 +169,7 @@ public class PostsController : ApiController
             request.Body,
             request.Slug,
             request.CoverUrl,
+            request.Tags,
             request.IsPublished);
 
         Result result = await Sender.Send(command, cancellationToken);
