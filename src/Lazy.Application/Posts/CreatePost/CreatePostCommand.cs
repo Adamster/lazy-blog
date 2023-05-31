@@ -1,4 +1,5 @@
 ﻿using Lazy.Application.Abstractions.Messaging;
+using Lazy.Application.Tags.SearchTag;
 
 namespace Lazy.Application.Posts.CreatePost;
 
@@ -7,7 +8,6 @@ public record CreatePostCommand(
     string? Summary,
     string Body,
     bool IsPublished,
-    //TODO: change to tag response
-    List<string> Tags,
+    List<TagResponse>? Tags,
     string? CoverUrl,
     Guid UserId) : ICommand<PostCreatedResponse>;

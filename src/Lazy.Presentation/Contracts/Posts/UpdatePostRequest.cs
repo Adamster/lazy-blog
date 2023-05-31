@@ -1,4 +1,6 @@
-﻿namespace Lazy.Presentation.Contracts.Posts;
+﻿using Lazy.Application.Tags.SearchTag;
+
+namespace Lazy.Presentation.Contracts.Posts;
 
 public record UpdatePostRequest(
     string Title,
@@ -6,4 +8,5 @@ public record UpdatePostRequest(
     string Body,
     string Slug,
     string? CoverUrl,
+    List<TagResponse> Tags,
     bool IsPublished);

@@ -31,6 +31,7 @@
     <Folder Include="Posts\GetPostByTag\" />
     <Folder Include="Posts\UpdatePost\" />
     <Folder Include="Tags\CreateTag\" />
+    <Folder Include="Tags\UpdateTag\" />
     <Folder Include="Users\CreateUser\" />
     <Folder Include="Users\Login\" />
     <Folder Include="Users\UpdateUser\" />

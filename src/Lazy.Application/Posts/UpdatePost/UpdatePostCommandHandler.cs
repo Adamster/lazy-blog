@@ -1,5 +1,6 @@
 ﻿using Lazy.Application.Abstractions.Authorization;
 using Lazy.Application.Abstractions.Messaging;
+using Lazy.Application.Tags.SearchTag;
 using Lazy.Domain.Entities;
 using Lazy.Domain.Errors;
 using Lazy.Domain.Repositories;
@@ -46,28 +47,21 @@ public class UpdatePostCommandHandler : ICommandHandler<UpdatePostCommand>
         Result<Body> bodyResult = Body.Create(request.Body);
         Result<Slug> slugResult = Slug.Create(request.Slug);
 
-
         List<Guid> tagIds = request.Tags
             .Where(x => x.TagId != Guid.Empty)
             .Select(x => x.TagId)
             .ToList();
 
-        List<Tag> existingTags =
+        List<Tag> updatedTags =
            await _tagRepository.GetTagByIdsAsync(tagIds, cancellationToken);
 
+        var tagsToCreate = request.Tags
+            .Where(x => x.TagId == Guid.Empty)
+            .ToList();
 
-        foreach (var existingTag in existingTags)
-        {
-            foreach (var tagUpdateRequest in request.Tags)
-            {
-                if (tagUpdateRequest.TagId == existingTag.Id)
-                {
-                    existingTag.Update(tagUpdateRequest.Tag);
-                }
-            }
-        }
-        
-        
+        List<Tag> newTags = CreateTags(tagsToCreate);
+
+        updatedTags.AddRange(newTags);
 
         post.Update(
             titleResult.Value,
@@ -75,6 +69,7 @@ public class UpdatePostCommandHandler : ICommandHandler<UpdatePostCommand>
             bodyResult.Value,
             slugResult.Value,
             request.CoverUrl,
+            updatedTags,
             request.IsPublished);
 
         _postRepository.Update(post);
@@ -82,5 +77,23 @@ public class UpdatePostCommandHandler : ICommandHandler<UpdatePostCommand>
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
+    }
+
+    private List<Tag> CreateTags(List<TagResponse> tagsToCreate)
+    {
+        var tags = new List<Tag>();
+
+        if (tags.Any())
+        {
+            return tags;
+        }
+
+        foreach (var requestedTag in tagsToCreate)
+        {
+            var tagResult = Tag.Create(requestedTag.Tag);
+            tags.Add(tagResult.Value);
+        }
+
+        return tags;
     }
 }

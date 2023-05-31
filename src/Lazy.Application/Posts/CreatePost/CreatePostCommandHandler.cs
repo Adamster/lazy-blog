@@ -1,4 +1,5 @@
 ﻿using Lazy.Application.Abstractions.Messaging;
+using Lazy.Application.Tags.SearchTag;
 using Lazy.Domain.Entities;
 using Lazy.Domain.Errors;
 using Lazy.Domain.Extensions;
@@ -13,12 +14,17 @@ internal sealed class CreatePostCommandHandler : ICommandHandler<CreatePostComma
     private readonly IPostRepository _postRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IUserRepository _userRepository;
+    private readonly ITagRepository _tagRepository;
 
-    public CreatePostCommandHandler(IPostRepository postRepository, IUnitOfWork unitOfWork, IUserRepository userRepository)
+    public CreatePostCommandHandler(IPostRepository postRepository,
+        IUnitOfWork unitOfWork, 
+        IUserRepository userRepository,
+        ITagRepository tagRepository)
     {
         _postRepository = postRepository;
         _unitOfWork = unitOfWork;
         _userRepository = userRepository;
+        _tagRepository = tagRepository;
     }
 
     public async Task<Result<PostCreatedResponse>> Handle(CreatePostCommand request, CancellationToken cancellationToken)
@@ -60,18 +66,32 @@ internal sealed class CreatePostCommandHandler : ICommandHandler<CreatePostComma
         return new PostCreatedResponse(post.Id, post.Slug.Value);
     }
 
-    private List<Tag> CreateTags(List<string> requestTags)
+    private List<Tag> CreateTags(List<TagResponse>? requestTags)
     {
         var tags = new List<Tag>();
+
+        if (requestTags is null)
+        {
+            return tags;
+        }
+
         if (!requestTags.Any())
         {
             return tags;
         }
-       
+
         foreach (var requestTag in requestTags)
         {
-            var tagResult = Tag.Create(requestTag);
-           tags.Add(tagResult.Value);
+            var existingTag = _tagRepository.GetTagByValue(requestTag.Tag);
+            if (existingTag is null)
+            {
+                var tagResult = Tag.Create(requestTag.Tag);
+                tags.Add(tagResult.Value);
+            }
+            else
+            {
+                tags.Add(existingTag);
+            }
         }
 
         return tags;
