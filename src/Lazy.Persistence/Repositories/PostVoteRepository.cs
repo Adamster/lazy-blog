@@ -24,6 +24,7 @@ public class PostVoteRepository : IPostVoteRepository
         CancellationToken cancellationToken)
     {
         return await _dbContext.Set<PostVote>()
+            .AsNoTracking()
             .Where(pv => pv.PostId == postId)
             .Include(pv => pv.Post)
             .Include(pv => pv.User)

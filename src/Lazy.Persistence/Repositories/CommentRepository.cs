@@ -23,6 +23,7 @@ public class CommentRepository : ICommentRepository
     public async Task<Comment?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default) =>
         await _dbContext
             .Set<Comment>()
+            .AsNoTracking()
             .Include(x => x.User)
             .FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
     

@@ -9,8 +9,8 @@ public class PostVote : Entity, IAuditableEntity
     public PostVote(Guid id, Post post, User user, VoteDirection voteDirection)
         : base(id)
     {
-        Post = post;
-        User = user;
+        UserId = user.Id;
+        PostId = post.Id;
         VoteDirection = voteDirection;
     }
 

@@ -15,15 +15,18 @@ public class UserRepository : IUserRepository
     public async Task<User?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default) => 
         await _dbContext
             .Set<User>()
+            .AsNoTracking()
             .FirstOrDefaultAsync(user => user.Id == id, cancellationToken);
 
     public async Task<User?> GetByEmailAsync(Email email, CancellationToken cancellationToken = default) =>
         await _dbContext
             .Set<User>()
+            .AsNoTracking()
             .FirstOrDefaultAsync(user => user.Email == email, cancellationToken);
 
     public async Task<bool> IsEmailUniqueAsync(Email email, CancellationToken cancellationToken = default) =>
         !await _dbContext.Set<User>()
+            .AsNoTracking()
             .AnyAsync(user => user.Email == email, cancellationToken);
 
     public void Add(User user) =>
@@ -35,6 +38,7 @@ public class UserRepository : IUserRepository
     public async Task<User?> GetByUsernameAsync(UserName userName, CancellationToken cancellationToken) =>
         await _dbContext
             .Set<User>()
+            .AsNoTracking()
             .FirstOrDefaultAsync(user => user.UserName == userName, cancellationToken);
 
 }

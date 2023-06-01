@@ -30,7 +30,7 @@ public class UpdateTagCommandHandler : ICommandHandler<UpdateTagCommand>
         var tagResult = Tag.Create(request.NewTagValue);
 
         tag.Update(tagResult.Value);
-
+        _tagRepository.Update(tag);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success();

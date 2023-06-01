@@ -10,4 +10,5 @@ public interface ITagRepository
 
     Tag? GetTagById(Guid tagId);
     Task<List<Tag>> GetTagByIdsAsync(IEnumerable<Guid> tagIds, CancellationToken cancellationToken);
+    void Update(Tag tag);
 }

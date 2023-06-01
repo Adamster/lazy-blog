@@ -18,11 +18,13 @@ public class PostRepository : IPostRepository
     public async Task<Post?> GetByIdAsync(Guid postId, CancellationToken cancellationToken) =>
         await _dbContext
             .Set<Post>()
+            .AsNoTracking()
             .FirstOrDefaultAsync(post => post.Id == postId, cancellationToken);
 
     public async Task<Post?> GetBySlugAsync(Slug slug, CancellationToken cancellationToken) =>
         await _dbContext
             .Set<Post>()
+            .AsNoTracking()
             .Include(p => p.User)
             .FirstOrDefaultAsync(post => post.Slug == slug, cancellationToken);
 
