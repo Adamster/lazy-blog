@@ -12,7 +12,6 @@ using Lazy.Domain.Entities;
 using Lazy.Infrastructure.Authorization;
 using Lazy.Persistence.Interceptors;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
 using Serilog;
 using AssemblyReference = Lazy.Infrastructure.AssemblyReference;
 
@@ -62,7 +61,7 @@ try
     builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
     builder.Services.AddSingleton<ICurrentUserContext, CurrentUserContext>();
     builder.Services.AddMemoryCache();
-
+    
     builder.Services.AddScoped<PostRepository>();
     builder.Services.AddScoped<IPostRepository, CachedPostRepository>();
 

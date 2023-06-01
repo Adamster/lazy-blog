@@ -3,7 +3,6 @@ using Lazy.Application.Abstractions.Messaging;
 using Lazy.Domain.Errors;
 using Lazy.Domain.Repositories;
 using Lazy.Domain.Shared;
-using Microsoft.AspNetCore.Http;
 
 namespace Lazy.Application.Posts.DeletePost;
 
