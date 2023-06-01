@@ -14,7 +14,7 @@ public class Slug : ValueObject
     public Slug(string value) => Value = value;
 
 
-    public string Value { get; private set; }
+    public string Value { get; private set; } = null!;
 
     public static Result<Slug> Create(string slug) =>
         Result.Create(slug)

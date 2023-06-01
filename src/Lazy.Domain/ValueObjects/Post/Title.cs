@@ -14,7 +14,7 @@ public class Title : ValueObject
 
     private Title(string value) => Value = value;
 
-    public string Value { get; private set; }
+    public string Value { get; private set; } = null!;
 
     public static Result<Title> Create(string title) =>
         Result.Create(title)

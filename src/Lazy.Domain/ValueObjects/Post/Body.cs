@@ -12,7 +12,7 @@ public class Body : ValueObject
 
     public Body(string value) => Value = value;
 
-    public string Value { get; private set; }
+    public string Value { get; private set; } = null!;
 
     public static Result<Body> Create(string body) =>
         Result.Create(body)

@@ -19,7 +19,7 @@ internal sealed class PostConfiguration : IEntityTypeConfiguration<Post>
             .HasMaxLength(Title.MaxLength);
 
         builder.Property(x => x.Summary)
-            .HasConversion(x => x.Value, v => Summary.Create(v).Value)
+            .HasConversion(x => x != null ? x.Value : string.Empty, v => Summary.Create(v).Value)
             .HasMaxLength(Summary.MaxLength);
 
         builder.Property(x => x.Slug)

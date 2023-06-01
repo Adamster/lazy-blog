@@ -19,11 +19,11 @@ public class PostVote : Entity, IAuditableEntity
     }
 
     public Guid PostId { get; private set; }
-    public Post Post { get; private set; }
+    public Post Post { get; private set; } = null!;
 
 
     public Guid UserId { get; private set; }
-    public User User { get; private set; }
+    public User User { get; private set; } = null!;
 
     public VoteDirection VoteDirection { get; private set; }
 

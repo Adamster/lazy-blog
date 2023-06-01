@@ -16,7 +16,7 @@ public class LastName : ValueObject
     private LastName()
     {
     }
-    public string Value { get; private set; }
+    public string Value { get; private set; } = null!;
 
     public static Result<LastName> Create(string lastName)
     {

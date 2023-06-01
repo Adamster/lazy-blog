@@ -10,7 +10,7 @@ public class Tag : Entity, IAuditableEntity
 
     public const int MaxLength = 50;
 
-    public string Value { get; private set; }
+    public string Value { get; private set; } = null!;
 
     public IReadOnlyCollection<Post> Posts => _posts;
 

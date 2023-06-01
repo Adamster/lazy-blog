@@ -14,7 +14,7 @@ namespace Lazy.Domain.ValueObjects.User
 
         private Email(string value) => Value = value;
 
-        public string Value { get; private set; }
+        public string Value { get; private set; } = null!;
 
         public static Result<Email> Create(string email) =>
             Result.Create(email)

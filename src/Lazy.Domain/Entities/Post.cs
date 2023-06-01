@@ -34,13 +34,13 @@ public sealed class Post : AggregateRoot, IAuditableEntity
     {
     }
 
-    public Title Title { get; private set; }
+    public Title Title { get; private set; } = null!;
 
-    public Body Body { get; private set; }
+    public Body Body { get; private set; } = null!;
 
     public Summary? Summary { get; private set; }
 
-    public Slug Slug { get; private set; }
+    public Slug Slug { get; private set; } = null!;
 
     public bool IsPublished { get; private set; }
 
@@ -52,7 +52,7 @@ public sealed class Post : AggregateRoot, IAuditableEntity
 
     public Guid UserId { get; private set; }
 
-    public User User { get; private set; }
+    public User User { get; private set; } = null!;
 
     public DateTime CreatedOnUtc { get; set; }
     public DateTime? UpdatedOnUtc { get; set; }

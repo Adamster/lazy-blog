@@ -17,7 +17,7 @@ public sealed class FirstName : ValueObject
     {
     }
 
-    public string Value { get; private set; }
+    public string Value { get; private set; } = null!;
 
 
     public static Result<FirstName> Create(string firstName)

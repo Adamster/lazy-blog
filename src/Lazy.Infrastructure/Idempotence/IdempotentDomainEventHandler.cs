@@ -19,10 +19,9 @@ where TDomainEvent : IDomainEvent
         _dbContext = dbContext;
     }
 
-    public async Task Handle(TDomainEvent notification, CancellationToken cancellationToken)
+
+    public Task Handle(TDomainEvent notification, CancellationToken cancellationToken)
     {
-        string consumer = _decorated.GetType().Name;
-        
-        //if(await _dbContext.Set<OutBo>())
+        throw new NotImplementedException();
     }
 }

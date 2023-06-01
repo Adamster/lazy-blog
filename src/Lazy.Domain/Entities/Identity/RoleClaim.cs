@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
-
 namespace Lazy.Domain.Entities.Identity;
 
 public class RoleClaim : IdentityRoleClaim<Guid>
 {
-    public virtual Role Role { get; set; }
+    public virtual Role Role { get; set; } = null!;
 }

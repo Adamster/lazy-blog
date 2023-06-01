@@ -31,13 +31,13 @@ public sealed class User : IdentityUser<Guid>, IAuditableEntity
     {
     }
 
-    public new Email Email { get; private set; }
+    public new Email Email { get; private set; } = null!;
 
-    public new UserName UserName { get; private set; }
+    public new UserName UserName { get; private set; } = null!;
 
-    public FirstName FirstName { get; set; }
+    public FirstName FirstName { get; set; } = null!;
 
-    public LastName LastName { get; set; }
+    public LastName LastName { get; set; } = null!;
 
     public IReadOnlyCollection<Post> Posts => _posts;
     public IReadOnlyCollection<Comment> Comments => _comments;

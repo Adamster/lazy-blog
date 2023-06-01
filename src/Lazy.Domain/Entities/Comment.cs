@@ -27,12 +27,12 @@ public sealed class Comment : Entity, IAuditableEntity
 
 
     public Guid PostId { get; private set; }
-    public Post Post { get; private set; }
+    public Post Post { get; private set; } = null!;
 
     public Guid UserId { get; private set; }
-    public User User { get; private set; }
+    public User User { get; private set; } = null!;
 
-    public Body CommentText { get; private set; }
+    public Body CommentText { get; private set; } = null!;
 
     public DateTime CreatedOnUtc { get; set; }
     public DateTime? UpdatedOnUtc { get; set; }
