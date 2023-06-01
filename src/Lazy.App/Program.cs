@@ -29,7 +29,7 @@ try
     var builder = WebApplication.CreateBuilder(args);
     
     builder.Host.UseSerilog();
-
+    builder.Services.AddApplicationInsightsTelemetry();
     builder
         .Services
         .Scan(
