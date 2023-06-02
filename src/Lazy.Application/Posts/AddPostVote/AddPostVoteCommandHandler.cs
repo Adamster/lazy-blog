@@ -31,20 +31,7 @@ public class AddPostVoteCommandHandler : ICommandHandler<AddPostVoteCommand>
 
     public async Task<Result> Handle(AddPostVoteCommand request, CancellationToken cancellationToken)
     {
-        var post = await _postRepository.GetByIdAsync(request.PostId, cancellationToken);
-
-        if (post is null)
-        {
-            return Result.Failure(DomainErrors.Post.NotFound(request.PostId));
-        }
-
         Guid currentUserId = _currentUserContext.GetCurrentUserId();
-        User? user = await _userRepository.GetByIdAsync(currentUserId, cancellationToken);
-        
-        if (user is null)
-        {
-            return Result.Failure(DomainErrors.User.NotFound(currentUserId));
-        }
         
         PostVote? postVote = await _postVoteRepository
             .GetPostVoteForUserIdAsync(
@@ -56,8 +43,7 @@ public class AddPostVoteCommandHandler : ICommandHandler<AddPostVoteCommand>
         {
             if (postVote.VoteDirection != request.Direction)
             {
-                post.Vote(request.Direction);
-                _postRepository.Update(post);
+                postVote.Post.Vote(request.Direction);
                 _postVoteRepository.Delete(postVote);
 
                 await _unitOfWork.SaveChangesAsync(cancellationToken);
@@ -74,6 +60,20 @@ public class AddPostVoteCommandHandler : ICommandHandler<AddPostVoteCommand>
         }
         else
         {
+            var post = await _postRepository.GetByIdAsync(request.PostId, cancellationToken);
+
+            if (post is null)
+            {
+                return Result.Failure(DomainErrors.Post.NotFound(request.PostId));
+            }
+
+            User? user = await _userRepository.GetByIdAsync(currentUserId, cancellationToken);
+
+            if (user is null)
+            {
+                return Result.Failure(DomainErrors.User.NotFound(currentUserId));
+            }
+
             PostVote newPostVote = PostVote.Create(post, user, request.Direction);
             _postVoteRepository.Add(newPostVote);
         }
