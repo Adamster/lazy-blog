@@ -1,4 +1,5 @@
-﻿using Lazy.Application.Users.GetUserById;
+﻿using Lazy.Application.Tags.SearchTag;
+using Lazy.Application.Users.GetUserById;
 
 namespace Lazy.Application.Posts.GetPostBySlug;
 
@@ -10,6 +11,7 @@ public record PostDetailedResponse(
     string Slug,
     string Body,
     string? CoverUrl,
+    IList<TagResponse> Tags,
     int Rating,
     long Views,
     DateTime CreatedAtUtc);

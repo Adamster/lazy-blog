@@ -1,4 +1,5 @@
 ﻿using Lazy.Application.Abstractions.Messaging;
+using Lazy.Application.Tags.SearchTag;
 using Lazy.Application.Users.GetUserById;
 using Lazy.Domain.Entities;
 using Lazy.Domain.Errors;
@@ -43,6 +44,7 @@ public class GetPostBySlugHandler : IQueryHandler<GetPostBySlugQuery, PostDetail
             post.Slug.Value,
             post.Body.Value,
             post.CoverUrl,
+            post.Tags.Select(t => new TagResponse(t.Id, t.Value)).ToList(),
             post.Rating,
             post.Views,
             post.CreatedOnUtc
