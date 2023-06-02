@@ -60,11 +60,7 @@ try
     builder.Services.AddSingleton<UpdateAuditableEntitiesInterceptor>();
     builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
     builder.Services.AddSingleton<ICurrentUserContext, CurrentUserContext>();
-    builder.Services.AddMemoryCache();
     
-    builder.Services.AddScoped<PostRepository>();
-    builder.Services.AddScoped<IPostRepository, CachedPostRepository>();
-
     builder.Services.AddDbContext<LazyBlogDbContext>(
         (sp, optionsBuilder) => { optionsBuilder.UseSqlServer(connectionString); });
 

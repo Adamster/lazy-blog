@@ -6,6 +6,10 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace Lazy.Persistence.Repositories;
 
+/// <summary>
+/// temporary removed cause of multiple issues 
+/// </summary>
+[Obsolete]
 public class CachedPostRepository : IPostRepository
 {
     private readonly PostRepository _postRepository;
