@@ -174,6 +174,10 @@ public static class DomainErrors
             "Avatar.EmptyFileName",
             "Avatar file name is empty");
 
+        public static readonly Error UploadFailed = new(
+            "Avatar.UploadFailed",
+            "Avatar upload failed, please try again later");
+
     }
 
     public static class Comment    

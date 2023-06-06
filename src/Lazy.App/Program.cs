@@ -88,6 +88,7 @@ try
 
     builder.Services.ConfigureOptions<JwtOptionsSetup>();
     builder.Services.ConfigureOptions<JwtBearerOptionsSetup>();
+    builder.Services.ConfigureOptions<AzureBlobStorageOptionsSetup>();
 
     var app = builder.Build();
 

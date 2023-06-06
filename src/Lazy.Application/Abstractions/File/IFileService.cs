@@ -4,7 +4,7 @@ namespace Lazy.Application.Abstractions.File;
 
 public interface IFileService
 {
-    string Add(IFormFile file);
+    Task<string?> UploadAsync(IFormFile file, string userName, CancellationToken ct);
 
-    void Delete(string fileName);
+    Task DeleteAsync(string fileName, CancellationToken ct);
 }
