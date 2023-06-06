@@ -26,9 +26,9 @@ public class UpdateCommentCommandHandler : ICommandHandler<UpdateCommentCommand>
         _currentUserContext = currentUserContext;
     }
 
-    public async Task<Result> Handle(UpdateCommentCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(UpdateCommentCommand request, CancellationToken ct)
     {
-        var user = await _userRepository.GetByIdAsync(request.UserId, cancellationToken);
+        var user = await _userRepository.GetByIdAsync(request.UserId, ct);
         if (user is null)
         {
             return Result.Failure(DomainErrors.User.NotFound(request.UserId));
@@ -41,7 +41,7 @@ public class UpdateCommentCommandHandler : ICommandHandler<UpdateCommentCommand>
             return Result.Failure(DomainErrors.Comment.UnauthorizedCommentUpdate);
         }
 
-        Comment? comment = await _commentRepository.GetByIdAsync(request.CommentId, cancellationToken);
+        Comment? comment = await _commentRepository.GetByIdAsync(request.CommentId, ct);
         if (comment is null)
         {
             return Result.Failure(DomainErrors.Comment.NotFound(request.CommentId));
@@ -49,7 +49,7 @@ public class UpdateCommentCommandHandler : ICommandHandler<UpdateCommentCommand>
 
         comment.Update(bodyUpdateResult.Value);
 
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        await _unitOfWork.SaveChangesAsync(ct);
 
         return Result.Success();
     }

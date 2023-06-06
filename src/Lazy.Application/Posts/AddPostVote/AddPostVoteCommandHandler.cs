@@ -29,7 +29,7 @@ public class AddPostVoteCommandHandler : ICommandHandler<AddPostVoteCommand>
         _userRepository = userRepository;
     }
 
-    public async Task<Result> Handle(AddPostVoteCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(AddPostVoteCommand request, CancellationToken ct)
     {
         Guid currentUserId = _currentUserContext.GetCurrentUserId();
         
@@ -37,7 +37,7 @@ public class AddPostVoteCommandHandler : ICommandHandler<AddPostVoteCommand>
             .GetPostVoteForUserIdAsync(
                 currentUserId,
                 request.PostId, 
-                cancellationToken);
+                ct);
 
         if (postVote is not null)
         {
@@ -47,7 +47,7 @@ public class AddPostVoteCommandHandler : ICommandHandler<AddPostVoteCommand>
                 _postRepository.Update(postVote.Post);
                 _postVoteRepository.Delete(postVote);
 
-                await _unitOfWork.SaveChangesAsync(cancellationToken);
+                await _unitOfWork.SaveChangesAsync(ct);
                 return Result.Success();
             }
 
@@ -61,14 +61,14 @@ public class AddPostVoteCommandHandler : ICommandHandler<AddPostVoteCommand>
         }
         else
         {
-            var post = await _postRepository.GetByIdAsync(request.PostId, cancellationToken);
+            var post = await _postRepository.GetByIdAsync(request.PostId, ct);
 
             if (post is null)
             {
                 return Result.Failure(DomainErrors.Post.NotFound(request.PostId));
             }
 
-            User? user = await _userRepository.GetByIdAsync(currentUserId, cancellationToken);
+            User? user = await _userRepository.GetByIdAsync(currentUserId, ct);
 
             if (user is null)
             {
@@ -79,7 +79,7 @@ public class AddPostVoteCommandHandler : ICommandHandler<AddPostVoteCommand>
             _postVoteRepository.Add(newPostVote);
         }
 
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        await _unitOfWork.SaveChangesAsync(ct);
         return Result.Success();
 
     }

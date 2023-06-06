@@ -30,9 +30,9 @@ public class AddCommentCommandHandler : ICommandHandler<AddCommentCommand, Guid>
         _commentRepository = commentRepository;
     }
 
-    public async Task<Result<Guid>> Handle(AddCommentCommand request, CancellationToken cancellationToken)
+    public async Task<Result<Guid>> Handle(AddCommentCommand request, CancellationToken ct)
     {
-        var user = await _userRepository.GetByIdAsync(request.UserId, cancellationToken);
+        var user = await _userRepository.GetByIdAsync(request.UserId, ct);
         if (user is null)
         {
             return Result.Failure<Guid>(DomainErrors.User.NotFound(request.UserId));
@@ -43,7 +43,7 @@ public class AddCommentCommandHandler : ICommandHandler<AddCommentCommand, Guid>
             return Result.Failure<Guid>(DomainErrors.Comment.UnauthorizedCommentUpdate);
         }
 
-        var post = await _postRepository.GetByIdAsync(request.PostId, cancellationToken);
+        var post = await _postRepository.GetByIdAsync(request.PostId, ct);
         if (post is null)
         {
             return Result.Failure<Guid>(DomainErrors.Post.NotFound(request.PostId));
@@ -55,7 +55,7 @@ public class AddCommentCommandHandler : ICommandHandler<AddCommentCommand, Guid>
         _commentRepository.Add(comment);
         
 
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        await _unitOfWork.SaveChangesAsync(ct);
 
         return comment.Id;
     }

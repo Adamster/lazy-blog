@@ -27,25 +27,25 @@ public class CommentsController : ApiController
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<IActionResult> GetCommentById(Guid id, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetCommentById(Guid id, CancellationToken ct)
     {
         var query = new GetCommentByIdQuery(id);
 
-        var response = await Sender.Send(query, cancellationToken);
+        var response = await Sender.Send(query, ct);
 
         return response.IsSuccess ? Ok(response.Value) : NotFound(response.Error);
     }
 
     [HttpPost]
     public async Task<IActionResult> AddComment([FromBody]AddCommentRequest request, 
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
         var command = new AddCommentCommand(
             request.PostId,
             request.UserId,
             request.Body);
 
-        var result = await Sender.Send(command, cancellationToken);
+        var result = await Sender.Send(command, ct);
 
         if (result.IsFailure)
         {
@@ -59,14 +59,14 @@ public class CommentsController : ApiController
     }
 
     [HttpPut]
-    public async Task<IActionResult> UpdateComment([FromBody] UpdateCommentRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> UpdateComment([FromBody] UpdateCommentRequest request, CancellationToken ct)
     {
         var command = new UpdateCommentCommand(
             request.UserId,
             request.CommentId,
             request.Body);
 
-        Result result = await Sender.Send(command, cancellationToken);
+        Result result = await Sender.Send(command, ct);
 
         if (result.IsFailure)
         {
@@ -79,11 +79,11 @@ public class CommentsController : ApiController
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> DeleteComment(Guid id, CancellationToken cancellationToken)
+    public async Task<IActionResult> DeleteComment(Guid id, CancellationToken ct)
     {
         var command = new DeleteCommentCommand(id);
 
-        Result result = await Sender.Send(command, cancellationToken);
+        Result result = await Sender.Send(command, ct);
 
         if (result.IsFailure)
         {

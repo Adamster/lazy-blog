@@ -29,7 +29,7 @@ public class LoginCommandHandler : ICommandHandler<LoginCommand, LoginResponse>
 
     public async Task<Result<LoginResponse>> Handle(
         LoginCommand request, 
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
         Result<Email> email = Email.Create(request.Email);
         if (email.IsFailure)
@@ -38,7 +38,7 @@ public class LoginCommandHandler : ICommandHandler<LoginCommand, LoginResponse>
         }
         User? user = await _userRepository.GetByEmailAsync(
             email.Value, 
-            cancellationToken);
+            ct);
 
         if (user is null)
         {

@@ -12,22 +12,22 @@ public class UserRepository : IUserRepository
     public UserRepository(LazyBlogDbContext dbContext) => 
         _dbContext = dbContext;
 
-    public async Task<User?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default) => 
+    public async Task<User?> GetByIdAsync(Guid id, CancellationToken ct = default) => 
         await _dbContext
             .Set<User>()
             .AsNoTracking()
-            .FirstOrDefaultAsync(user => user.Id == id, cancellationToken);
+            .FirstOrDefaultAsync(user => user.Id == id, ct);
 
-    public async Task<User?> GetByEmailAsync(Email email, CancellationToken cancellationToken = default) =>
+    public async Task<User?> GetByEmailAsync(Email email, CancellationToken ct = default) =>
         await _dbContext
             .Set<User>()
             .AsNoTracking()
-            .FirstOrDefaultAsync(user => user.Email == email, cancellationToken);
+            .FirstOrDefaultAsync(user => user.Email == email, ct);
 
-    public async Task<bool> IsEmailUniqueAsync(Email email, CancellationToken cancellationToken = default) =>
+    public async Task<bool> IsEmailUniqueAsync(Email email, CancellationToken ct = default) =>
         !await _dbContext.Set<User>()
             .AsNoTracking()
-            .AnyAsync(user => user.Email == email, cancellationToken);
+            .AnyAsync(user => user.Email == email, ct);
 
     public void Add(User user) =>
         _dbContext.Set<User>().Add(user);
@@ -35,10 +35,10 @@ public class UserRepository : IUserRepository
     public void Update(User user) =>
         _dbContext.Set<User>().Update(user);
 
-    public async Task<User?> GetByUsernameAsync(UserName userName, CancellationToken cancellationToken) =>
+    public async Task<User?> GetByUsernameAsync(UserName userName, CancellationToken ct) =>
         await _dbContext
             .Set<User>()
             .AsNoTracking()
-            .FirstOrDefaultAsync(user => user.UserName == userName, cancellationToken);
+            .FirstOrDefaultAsync(user => user.UserName == userName, ct);
 
 }

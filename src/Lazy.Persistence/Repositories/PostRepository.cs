@@ -15,20 +15,20 @@ public class PostRepository : IPostRepository
     public PostRepository(LazyBlogDbContext dbContext) =>
         _dbContext = dbContext;
 
-    public async Task<Post?> GetByIdAsync(Guid postId, CancellationToken cancellationToken) =>
+    public async Task<Post?> GetByIdAsync(Guid postId, CancellationToken ct) =>
         await _dbContext
             .Set<Post>()
             .Include(x => x.Tags)
-            .FirstOrDefaultAsync(post => post.Id == postId, cancellationToken);
+            .FirstOrDefaultAsync(post => post.Id == postId, ct);
 
-    public async Task<Post?> GetBySlugAsync(Slug slug, CancellationToken cancellationToken) =>
+    public async Task<Post?> GetBySlugAsync(Slug slug, CancellationToken ct) =>
         await _dbContext
             .Set<Post>()
             .Include(p => p.User)
             .AsNoTracking()
-            .FirstOrDefaultAsync(post => post.Slug == slug, cancellationToken);
+            .FirstOrDefaultAsync(post => post.Slug == slug, ct);
 
-    public async Task<IList<Post>> GetPostsAsync(int offset, CancellationToken cancellationToken)
+    public async Task<IList<Post>> GetPostsAsync(int offset, CancellationToken ct)
     {
         List<Post> posts = await _dbContext.Set<Post>()
             .Where(p => p.IsPublished)
@@ -40,12 +40,12 @@ public class PostRepository : IPostRepository
             .ThenInclude(u => u.PostVotes)
             .Include(x => x.Comments)
             .Include(x => x.Tags)
-            .ToListAsync(cancellationToken);
+            .ToListAsync(ct);
 
         return posts;
     }
 
-    public async Task<IList<Post>> GetPostsByTagAsync(Tag tag, CancellationToken cancellationToken)
+    public async Task<IList<Post>> GetPostsByTagAsync(Tag tag, CancellationToken ct)
     {
         List<Post> posts = await _dbContext.Set<Post>()
             .AsNoTracking()
@@ -56,7 +56,7 @@ public class PostRepository : IPostRepository
             .Include(x => x.User)
             .ThenInclude(u => u.PostVotes)
             .Include(x => x.Comments)
-            .ToListAsync(cancellationToken);
+            .ToListAsync(ct);
 
         return posts;
     }
@@ -67,7 +67,7 @@ public class PostRepository : IPostRepository
     public void Update(Post post) =>
         _dbContext.Set<Post>().Update(post);
 
-    public async Task<IList<Post>> GetPostsByUserIdAsync(Guid userId, int offset, CancellationToken cancellationToken)
+    public async Task<IList<Post>> GetPostsByUserIdAsync(Guid userId, int offset, CancellationToken ct)
     {
         List<Post> posts = await _dbContext.Set<Post>()
             .Where(p => p.UserId == userId)
@@ -78,12 +78,12 @@ public class PostRepository : IPostRepository
             .Include(x => x.User)
             .ThenInclude(u => u.PostVotes)
             .Include(x => x.Comments)
-            .ToListAsync(cancellationToken);
+            .ToListAsync(ct);
 
         return posts;
     }
 
-    public async Task<IList<Post>> GetPostsByUserNameAsync(UserName userName, int offset, CancellationToken cancellationToken)
+    public async Task<IList<Post>> GetPostsByUserNameAsync(UserName userName, int offset, CancellationToken ct)
     {
         List<Post> posts = await _dbContext.Set<Post>()
             .Where(p => p.User.UserName == userName)
@@ -93,7 +93,7 @@ public class PostRepository : IPostRepository
             .AsNoTracking()
             .Include(x => x.User)
             .Include(x => x.Comments)
-            .ToListAsync(cancellationToken);
+            .ToListAsync(ct);
 
         return posts;   
     }

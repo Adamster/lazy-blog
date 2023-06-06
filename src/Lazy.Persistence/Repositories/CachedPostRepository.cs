@@ -22,7 +22,7 @@ public class CachedPostRepository : IPostRepository
         _memoryCache = memoryCache;
     }
 
-    public Task<Post?> GetByIdAsync(Guid postId, CancellationToken cancellationToken)
+    public Task<Post?> GetByIdAsync(Guid postId, CancellationToken ct)
     {
         string key = $"post-{postId}";
 
@@ -33,11 +33,11 @@ public class CachedPostRepository : IPostRepository
             entry =>
             {
                 entry.SetAbsoluteExpiration(TimeSpan.FromMinutes(2));
-                return _postRepository.GetByIdAsync(postId, cancellationToken);
+                return _postRepository.GetByIdAsync(postId, ct);
             });
     }
 
-    public Task<Post?> GetBySlugAsync(Slug slug, CancellationToken cancellationToken)
+    public Task<Post?> GetBySlugAsync(Slug slug, CancellationToken ct)
     {
         string key = $"post-{slug.Value}";
 
@@ -48,11 +48,11 @@ public class CachedPostRepository : IPostRepository
             entry =>
             {
                 entry.SetAbsoluteExpiration(TimeSpan.FromMinutes(2));
-                return _postRepository.GetBySlugAsync(slug, cancellationToken);
+                return _postRepository.GetBySlugAsync(slug, ct);
             });
     }
 
-    public Task<IList<Post>> GetPostsAsync(int offset, CancellationToken cancellationToken)
+    public Task<IList<Post>> GetPostsAsync(int offset, CancellationToken ct)
     {
         string key = $"posts-{offset}";
 
@@ -63,11 +63,11 @@ public class CachedPostRepository : IPostRepository
             entry =>
             {
                 entry.SetAbsoluteExpiration(TimeSpan.FromMinutes(2));
-                return  _postRepository.GetPostsAsync(offset, cancellationToken);
+                return  _postRepository.GetPostsAsync(offset, ct);
             })!;
     }
 
-    public Task<IList<Post>> GetPostsByTagAsync(Tag tag, CancellationToken cancellationToken)
+    public Task<IList<Post>> GetPostsByTagAsync(Tag tag, CancellationToken ct)
     {
         string key = $"posts-{tag.Value}";
 
@@ -78,7 +78,7 @@ public class CachedPostRepository : IPostRepository
             entry =>
             {
                 entry.SetAbsoluteExpiration(TimeSpan.FromMinutes(2));
-                return _postRepository.GetPostsByTagAsync(tag, cancellationToken);
+                return _postRepository.GetPostsByTagAsync(tag, ct);
             })!;
     }
 
@@ -100,7 +100,7 @@ public class CachedPostRepository : IPostRepository
         _postRepository.Delete(post);
     } 
 
-    public Task<IList<Post>> GetPostsByUserIdAsync(Guid userId, int offset, CancellationToken cancellationToken)
+    public Task<IList<Post>> GetPostsByUserIdAsync(Guid userId, int offset, CancellationToken ct)
     {
         string key = $"posts-{userId}/{offset}";
 
@@ -111,11 +111,11 @@ public class CachedPostRepository : IPostRepository
             entry =>
             {
                 entry.SetAbsoluteExpiration(TimeSpan.FromMinutes(2));
-                return _postRepository.GetPostsByUserIdAsync(userId, offset, cancellationToken);
+                return _postRepository.GetPostsByUserIdAsync(userId, offset, ct);
             })!;
     }
 
-    public Task<IList<Post>> GetPostsByUserNameAsync(UserName userName, int offset, CancellationToken cancellationToken)
+    public Task<IList<Post>> GetPostsByUserNameAsync(UserName userName, int offset, CancellationToken ct)
     {
         string key = $"posts-user-{userName.Value}-{offset}";
 
@@ -126,7 +126,7 @@ public class CachedPostRepository : IPostRepository
             entry =>
             {
                 entry.SetAbsoluteExpiration(TimeSpan.FromMinutes(2));
-                return _postRepository.GetPostsByUserNameAsync(userName, offset, cancellationToken);
+                return _postRepository.GetPostsByUserNameAsync(userName, offset, ct);
             })!;
     }
 

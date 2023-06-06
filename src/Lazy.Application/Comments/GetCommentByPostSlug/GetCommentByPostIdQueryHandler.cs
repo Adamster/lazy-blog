@@ -21,9 +21,9 @@ public class GetCommentByPostIdQueryHandler : IQueryHandler<GetCommentByPostIdQu
         _commentRepository = commentRepository;
     }
 
-    public async Task<Result<List<CommentResponse>>> Handle(GetCommentByPostIdQuery request, CancellationToken cancellationToken)
+    public async Task<Result<List<CommentResponse>>> Handle(GetCommentByPostIdQuery request, CancellationToken ct)
     {
-        var post = await _postRepository.GetByIdAsync(request.PostId, cancellationToken);
+        var post = await _postRepository.GetByIdAsync(request.PostId, ct);
 
         if (post is null)
         {
@@ -31,7 +31,7 @@ public class GetCommentByPostIdQueryHandler : IQueryHandler<GetCommentByPostIdQu
         }
 
         var tmpAvatarUrl = "https://metro.co.uk/wp-content/uploads/2015/06/ad_174020392-e1487698550420.jpg";
-        List<Comment> comments = await _commentRepository.GetAllAsync(post.Id, cancellationToken);
+        List<Comment> comments = await _commentRepository.GetAllAsync(post.Id, ct);
 
         List<CommentResponse> response = 
             comments.Select(

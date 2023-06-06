@@ -16,11 +16,11 @@ internal sealed class UnitOfWork : IUnitOfWork
         _dbContext = dbContext;
     }
 
-    public Task SaveChangesAsync(CancellationToken cancellationToken = default)
+    public Task SaveChangesAsync(CancellationToken ct = default)
     {
         UpdateAuditableEntities();
 
-        return _dbContext.SaveChangesAsync(cancellationToken);
+        return _dbContext.SaveChangesAsync(ct);
     }
 
     public IDbTransaction BeginTransaction()

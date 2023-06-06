@@ -28,9 +28,9 @@ public class UpdatePostCommandHandler : ICommandHandler<UpdatePostCommand>
         _tagRepository = tagRepository;
     }
 
-    public async Task<Result> Handle(UpdatePostCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(UpdatePostCommand request, CancellationToken ct)
     {
-        var post = await _postRepository.GetByIdAsync(request.Id, cancellationToken);
+        var post = await _postRepository.GetByIdAsync(request.Id, ct);
 
         if (post is null)
         {
@@ -57,7 +57,7 @@ public class UpdatePostCommandHandler : ICommandHandler<UpdatePostCommand>
                 .ToList();
             
             updatedTags =
-                await _tagRepository.GetTagByIdsAsync(tagIds, cancellationToken);
+                await _tagRepository.GetTagByIdsAsync(tagIds, ct);
 
             var tagsToCreate = request.Tags
                 .Where(x => x.TagId == Guid.Empty)
@@ -79,7 +79,7 @@ public class UpdatePostCommandHandler : ICommandHandler<UpdatePostCommand>
 
         _postRepository.Update(post);
 
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        await _unitOfWork.SaveChangesAsync(ct);
 
         return Result.Success();
     }

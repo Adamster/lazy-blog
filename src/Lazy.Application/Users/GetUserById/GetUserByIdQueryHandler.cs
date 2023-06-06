@@ -15,11 +15,11 @@ internal sealed class GetUserByIdQueryHandler : IQueryHandler<GetUserByIdQuery, 
 
     public async Task<Result<UserResponse>> Handle(
         GetUserByIdQuery request,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
         var user = await _userRepository.GetByIdAsync(
             request.UserId,
-            cancellationToken);
+            ct);
 
         if (user is null)
         {

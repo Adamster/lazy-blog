@@ -14,9 +14,9 @@ public class SearchTagQueryHandler : IQueryHandler<SearchTagQuery, List<TagRespo
         _tagRepository = tagRepository;
     }
 
-    public async Task<Result<List<TagResponse>>> Handle(SearchTagQuery request, CancellationToken cancellationToken)
+    public async Task<Result<List<TagResponse>>> Handle(SearchTagQuery request, CancellationToken ct)
     {
-        List<Tag> result = await _tagRepository.SearchTagAsync(request.SearchTerm, cancellationToken);
+        List<Tag> result = await _tagRepository.SearchTagAsync(request.SearchTerm, ct);
 
         if (!result.Any())
         {

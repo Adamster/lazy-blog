@@ -23,9 +23,9 @@ public class PublishPostCommandHandler : ICommandHandler<PublishPostCommand>
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<Result> Handle(PublishPostCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(PublishPostCommand request, CancellationToken ct)
     {
-        var post = await _postRepository.GetByIdAsync(request.Id, cancellationToken);
+        var post = await _postRepository.GetByIdAsync(request.Id, ct);
 
         if (post is null)
         {
@@ -38,7 +38,7 @@ public class PublishPostCommandHandler : ICommandHandler<PublishPostCommand>
         }
 
         post.Publish();
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        await _unitOfWork.SaveChangesAsync(ct);
         return Result.Success();
     }
 }

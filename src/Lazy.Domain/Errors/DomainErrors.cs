@@ -156,6 +156,26 @@ public static class DomainErrors
             "Last name is too long");
     }
 
+    public static class Avatar
+    {
+        public static readonly Error NotSupportedExtension = new(
+            "Avatar.TypeNotSupported",
+            "This file type isn't supported");
+
+        public static readonly Error NotValidUrl = new(
+            "Avatar.NotValidUrl",
+            "This string isn't a valid url");
+
+        public static readonly Error EmptyUrl = new(
+            "Avatar.EmptyUrl",
+            "Avatar url is empty");
+
+        public static readonly Error EmptyFileName = new(
+            "Avatar.EmptyFileName",
+            "Avatar file name is empty");
+
+    }
+
     public static class Comment    
     {
         public static readonly Func<Guid, Error> NotFound = id => new Error(

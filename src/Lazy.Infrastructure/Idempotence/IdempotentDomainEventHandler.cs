@@ -20,7 +20,7 @@ where TDomainEvent : IDomainEvent
     }
 
 
-    public Task Handle(TDomainEvent notification, CancellationToken cancellationToken)
+    public Task Handle(TDomainEvent notification, CancellationToken ct)
     {
         throw new NotImplementedException();
     }

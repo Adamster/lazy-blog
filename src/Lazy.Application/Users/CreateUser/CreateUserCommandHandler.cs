@@ -29,7 +29,7 @@ internal sealed class CreateUserCommandHandler : ICommandHandler<CreateUserComma
         _logger = logger;
     }
 
-    public async Task<Result<Guid>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
+    public async Task<Result<Guid>> Handle(CreateUserCommand request, CancellationToken ct)
     {
         Result<Email> emailResult = Email.Create(request.Email);
 
@@ -42,12 +42,12 @@ internal sealed class CreateUserCommandHandler : ICommandHandler<CreateUserComma
         Result<LastName> lastNameResult = LastName.Create(request.LastName);
         Result<UserName> userNameResult = UserName.Create(request.UserName);
 
-        if (!await _userRepository.IsEmailUniqueAsync(emailResult.Value, cancellationToken))
+        if (!await _userRepository.IsEmailUniqueAsync(emailResult.Value, ct))
         {
             return Result.Failure<Guid>(DomainErrors.User.EmailAlreadyInUse);
         }
 
-        if (await _userRepository.GetByUsernameAsync(userNameResult.Value, cancellationToken) is not null)
+        if (await _userRepository.GetByUsernameAsync(userNameResult.Value, ct) is not null)
         {
             return Result.Failure<Guid>(DomainErrors.UserName.UserNameAlreadyInUse);
         }
@@ -69,7 +69,7 @@ internal sealed class CreateUserCommandHandler : ICommandHandler<CreateUserComma
 
         _logger.LogInformation($"New user with email {user.Email} registered");
 
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        await _unitOfWork.SaveChangesAsync(ct);
         return user.Id;
     }
 

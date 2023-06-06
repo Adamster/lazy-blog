@@ -21,10 +21,10 @@ public class GetPostByUserNameQueryHandler : IQueryHandler<GetPostByUserNameQuer
         _userRepository = userRepository;
     }
 
-    public async Task<Result<UserPostResponse>> Handle(GetPostByUserNameQuery request, CancellationToken cancellationToken)
+    public async Task<Result<UserPostResponse>> Handle(GetPostByUserNameQuery request, CancellationToken ct)
     {
         var userNameResult = UserName.Create(request.UserName);
-        var user = await _userRepository.GetByUsernameAsync(userNameResult.Value, cancellationToken);
+        var user = await _userRepository.GetByUsernameAsync(userNameResult.Value, ct);
 
         if (user is null)
         {
@@ -33,7 +33,7 @@ public class GetPostByUserNameQueryHandler : IQueryHandler<GetPostByUserNameQuer
                 $"The user with Username {request.UserName} was not found."));
         }
 
-        var posts = await _postRepository.GetPostsByUserNameAsync(userNameResult.Value, request.Offset, cancellationToken);
+        var posts = await _postRepository.GetPostsByUserNameAsync(userNameResult.Value, request.Offset, ct);
 
         List<UserPostItem> postsDetails = posts
             .Select(p =>
