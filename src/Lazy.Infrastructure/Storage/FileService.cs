@@ -61,13 +61,6 @@ public class FileService : IFileService
 
     private BlobServiceClient GetBlobServiceClient()
     {
-#if !DEBUG
-        BlobServiceClient client = new(
-            new Uri($"https://{_options.AccountName}.blob.core.windows.net"),
-            new DefaultAzureCredential());
-
-        return client;
-#endif
         //TODO use keys approach for local development
         BlobServiceClient client = new(
             new Uri($"https://{_options.AccountName}.blob.core.windows.net"),
