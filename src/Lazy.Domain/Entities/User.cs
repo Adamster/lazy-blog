@@ -11,7 +11,7 @@ public sealed class User : IdentityUser<Guid>, IAuditableEntity
     private readonly List<Post> _posts = new();
     private readonly List<Comment> _comments = new();
     private readonly List<UserClaim> _claims = new();
-    private readonly List<UserLogin> _logins = new ();
+    private readonly List<UserLogin> _logins = new();
     private readonly List<UserToken> _tokens = new();
     private readonly List<UserRole> _userRoles = new();
     private readonly List<PostVote> _postVotes = new();
@@ -39,7 +39,7 @@ public sealed class User : IdentityUser<Guid>, IAuditableEntity
 
     public LastName LastName { get; set; } = null!;
 
-    public Avatar? Avatar {get; private set; }
+    public Avatar? Avatar { get; private set; }
 
     public IReadOnlyCollection<Post> Posts => _posts;
     public IReadOnlyCollection<Comment> Comments => _comments;
@@ -67,8 +67,8 @@ public sealed class User : IdentityUser<Guid>, IAuditableEntity
     {
         var user = new User(
             id,
-            email, 
-            firstName, 
+            email,
+            firstName,
             lastName,
             userName);
 

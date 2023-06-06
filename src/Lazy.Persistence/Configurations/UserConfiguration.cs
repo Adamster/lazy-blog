@@ -43,6 +43,12 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
             .HasConversion(x => x.Value, v => UserName.Create(v).Value)
             .HasMaxLength(UserName.MaxLength);
 
+        builder.OwnsOne(p => p.Avatar, avatarBuilder =>
+        {
+            avatarBuilder.Property(x => x.Url).HasMaxLength(Avatar.MaxUrlLength);
+            avatarBuilder.Property(x => x.Filename).HasMaxLength(Avatar.MaxFilenameLength);
+        });
+
         builder
             .HasMany(u => u.Posts)
             .WithOne(p => p.User)
