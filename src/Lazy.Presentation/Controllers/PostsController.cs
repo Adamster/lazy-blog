@@ -39,11 +39,11 @@ public class PostsController : ApiController
     [HttpGet("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Result<PostResponse>))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetPostById(Guid id, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetPostById(Guid id, CancellationToken ct)
     {
         var query = new GetPostByIdQuery(id);
 
-        Result<PostResponse> response = await Sender.Send(query, cancellationToken);
+        Result<PostResponse> response = await Sender.Send(query, ct);
 
         return response.IsSuccess ? Ok(response.Value) : NotFound(response.Error);
     }
@@ -52,10 +52,10 @@ public class PostsController : ApiController
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Result<List<PublishedPostResponse>>))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetPosts(int offset, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetPosts(int offset, CancellationToken ct)
     {
         var query = new GetPublishedPostsQuery(offset);
-        Result<List<PublishedPostResponse>> result = await Sender.Send(query, cancellationToken);
+        Result<List<PublishedPostResponse>> result = await Sender.Send(query, ct);
 
         if (result.IsFailure)
         {
@@ -69,10 +69,10 @@ public class PostsController : ApiController
     [HttpGet("t/{tag}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Result<List<PublishedPostResponse>>))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetPosts(string tag, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetPosts(string tag, CancellationToken ct)
     {
         var query = new GetPostByTagQuery(tag);
-        Result<List<PublishedPostResponse>> result = await Sender.Send(query, cancellationToken);
+        Result<List<PublishedPostResponse>> result = await Sender.Send(query, ct);
 
         if (result.IsFailure)
         {
@@ -86,11 +86,11 @@ public class PostsController : ApiController
     [HttpGet("{slug}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Result<PostDetailedResponse>))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetPostBySlug(string slug, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetPostBySlug(string slug, CancellationToken ct)
     {
         var query = new GetPostBySlugQuery(slug);
 
-        Result<PostDetailedResponse> response = await Sender.Send(query, cancellationToken);
+        Result<PostDetailedResponse> response = await Sender.Send(query, ct);
 
         return response.IsSuccess ? Ok(response.Value) : NotFound(response.Error);
     }
@@ -99,11 +99,11 @@ public class PostsController : ApiController
     [HttpGet("{id:guid}/comments")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Result<List<CommentResponse>>))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetCommentForPostBySlug(Guid id, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetCommentForPostBySlug(Guid id, CancellationToken ct)
     {
         var query = new GetCommentByPostIdQuery(id);
 
-        Result<List<CommentResponse>> response = await Sender.Send(query, cancellationToken);
+        Result<List<CommentResponse>> response = await Sender.Send(query, ct);
 
         return response.IsSuccess ? Ok(response.Value) : NotFound(response.Error);
     }
@@ -115,11 +115,11 @@ public class PostsController : ApiController
     public async Task<IActionResult> GetPostByUserName(
         string userName,
         [FromQuery]int offset,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
         var query = new GetPostByUserNameQuery(userName, offset);
 
-        Result<UserPostResponse> response = await Sender.Send(query, cancellationToken);
+        Result<UserPostResponse> response = await Sender.Send(query, ct);
 
         return response.IsSuccess ? Ok(response.Value) : NotFound(response.Error);
 
@@ -130,7 +130,7 @@ public class PostsController : ApiController
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> CreatePost(
         [FromBody]CreatePostRequest request, 
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
         var command = new CreatePostCommand(
             request.Title,
@@ -141,7 +141,7 @@ public class PostsController : ApiController
             request.CoverUrl,
             request.UserId);
 
-        Result<PostCreatedResponse> result = await Sender.Send(command, cancellationToken);
+        Result<PostCreatedResponse> result = await Sender.Send(command, ct);
 
         if (result.IsFailure)
         {
@@ -160,7 +160,7 @@ public class PostsController : ApiController
     public async Task<IActionResult> UpdatePost(
         Guid id,
         [FromBody] UpdatePostRequest request, 
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
         var command = new UpdatePostCommand(
             id,
@@ -172,7 +172,7 @@ public class PostsController : ApiController
             request.Tags,
             request.IsPublished);
 
-        Result result = await Sender.Send(command, cancellationToken);
+        Result result = await Sender.Send(command, ct);
 
         if (result.IsFailure)
         {
@@ -185,11 +185,11 @@ public class PostsController : ApiController
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> DeletePost(Guid id, CancellationToken cancellationToken)
+    public async Task<IActionResult> DeletePost(Guid id, CancellationToken ct)
     {
         var command = new DeletePostCommand(id);
 
-        Result result = await Sender.Send(command, cancellationToken);
+        Result result = await Sender.Send(command, ct);
 
         if (result.IsFailure)
         {
@@ -203,11 +203,11 @@ public class PostsController : ApiController
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> AddView(Guid id, CancellationToken cancellationToken)
+    public async Task<IActionResult> AddView(Guid id, CancellationToken ct)
     {
         var command = new AddPostViewCommand(id);
 
-        Result result = await Sender.Send(command, cancellationToken);
+        Result result = await Sender.Send(command, ct);
 
         if (result.IsFailure)
         {
@@ -223,11 +223,11 @@ public class PostsController : ApiController
     
     public async Task<IActionResult> VotePost(Guid id,
         VoteDirection direction, 
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
         var command = new AddPostVoteCommand(id, direction);
 
-        var result = await Sender.Send(command, cancellationToken);
+        var result = await Sender.Send(command, ct);
 
         if (result.IsFailure)
         {
@@ -238,10 +238,10 @@ public class PostsController : ApiController
     }
 
     [HttpPut("{id:guid}/publish")]
-    public async Task<IActionResult> PublishPost(Guid id, CancellationToken cancellationToken)
+    public async Task<IActionResult> PublishPost(Guid id, CancellationToken ct)
     {
         var command = new PublishPostCommand(id);
-        var result = await Sender.Send(command, cancellationToken);
+        var result = await Sender.Send(command, ct);
 
         if (result.IsFailure)
         {
@@ -252,11 +252,11 @@ public class PostsController : ApiController
     }
 
     [HttpPut("{id:guid}/hide")]
-    public async Task<IActionResult> HidePost(Guid id, CancellationToken cancellationToken)
+    public async Task<IActionResult> HidePost(Guid id, CancellationToken ct)
     {
         var command = new HidePostCommand(id);
 
-        var result = await Sender.Send(command, cancellationToken);
+        var result = await Sender.Send(command, ct);
 
         if (result.IsFailure)
         {

@@ -10,7 +10,7 @@ public interface ICommentRepository
 
     void Delete(Comment comment);
 
-    Task<Comment?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<Comment?> GetByIdAsync(Guid id, CancellationToken ct = default);
 
-    Task<List<Comment>> GetAllAsync(Guid postId, CancellationToken cancellationToken = default);
+    Task<List<Comment>> GetAllAsync(Guid postId, CancellationToken ct = default);
 }

@@ -17,17 +17,17 @@ public class UpdateUserCommandHandler : ICommandHandler<UpdateUserCommand>
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<Result> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(UpdateUserCommand request, CancellationToken ct)
     {
         var userNameResult = UserName.Create(request.Username);
-        var user = await _userRepository.GetByIdAsync(request.Id, cancellationToken);
+        var user = await _userRepository.GetByIdAsync(request.Id, ct);
 
         if (user == null)
         {
             return Result.Failure(DomainErrors.User.NotFound(request.Id));
         }
 
-        if (await _userRepository.GetByUsernameAsync(userNameResult.Value, cancellationToken) is not null)
+        if (await _userRepository.GetByUsernameAsync(userNameResult.Value, ct) is not null)
         {
             return Result.Failure(DomainErrors.UserName.UserNameAlreadyInUse);
         }
@@ -42,7 +42,7 @@ public class UpdateUserCommandHandler : ICommandHandler<UpdateUserCommand>
 
         _userRepository.Update(user);
 
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        await _unitOfWork.SaveChangesAsync(ct);
 
         return Result.Success();
     }

@@ -22,11 +22,11 @@ public class TagsController : ApiController
     [HttpGet("{searchTerm}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Result<List<TagResponse>>))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> SearchTag(string searchTerm, CancellationToken cancellationToken)
+    public async Task<IActionResult> SearchTag(string searchTerm, CancellationToken ct)
     {
         var query = new SearchTagQuery(searchTerm);
 
-        Result<List<TagResponse>> response = await Sender.Send(query, cancellationToken);
+        Result<List<TagResponse>> response = await Sender.Send(query, ct);
 
         return response.IsFailure ? HandleFailure(response) : Ok(response.Value);
     }
@@ -38,11 +38,11 @@ public class TagsController : ApiController
     public async Task<IActionResult> UpdateTag(
         Guid id, 
         string tag,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
         var command = new UpdateTagCommand(id, tag);
 
-        Result result = await Sender.Send(command, cancellationToken);
+        Result result = await Sender.Send(command, ct);
 
         return result.IsFailure ? HandleFailure(result) : NoContent();
     }

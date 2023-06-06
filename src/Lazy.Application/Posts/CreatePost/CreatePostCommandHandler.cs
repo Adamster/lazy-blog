@@ -27,14 +27,14 @@ internal sealed class CreatePostCommandHandler : ICommandHandler<CreatePostComma
         _tagRepository = tagRepository;
     }
 
-    public async Task<Result<PostCreatedResponse>> Handle(CreatePostCommand request, CancellationToken cancellationToken)
+    public async Task<Result<PostCreatedResponse>> Handle(CreatePostCommand request, CancellationToken ct)
     {
         Result<Title> titleResult = Title.Create(request.Title);
         Result<Summary> summaryResult = Summary.Create(request.Summary);
         Result<Body> bodyResult = Body.Create(request.Body);
         List<Tag> tags = CreateTags(request.Tags);
 
-        if (await _userRepository.GetByIdAsync(request.UserId, cancellationToken) is null)
+        if (await _userRepository.GetByIdAsync(request.UserId, ct) is null)
         {
             return Result.Failure<PostCreatedResponse>(DomainErrors.User.NotFound(request.UserId));
         }
@@ -43,7 +43,7 @@ internal sealed class CreatePostCommandHandler : ICommandHandler<CreatePostComma
 
         Guid postId = Guid.NewGuid();
 
-        if (await _postRepository.GetBySlugAsync(slugResult.Value, cancellationToken) is not null)
+        if (await _postRepository.GetBySlugAsync(slugResult.Value, ct) is not null)
         {
             slugResult = Slug.Create($"{postId.ToByteArray().GetHashCode()}-{slugResult.Value.Value}");
         }
@@ -61,7 +61,7 @@ internal sealed class CreatePostCommandHandler : ICommandHandler<CreatePostComma
 
         _postRepository.Add(post);
 
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        await _unitOfWork.SaveChangesAsync(ct);
 
         return new PostCreatedResponse(post.Id, post.Slug.Value);
     }

@@ -18,7 +18,7 @@ public class GetPostBySlugHandler : IQueryHandler<GetPostBySlugQuery, PostDetail
         _postRepository = postRepository;
     }
 
-    public async Task<Result<PostDetailedResponse>> Handle(GetPostBySlugQuery request, CancellationToken cancellationToken)
+    public async Task<Result<PostDetailedResponse>> Handle(GetPostBySlugQuery request, CancellationToken ct)
     {
         var slugResult = Slug.Create(request.Slug);
 
@@ -27,7 +27,7 @@ public class GetPostBySlugHandler : IQueryHandler<GetPostBySlugQuery, PostDetail
             return Result.Failure<PostDetailedResponse>(slugResult.Error);
         }
 
-        Post? post = await _postRepository.GetBySlugAsync(slugResult.Value, cancellationToken);
+        Post? post = await _postRepository.GetBySlugAsync(slugResult.Value, ct);
 
         if (post is null)
         {

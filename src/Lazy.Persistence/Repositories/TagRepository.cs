@@ -13,12 +13,12 @@ public class TagRepository : ITagRepository
         _dbContext = dbContext;
     }
 
-    public Task<List<Tag>> SearchTagAsync(string searchTerm, CancellationToken cancellationToken)
+    public Task<List<Tag>> SearchTagAsync(string searchTerm, CancellationToken ct)
     {
         return _dbContext.Set<Tag>()
             .AsNoTracking()
             .Where(x => x.Value.Contains(searchTerm))
-            .ToListAsync(cancellationToken);
+            .ToListAsync(ct);
     }
 
     public Tag? GetTagByValue(string tagValue) =>
@@ -34,12 +34,12 @@ public class TagRepository : ITagRepository
             .FirstOrDefault(t => t.Id == tagId);
     }
 
-    public async Task<List<Tag>> GetTagByIdsAsync(IEnumerable<Guid> tagIds, CancellationToken cancellationToken)
+    public async Task<List<Tag>> GetTagByIdsAsync(IEnumerable<Guid> tagIds, CancellationToken ct)
     {
         return await _dbContext.Set<Tag>()
             .AsNoTracking()
             .Where(t => tagIds.Any(id => id == t.Id))
-            .ToListAsync(cancellationToken);
+            .ToListAsync(ct);
     }
 
     public void Update(Tag tag)

@@ -15,9 +15,9 @@ public class GetPublishedPostsQueryHandler : IQueryHandler<GetPublishedPostsQuer
         _postRepository = postRepository;
     }
 
-    public async Task<Result<List<PublishedPostResponse>>> Handle(GetPublishedPostsQuery request, CancellationToken cancellationToken)
+    public async Task<Result<List<PublishedPostResponse>>> Handle(GetPublishedPostsQuery request, CancellationToken ct)
     {
-        var posts = await _postRepository.GetPostsAsync(request.Offset, cancellationToken);
+        var posts = await _postRepository.GetPostsAsync(request.Offset, ct);
 
         List<PublishedPostResponse> response = posts
             .Select(p =>

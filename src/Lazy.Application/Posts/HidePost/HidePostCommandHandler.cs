@@ -19,9 +19,9 @@ public class HidePostCommandHandler : ICommandHandler<HidePostCommand>
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<Result> Handle(HidePostCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(HidePostCommand request, CancellationToken ct)
     {
-        var post = await _postRepository.GetByIdAsync(request.Id, cancellationToken);
+        var post = await _postRepository.GetByIdAsync(request.Id, ct);
 
         if (post is null)
         {
@@ -34,7 +34,7 @@ public class HidePostCommandHandler : ICommandHandler<HidePostCommand>
         }
 
         post.Hide();
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        await _unitOfWork.SaveChangesAsync(ct);
         return Result.Success();
     }
 }

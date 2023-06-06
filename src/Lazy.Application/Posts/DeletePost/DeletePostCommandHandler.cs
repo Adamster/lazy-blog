@@ -22,9 +22,9 @@ public class DeletePostCommandHandler : ICommandHandler<DeletePostCommand>
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<Result> Handle(DeletePostCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(DeletePostCommand request, CancellationToken ct)
     {
-        var post = await _postRepository.GetByIdAsync(request.PostId, cancellationToken);
+        var post = await _postRepository.GetByIdAsync(request.PostId, ct);
 
         if (post is null)
         {
@@ -37,7 +37,7 @@ public class DeletePostCommandHandler : ICommandHandler<DeletePostCommand>
         }
 
         _postRepository.Delete(post);
-       await _unitOfWork.SaveChangesAsync(cancellationToken);
+       await _unitOfWork.SaveChangesAsync(ct);
 
        return Result.Success();
     }

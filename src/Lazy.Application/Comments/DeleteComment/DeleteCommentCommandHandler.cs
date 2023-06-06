@@ -22,9 +22,9 @@ public sealed class DeleteCommentCommandHandler : ICommandHandler<DeleteCommentC
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<Result> Handle(DeleteCommentCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(DeleteCommentCommand request, CancellationToken ct)
     {
-        var comment = await _commentRepository.GetByIdAsync(request.Id, cancellationToken);
+        var comment = await _commentRepository.GetByIdAsync(request.Id, ct);
 
         if (comment is null)
         {
@@ -37,7 +37,7 @@ public sealed class DeleteCommentCommandHandler : ICommandHandler<DeleteCommentC
         }
 
         _commentRepository.Delete(comment);
-         await _unitOfWork.SaveChangesAsync(cancellationToken);
+         await _unitOfWork.SaveChangesAsync(ct);
 
          return Result.Success();
     }

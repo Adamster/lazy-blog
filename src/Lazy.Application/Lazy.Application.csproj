@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Abstractions\File\" />
     <Folder Include="Comments\GetCommentById\" />
     <Folder Include="Comments\UpdateComment\" />
     <Folder Include="Posts\GetPostById\" />
@@ -35,6 +36,7 @@
     <Folder Include="Tags\UpdateTag\" />
     <Folder Include="Users\CreateUser\" />
     <Folder Include="Users\Login\" />
+    <Folder Include="Users\UploadUserAvatar\" />
     <Folder Include="Users\UpdateUser\" />
   </ItemGroup>
 
