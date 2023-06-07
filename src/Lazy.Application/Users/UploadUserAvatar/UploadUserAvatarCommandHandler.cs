@@ -43,6 +43,7 @@ public class UploadUserAvatarCommandHandler : ICommandHandler<UploadUserAvatarCo
 
         user.SetAvatar(newAvatarResult.Value);
 
+        _userRepository.Update(user);
         await _unitOfWork.SaveChangesAsync(ct);
 
         return Result.Success();

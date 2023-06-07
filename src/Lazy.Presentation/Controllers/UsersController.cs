@@ -50,6 +50,9 @@ public class UsersController : ApiController
     }
 
     [HttpPost("{id:guid}/avatar")]
+    [Consumes("multipart/form-data")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> UploadAvatar(
         [FromRoute] Guid id,
         [FromForm] IFormFile file, 
