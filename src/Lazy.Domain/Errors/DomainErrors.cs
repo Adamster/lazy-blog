@@ -178,6 +178,9 @@ public static class DomainErrors
             "Avatar.UploadFailed",
             "Avatar upload failed, please try again later");
 
+        public static readonly Error ImageFileSizeTooLarge = new(
+            "Avatar.ImageFileSizeTooLarge",
+            "Avatar file size is too large");
     }
 
     public static class Comment    

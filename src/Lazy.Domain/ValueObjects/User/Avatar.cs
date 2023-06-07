@@ -35,7 +35,7 @@ public class Avatar : ValueObject
     public string Filename { get; private set; } = null!;
     public string Url { get; private set; } = null!;
 
-    public static Result<Avatar> Create(string fileName, string url)
+    public static Result<Avatar> Create(string fileName, string url, long fileSizeInBytes, bool ignoreUrlCheck = false)
     {
         var fileExtension = Path.GetExtension(fileName)
             .ToLowerInvariant();
@@ -50,14 +50,19 @@ public class Avatar : ValueObject
             return Result.Failure<Avatar>(DomainErrors.Avatar.NotSupportedExtension);
         }
 
-        if (string.IsNullOrEmpty(url))
+        if (fileSizeInBytes > MaxSizeInBytes)
+        {
+            return Result.Failure<Avatar>(DomainErrors.Avatar.ImageFileSizeTooLarge);
+        }
+
+        if (string.IsNullOrEmpty(url) && !ignoreUrlCheck)
         {
             return Result.Failure<Avatar>(DomainErrors.Avatar.EmptyUrl);
         }
 
         var isValidUrl = Uri.TryCreate(url, UriKind.RelativeOrAbsolute, out _);
 
-        if (!isValidUrl)
+        if (!isValidUrl && !ignoreUrlCheck)
         {
             return Result.Failure<Avatar>(DomainErrors.Avatar.NotValidUrl);
         }

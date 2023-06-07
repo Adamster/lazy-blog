@@ -54,9 +54,12 @@ public class FileService : IFileService
         }
     }
 
-    public Task DeleteAsync(string fileName, CancellationToken ct)
+    public async Task DeleteAsync(string fileName, CancellationToken ct)
     {
-        throw new NotImplementedException();
+        var blobServiceClient = GetBlobServiceClient();
+        var blobContainerClient = blobServiceClient.GetBlobContainerClient(_options.ImageContainerName);
+
+        await blobContainerClient.DeleteBlobIfExistsAsync(fileName, cancellationToken: ct);
     }
 
     private BlobServiceClient GetBlobServiceClient()
