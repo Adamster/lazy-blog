@@ -20,7 +20,7 @@ using AssemblyReference = Lazy.Infrastructure.AssemblyReference;
 string lazyCorsPolicyName = "lazy-blog";
 var today = DateTime.Today;
 Log.Logger = new LoggerConfiguration()
-    .MinimumLevel.Debug()
+    .MinimumLevel.Information()
     .WriteTo.Console()
     .WriteTo.File($"Logs\\{today.Year}\\{today.Month}\\{today.Day}\\Logs.log")
     .CreateLogger();
