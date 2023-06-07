@@ -6,6 +6,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Scrutor;
 using FluentValidation;
+using Lazy.App.Extensions;
 using Lazy.App.OptionsSetup;
 using Lazy.Application.Abstractions.Authorization;
 using Lazy.Domain.Entities;
@@ -72,7 +73,8 @@ try
         .AddControllers()
         .AddApplicationPart(Lazy.Presentation.AssemblyReference.Assembly);
 
-    builder.Services.AddSwaggerGen();
+
+    builder.Services.AddSwaggerAuthConfiguration();
 
     builder.Services.AddCors(o => o.AddPolicy(lazyCorsPolicyName, policyBuilder =>
     {

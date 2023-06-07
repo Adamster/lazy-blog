@@ -52,7 +52,7 @@ public class UsersController : ApiController
     [HttpPost("{id:guid}/avatar")]
     public async Task<IActionResult> UploadAvatar(
         [FromRoute] Guid id,
-        [FromBody] IFormFile file, 
+        [FromForm] IFormFile file, 
         CancellationToken ct)
     {
         var command = new UploadUserAvatarCommand(id, file);
