@@ -29,38 +29,25 @@ public class AddPostVoteCommandHandler : ICommandHandler<AddPostVoteCommand>
         _userRepository = userRepository;
     }
 
-    public async Task<Result> Handle(AddPostVoteCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(AddPostVoteCommand request, CancellationToken ct)
     {
-        var post = await _postRepository.GetByIdAsync(request.PostId, cancellationToken);
-
-        if (post is null)
-        {
-            return Result.Failure(DomainErrors.Post.NotFound(request.PostId));
-        }
-
         Guid currentUserId = _currentUserContext.GetCurrentUserId();
-        User? user = await _userRepository.GetByIdAsync(currentUserId, cancellationToken);
-        
-        if (user is null)
-        {
-            return Result.Failure(DomainErrors.User.NotFound(currentUserId));
-        }
         
         PostVote? postVote = await _postVoteRepository
             .GetPostVoteForUserIdAsync(
                 currentUserId,
                 request.PostId, 
-                cancellationToken);
+                ct);
 
         if (postVote is not null)
         {
             if (postVote.VoteDirection != request.Direction)
             {
-                post.Vote(request.Direction);
-                _postRepository.Update(post);
+                postVote.Post.Vote(request.Direction);
+                _postRepository.Update(postVote.Post);
                 _postVoteRepository.Delete(postVote);
 
-                await _unitOfWork.SaveChangesAsync(cancellationToken);
+                await _unitOfWork.SaveChangesAsync(ct);
                 return Result.Success();
             }
 
@@ -74,11 +61,25 @@ public class AddPostVoteCommandHandler : ICommandHandler<AddPostVoteCommand>
         }
         else
         {
+            var post = await _postRepository.GetByIdAsync(request.PostId, ct);
+
+            if (post is null)
+            {
+                return Result.Failure(DomainErrors.Post.NotFound(request.PostId));
+            }
+
+            User? user = await _userRepository.GetByIdAsync(currentUserId, ct);
+
+            if (user is null)
+            {
+                return Result.Failure(DomainErrors.User.NotFound(currentUserId));
+            }
+
             PostVote newPostVote = PostVote.Create(post, user, request.Direction);
             _postVoteRepository.Add(newPostVote);
         }
 
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        await _unitOfWork.SaveChangesAsync(ct);
         return Result.Success();
 
     }

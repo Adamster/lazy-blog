@@ -22,7 +22,7 @@ public class GetPostByTagQueryHandler : IQueryHandler<GetPostByTagQuery,List<Pub
     }
 
 
-    public async Task<Result<List<PublishedPostResponse>>> Handle(GetPostByTagQuery request, CancellationToken cancellationToken)
+    public async Task<Result<List<PublishedPostResponse>>> Handle(GetPostByTagQuery request, CancellationToken ct)
     {
         Tag? tag = _tagRepository.GetTagByValue(request.Tag);
         if (tag is null)
@@ -30,7 +30,7 @@ public class GetPostByTagQueryHandler : IQueryHandler<GetPostByTagQuery,List<Pub
             return Result.Failure<List<PublishedPostResponse>>(DomainErrors.Tag.NotFound(request.Tag));
         }
 
-        IList<Post> posts = await _postRepository.GetPostsByTagAsync(tag, cancellationToken);
+        IList<Post> posts = await _postRepository.GetPostsByTagAsync(tag, ct);
 
         var response = posts
             .Select(p =>
@@ -39,8 +39,7 @@ public class GetPostByTagQueryHandler : IQueryHandler<GetPostByTagQuery,List<Pub
                     p.Title.Value,
                     p.Summary?.Value,
                     p.Slug.Value,
-                    new UserResponse(p.UserId, p.User.Email.Value, p.User.FirstName.Value, p.User.LastName.Value,
-                        p.User.UserName.Value, p.User.CreatedOnUtc),
+                    new UserResponse(p.User),
                     p.Views,
                     p.Comments.Count,
                     p.Rating,

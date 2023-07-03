@@ -20,20 +20,21 @@ public class CommentRepository : ICommentRepository
     public void Delete(Comment comment) =>
         _dbContext.Set<Comment>().Remove(comment);
 
-    public async Task<Comment?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default) =>
+    public async Task<Comment?> GetByIdAsync(Guid id, CancellationToken ct = default) =>
         await _dbContext
             .Set<Comment>()
+            .AsNoTracking()
             .Include(x => x.User)
-            .FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
+            .FirstOrDefaultAsync(c => c.Id == id, ct);
     
-    public async Task<List<Comment>> GetAllAsync(Guid postId, CancellationToken cancellationToken = default)
+    public async Task<List<Comment>> GetAllAsync(Guid postId, CancellationToken ct = default)
     {
         List<Comment> comments = await _dbContext.Set<Comment>()
             .OrderByDescending(x => x.CreatedOnUtc)
             .Where(c => c.PostId == postId)
             .Include(x => x.User)
             .AsNoTracking()
-            .ToListAsync(cancellationToken);
+            .ToListAsync(ct);
 
         return comments;
     }

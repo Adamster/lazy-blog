@@ -20,7 +20,7 @@ using AssemblyReference = Lazy.Infrastructure.AssemblyReference;
 string lazyCorsPolicyName = "lazy-blog";
 var today = DateTime.Today;
 Log.Logger = new LoggerConfiguration()
-    .MinimumLevel.Debug()
+    .MinimumLevel.Information()
     .WriteTo.Console()
     .WriteTo.File($"Logs\\{today.Year}\\{today.Month}\\{today.Day}\\Logs.log")
     .CreateLogger();
@@ -61,11 +61,7 @@ try
     builder.Services.AddSingleton<UpdateAuditableEntitiesInterceptor>();
     builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
     builder.Services.AddSingleton<ICurrentUserContext, CurrentUserContext>();
-    builder.Services.AddMemoryCache();
     
-    builder.Services.AddScoped<PostRepository>();
-    builder.Services.AddScoped<IPostRepository, CachedPostRepository>();
-
     builder.Services.AddDbContext<LazyBlogDbContext>(
         (sp, optionsBuilder) => { optionsBuilder.UseSqlServer(connectionString); });
 
@@ -93,6 +89,7 @@ try
 
     builder.Services.ConfigureOptions<JwtOptionsSetup>();
     builder.Services.ConfigureOptions<JwtBearerOptionsSetup>();
+    builder.Services.ConfigureOptions<AzureBlobStorageOptionsSetup>();
 
     var app = builder.Build();
 

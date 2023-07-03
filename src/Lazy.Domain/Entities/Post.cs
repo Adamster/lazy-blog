@@ -100,7 +100,7 @@ public sealed class Post : AggregateRoot, IAuditableEntity
         Body body,
         Slug slug, 
         string? coverUrl,
-        List<Tag> tags,
+        List<Tag>? tags,
         bool isPublished)
     {
         Title = title;
@@ -109,9 +109,12 @@ public sealed class Post : AggregateRoot, IAuditableEntity
         Slug = slug;
         CoverUrl = coverUrl ?? string.Empty;
         IsPublished = isPublished;
-
-        _tags.Clear();
-        _tags.AddRange(tags);
+        
+        if (tags is not null)
+        {
+            _tags.Clear();
+            _tags.AddRange(tags);
+        }
     }
 
     private void UpVote()

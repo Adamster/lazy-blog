@@ -1,4 +1,5 @@
 ﻿using Lazy.Application.Abstractions.Messaging;
+using Lazy.Application.Tags.SearchTag;
 using Lazy.Application.Users.GetUserById;
 using Lazy.Domain.Entities;
 using Lazy.Domain.Errors;
@@ -17,7 +18,7 @@ public class GetPostBySlugHandler : IQueryHandler<GetPostBySlugQuery, PostDetail
         _postRepository = postRepository;
     }
 
-    public async Task<Result<PostDetailedResponse>> Handle(GetPostBySlugQuery request, CancellationToken cancellationToken)
+    public async Task<Result<PostDetailedResponse>> Handle(GetPostBySlugQuery request, CancellationToken ct)
     {
         var slugResult = Slug.Create(request.Slug);
 
@@ -26,7 +27,7 @@ public class GetPostBySlugHandler : IQueryHandler<GetPostBySlugQuery, PostDetail
             return Result.Failure<PostDetailedResponse>(slugResult.Error);
         }
 
-        Post? post = await _postRepository.GetBySlugAsync(slugResult.Value, cancellationToken);
+        Post? post = await _postRepository.GetBySlugAsync(slugResult.Value, ct);
 
         if (post is null)
         {
@@ -43,6 +44,7 @@ public class GetPostBySlugHandler : IQueryHandler<GetPostBySlugQuery, PostDetail
             post.Slug.Value,
             post.Body.Value,
             post.CoverUrl,
+            post.Tags.Select(t => new TagResponse(t.Id, t.Value)).ToList(),
             post.Rating,
             post.Views,
             post.CreatedOnUtc

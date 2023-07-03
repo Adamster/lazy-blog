@@ -21,13 +21,14 @@ public class PostVoteRepository : IPostVoteRepository
     public async Task<PostVote?> GetPostVoteForUserIdAsync(
         Guid userId, 
         Guid postId,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
         return await _dbContext.Set<PostVote>()
+            .AsNoTracking()
             .Where(pv => pv.PostId == postId)
             .Include(pv => pv.Post)
             .Include(pv => pv.User)
-            .SingleOrDefaultAsync(p => p.UserId == userId, cancellationToken);
+            .SingleOrDefaultAsync(p => p.UserId == userId, ct);
     }
 
     public void Update(PostVote vote) =>

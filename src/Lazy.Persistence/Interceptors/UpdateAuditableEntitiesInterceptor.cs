@@ -8,7 +8,7 @@ namespace Lazy.Persistence.Interceptors;
 public class UpdateAuditableEntitiesInterceptor : SaveChangesInterceptor
 {
     public override ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData, InterceptionResult<int> result,
-        CancellationToken cancellationToken = new CancellationToken())
+        CancellationToken ct = new CancellationToken())
     {
         DbContext? dbContext = eventData.Context;
 
@@ -17,7 +17,7 @@ public class UpdateAuditableEntitiesInterceptor : SaveChangesInterceptor
             return base.SavingChangesAsync(
                 eventData,
                 result,
-                cancellationToken);
+                ct);
         }
 
         IEnumerable<EntityEntry<IAuditableEntity>> entries = 
@@ -38,6 +38,6 @@ public class UpdateAuditableEntitiesInterceptor : SaveChangesInterceptor
             }
         }
         
-        return base.SavingChangesAsync(eventData, result, cancellationToken);
+        return base.SavingChangesAsync(eventData, result, ct);
     }
 }

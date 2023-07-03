@@ -16,10 +16,10 @@ public class GetByUserNameQueryHandler : IQueryHandler<CheckIfUserNameIsUnique, 
         _userRepository = userRepository;
     }
 
-    public async Task<Result<bool>> Handle(CheckIfUserNameIsUnique request, CancellationToken cancellationToken)
+    public async Task<Result<bool>> Handle(CheckIfUserNameIsUnique request, CancellationToken ct)
     {
         var userNameResult = UserName.Create(request.Username);
-        var user = await _userRepository.GetByUsernameAsync(userNameResult.Value, cancellationToken);
+        var user = await _userRepository.GetByUsernameAsync(userNameResult.Value, ct);
 
         if (user is not null)
         {

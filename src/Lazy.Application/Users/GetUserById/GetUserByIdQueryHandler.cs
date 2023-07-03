@@ -15,11 +15,11 @@ internal sealed class GetUserByIdQueryHandler : IQueryHandler<GetUserByIdQuery, 
 
     public async Task<Result<UserResponse>> Handle(
         GetUserByIdQuery request,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
         var user = await _userRepository.GetByIdAsync(
             request.UserId,
-            cancellationToken);
+            ct);
 
         if (user is null)
         {
@@ -28,14 +28,7 @@ internal sealed class GetUserByIdQueryHandler : IQueryHandler<GetUserByIdQuery, 
                 $"The author with Id {request.UserId} was not found."));
         }
 
-        var response = new UserResponse(
-            user.Id,
-            user.Email.Value,
-            user.FirstName.Value, 
-            user.LastName.Value,
-            user.UserName.Value, 
-            user.CreatedOnUtc);
-
+        var response = new UserResponse(user);
         return response;
     }
 }

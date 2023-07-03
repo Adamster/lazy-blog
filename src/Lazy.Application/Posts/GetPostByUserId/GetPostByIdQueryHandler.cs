@@ -1,6 +1,7 @@
 ﻿using Lazy.Application.Abstractions.Messaging;
 using Lazy.Application.Posts.GetPublishedPosts;
 using Lazy.Application.Users.GetUserById;
+using Lazy.Domain.Entities;
 using Lazy.Domain.Repositories;
 using Lazy.Domain.Shared;
 
@@ -19,9 +20,9 @@ public class GetPostByIdQueryHandler : IQueryHandler<GetPostByUserIdQuery, UserP
         _userRepository = userRepository;
     }
 
-    public async Task<Result<UserPostResponse>> Handle(GetPostByUserIdQuery request, CancellationToken cancellationToken)
+    public async Task<Result<UserPostResponse>> Handle(GetPostByUserIdQuery request, CancellationToken ct)
     {
-        var user = await _userRepository.GetByIdAsync(request.UserId, cancellationToken);
+        User? user = await _userRepository.GetByIdAsync(request.UserId, ct);
 
         if (user is null)
         {
@@ -31,7 +32,7 @@ public class GetPostByIdQueryHandler : IQueryHandler<GetPostByUserIdQuery, UserP
         }
 
         var posts = await _postRepository
-           .GetPostsByUserIdAsync(request.UserId, request.Offset, cancellationToken);
+           .GetPostsByUserIdAsync(request.UserId, request.Offset, ct);
 
         var postDetails = posts
             .Select(p =>

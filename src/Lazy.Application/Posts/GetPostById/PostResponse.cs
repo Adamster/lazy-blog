@@ -1,4 +1,6 @@
-﻿namespace Lazy.Application.Posts.GetPostById;
+﻿using Lazy.Application.Tags.SearchTag;
+
+namespace Lazy.Application.Posts.GetPostById;
 
 public record PostResponse(
     Guid Id,
@@ -6,4 +8,5 @@ public record PostResponse(
     string? Summary,
     string Body,
     string Slug,
+    IList<TagResponse> Tags,
     string? CoverUrl);

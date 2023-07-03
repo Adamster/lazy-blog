@@ -28,9 +28,9 @@ public class UpdatePostCommandHandler : ICommandHandler<UpdatePostCommand>
         _tagRepository = tagRepository;
     }
 
-    public async Task<Result> Handle(UpdatePostCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(UpdatePostCommand request, CancellationToken ct)
     {
-        var post = await _postRepository.GetByIdAsync(request.Id, cancellationToken);
+        var post = await _postRepository.GetByIdAsync(request.Id, ct);
 
         if (post is null)
         {
@@ -47,21 +47,26 @@ public class UpdatePostCommandHandler : ICommandHandler<UpdatePostCommand>
         Result<Body> bodyResult = Body.Create(request.Body);
         Result<Slug> slugResult = Slug.Create(request.Slug);
 
-        List<Guid> tagIds = request.Tags
-            .Where(x => x.TagId != Guid.Empty)
-            .Select(x => x.TagId)
-            .ToList();
+        List<Tag>? updatedTags = null;
 
-        List<Tag> updatedTags =
-           await _tagRepository.GetTagByIdsAsync(tagIds, cancellationToken);
+        if (request.Tags is not null)
+        {
+            List<Guid> tagIds = request.Tags
+                .Where(x => x.TagId != Guid.Empty)
+                .Select(x => x.TagId)
+                .ToList();
+            
+            updatedTags =
+                await _tagRepository.GetTagByIdsAsync(tagIds, ct);
 
-        var tagsToCreate = request.Tags
-            .Where(x => x.TagId == Guid.Empty)
-            .ToList();
+            var tagsToCreate = request.Tags
+                .Where(x => x.TagId == Guid.Empty)
+                .ToList();
 
-        List<Tag> newTags = CreateTags(tagsToCreate);
+            List<Tag> newTags = CreateTags(tagsToCreate);
 
-        updatedTags.AddRange(newTags);
+            updatedTags.AddRange(newTags);
+        }
 
         post.Update(
             titleResult.Value,
@@ -74,7 +79,7 @@ public class UpdatePostCommandHandler : ICommandHandler<UpdatePostCommand>
 
         _postRepository.Update(post);
 
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        await _unitOfWork.SaveChangesAsync(ct);
 
         return Result.Success();
     }

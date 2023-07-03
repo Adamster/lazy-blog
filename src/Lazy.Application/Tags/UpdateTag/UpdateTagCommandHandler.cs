@@ -19,7 +19,7 @@ public class UpdateTagCommandHandler : ICommandHandler<UpdateTagCommand>
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<Result> Handle(UpdateTagCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(UpdateTagCommand request, CancellationToken ct)
     {
         var tag = _tagRepository.GetTagById(request.Id);
         if (tag is null)
@@ -30,8 +30,8 @@ public class UpdateTagCommandHandler : ICommandHandler<UpdateTagCommand>
         var tagResult = Tag.Create(request.NewTagValue);
 
         tag.Update(tagResult.Value);
-
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        _tagRepository.Update(tag);
+        await _unitOfWork.SaveChangesAsync(ct);
 
         return Result.Success();
     }

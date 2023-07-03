@@ -16,8 +16,6 @@ public sealed class Comment : Entity, IAuditableEntity
     {
         PostId = post.Id;
         UserId = user.Id;
-        Post = post;
-        User = user;
         CommentText = commentText;
     }
 

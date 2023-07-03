@@ -1,4 +1,5 @@
 ﻿using Lazy.Application.Abstractions.Messaging;
+using Lazy.Application.Tags.SearchTag;
 using Lazy.Domain.Entities;
 using Lazy.Domain.Repositories;
 using Lazy.Domain.Shared;
@@ -14,10 +15,10 @@ public class GetPostByIdQueryHandler : IQueryHandler<GetPostByIdQuery, PostRespo
         _postRepository = postRepository;
     }
 
-    public async Task<Result<PostResponse>> Handle(GetPostByIdQuery request, CancellationToken cancellationToken)
+    public async Task<Result<PostResponse>> Handle(GetPostByIdQuery request, CancellationToken ct)
     {
         Post? post = await _postRepository.GetByIdAsync(request.PostId,
-            cancellationToken);
+            ct);
 
         if (post is null)
         {
@@ -28,10 +29,11 @@ public class GetPostByIdQueryHandler : IQueryHandler<GetPostByIdQuery, PostRespo
 
         var response = new PostResponse(
             post.Id,
-            post.Title.Value, 
+            post.Title.Value,
             post.Summary?.Value,
             post.Body.Value,
             post.Slug.Value,
+            post.Tags.Select(t => new TagResponse(t.Id, t.Value)).ToList(),
             post.CoverUrl);
 
         return response;
