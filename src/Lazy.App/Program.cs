@@ -73,7 +73,6 @@ try
         .AddControllers()
         .AddApplicationPart(Lazy.Presentation.AssemblyReference.Assembly);
 
-
     builder.Services.AddSwaggerAuthConfiguration();
 
     builder.Services.AddCors(o => o.AddPolicy(lazyCorsPolicyName, policyBuilder =>

@@ -36,6 +36,7 @@
     <Folder Include="Tags\UpdateTag\" />
     <Folder Include="Users\CreateUser\" />
     <Folder Include="Users\Login\" />
+    <Folder Include="Users\RefreshToken\" />
     <Folder Include="Users\UploadUserAvatar\" />
     <Folder Include="Users\UpdateUser\" />
   </ItemGroup>

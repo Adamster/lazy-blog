@@ -4,6 +4,7 @@ using Lazy.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Lazy.Persistence.Migrations
 {
     [DbContext(typeof(LazyBlogDbContext))]
-    partial class LazyBlogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230522140137_UpdatedUserTokenAsRefreshToken")]
+    partial class UpdatedUserTokenAsRefreshToken
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -169,8 +172,8 @@ namespace Lazy.Persistence.Migrations
 
             modelBuilder.Entity("Lazy.Domain.Entities.Identity.UserToken", b =>
                 {
-                    b.Property<string>("Value")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("LoginProvider")
                         .HasColumnType("nvarchar(450)");
@@ -197,12 +200,10 @@ namespace Lazy.Persistence.Migrations
                     b.Property<DateTime?>("UpdatedOnUtc")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("Value")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Value", "LoginProvider", "Name");
-
-                    b.HasIndex("UserId");
+                    b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("Tokens", (string)null);
                 });
@@ -295,33 +296,6 @@ namespace Lazy.Persistence.Migrations
                     b.ToTable("PostVotes", (string)null);
                 });
 
-            modelBuilder.Entity("Lazy.Domain.Entities.Tag", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedOnUtc")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<DateTime?>("UpdatedOnUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Value")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Value")
-                        .IsUnique();
-
-                    b.ToTable("Tags", (string)null);
-                });
-
             modelBuilder.Entity("Lazy.Domain.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -410,21 +384,6 @@ namespace Lazy.Persistence.Migrations
                         .IsUnique();
 
                     b.ToTable("Users", (string)null);
-                });
-
-            modelBuilder.Entity("PostTag", b =>
-                {
-                    b.Property<Guid>("PostsId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("TagsId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("PostsId", "TagsId");
-
-                    b.HasIndex("TagsId");
-
-                    b.ToTable("PostTag");
                 });
 
             modelBuilder.Entity("Lazy.Domain.Entities.Comment", b =>
@@ -537,49 +496,6 @@ namespace Lazy.Persistence.Migrations
                     b.Navigation("Post");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Lazy.Domain.Entities.User", b =>
-                {
-                    b.OwnsOne("Lazy.Domain.ValueObjects.User.Avatar", "Avatar", b1 =>
-                        {
-                            b1.Property<Guid>("UserId")
-                                .HasColumnType("uniqueidentifier");
-
-                            b1.Property<string>("Filename")
-                                .IsRequired()
-                                .HasMaxLength(300)
-                                .HasColumnType("nvarchar(300)");
-
-                            b1.Property<string>("Url")
-                                .IsRequired()
-                                .HasMaxLength(600)
-                                .HasColumnType("nvarchar(600)");
-
-                            b1.HasKey("UserId");
-
-                            b1.ToTable("Users");
-
-                            b1.WithOwner()
-                                .HasForeignKey("UserId");
-                        });
-
-                    b.Navigation("Avatar");
-                });
-
-            modelBuilder.Entity("PostTag", b =>
-                {
-                    b.HasOne("Lazy.Domain.Entities.Post", null)
-                        .WithMany()
-                        .HasForeignKey("PostsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Lazy.Domain.Entities.Tag", null)
-                        .WithMany()
-                        .HasForeignKey("TagsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Lazy.Domain.Entities.Identity.Role", b =>
