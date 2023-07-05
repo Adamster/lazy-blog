@@ -56,9 +56,9 @@ public class LoginCommandHandler : ICommandHandler<LoginCommand, LoginResponse>
             return Result.Failure<LoginResponse>(DomainErrors.User.InvalidCredentials);
         }
 
-        TokenResponse tokenResponse = await _jwtProvider.GenerateAsync(user, cancellationToken);
+        TokenResponse tokenResponse = await _jwtProvider.GenerateAsync(user, ct);
 
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        await _unitOfWork.SaveChangesAsync(ct);
 
         return new LoginResponse(
             tokenResponse.AccessToken,
