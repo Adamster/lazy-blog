@@ -13,7 +13,7 @@ public class UserToken : IdentityUserToken<Guid>, IAuditableEntity
     {
         Value = Guid.NewGuid().ToString();
         JwtId = tokenId;
-        User = user;
+        UserId = user.Id;
         CreatedOnUtc = DateTime.UtcNow;
         ExpiryDate = DateTime.UtcNow.AddMonths(RefreshTokenLifeTimeInMonths);
         Name = LazyBlogToken;
@@ -23,6 +23,8 @@ public class UserToken : IdentityUserToken<Guid>, IAuditableEntity
     public UserToken()
     {
     }
+
+    public Guid UserId { get; set; }
 
     public virtual User User { get; set; }
 
