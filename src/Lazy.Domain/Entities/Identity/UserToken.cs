@@ -44,4 +44,9 @@ public class UserToken : IdentityUserToken<Guid>, IAuditableEntity
     {
         IsUsed = true;
     }
+
+    public void UpdateValue(string tokenId)
+    {
+        Value = tokenId;
+    }
 }
