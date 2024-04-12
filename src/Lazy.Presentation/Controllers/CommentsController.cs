@@ -85,6 +85,12 @@ public class CommentsController : ApiController
 
         Result result = await Sender.Send(command, ct);
 
-        return result.IsFailure ? HandleFailure(result) : NoContent();
+        if (result.IsFailure)
+        {
+            return HandleFailure(result);
+        }
+
+        return NoContent();
+
     }
 }

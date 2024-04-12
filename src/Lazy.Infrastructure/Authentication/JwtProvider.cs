@@ -55,20 +55,11 @@ public sealed class JwtProvider : IJwtProvider
         string tokenValue = new JwtSecurityTokenHandler()
             .WriteToken(token);
 
-        UserToken? existingToken = await _userTokenRepository.GetByUserIdAsync(user.Id, cancellationToken);
-        if (existingToken is null)
-        {
-            var userToken = new UserToken(token.Id, user);
+        var userToken = new UserToken(token.Id, user);
 
-            await _userTokenRepository.AddAsync(userToken, cancellationToken);
+        await _userTokenRepository.AddAsync(userToken, cancellationToken);
 
-            return new TokenResponse(tokenValue, userToken.Value!);
-        }
-
-        existingToken.UpdateValue(token.Id);
-        _userTokenRepository.Update(existingToken);
-
-        return new TokenResponse(tokenValue, existingToken.Value!);
+        return new TokenResponse(tokenValue, userToken.Value!);
     }
 
     public ClaimsPrincipal? GetPrincipalFromToken(string token)

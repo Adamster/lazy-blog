@@ -17,11 +17,6 @@ public class UserTokenRepository : IUserTokenRepository
         await _dbContext.Set<UserToken>()
             .SingleOrDefaultAsync(x => x.Value == requestRefreshToken, cancellationToken);
 
-    public async Task<UserToken?> GetByUserIdAsync(Guid userId, CancellationToken ct) =>
-        await _dbContext.Set<UserToken>()
-            .OrderByDescending(x => x.CreatedOnUtc)
-            .FirstOrDefaultAsync(x => x.UserId == userId, ct);
-
     public void Update(UserToken storedRefreshToken) 
         => _dbContext.Set<UserToken>().Update(storedRefreshToken);
 
