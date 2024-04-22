@@ -31,20 +31,8 @@ public class RefreshTokenCommandHandler : ICommandHandler<RefreshTokenCommand, L
 
     public async Task<Result<LoginResponse>> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
     {
-        var validatedToken = _jwtProvider.GetPrincipalFromToken(request.AccessToken);
-
-        if (validatedToken == null)
-        {
-            return Result.Failure<LoginResponse>(DomainErrors.UserToken.InvalidToken);
-        }
-
-        if (!_jwtProvider.IsTokenExpired(validatedToken))
-        {
-            return Result.Failure<LoginResponse>(DomainErrors.UserToken.AccessTokenNotExpired);
-        }
-
         UserToken? storedRefreshToken = await _userTokenRepository.GetByRefreshTokenAsync(request.RefreshToken, cancellationToken);
-        string accessTokenId = _jwtProvider.GetAccessTokenId(validatedToken);
+
         if (storedRefreshToken is null)
         {
             return Result.Failure<LoginResponse>(DomainErrors.UserToken.NotFound);
@@ -65,16 +53,11 @@ public class RefreshTokenCommandHandler : ICommandHandler<RefreshTokenCommand, L
             return Result.Failure<LoginResponse>(DomainErrors.UserToken.IsUsed);
         }
 
-        if (storedRefreshToken.JwtId != accessTokenId)
-        {
-            return Result.Failure<LoginResponse>(DomainErrors.UserToken.NotMatched);
-        }
-
         storedRefreshToken.UseToken();
         _userTokenRepository.Update(storedRefreshToken);
 
 
-        Guid userId = _jwtProvider.GetUserIdFromToken(validatedToken);
+        Guid userId = storedRefreshToken.UserId;
         var user = await _userRepository.GetByIdAsync(userId, cancellationToken);
         
         if (user is null)
