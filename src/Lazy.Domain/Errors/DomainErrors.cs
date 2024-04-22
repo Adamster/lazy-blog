@@ -212,7 +212,7 @@ public static class DomainErrors
 
         public static readonly Error ImageFileSizeTooLarge = new(
             "Avatar.ImageFileSizeTooLarge",
-            "Avatar file size is too large");
+            $"Avatar file size is too large. Maximum is 7mb");
     }
 
     public static class Comment    

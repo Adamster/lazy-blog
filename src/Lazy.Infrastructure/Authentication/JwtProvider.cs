@@ -93,7 +93,7 @@ public sealed class JwtProvider : IJwtProvider
         DateTime expiryDateTimeUtc = DateTimeOffset.FromUnixTimeSeconds(expiryDateUnix)
             .UtcDateTime;
 
-        return expiryDateTimeUtc > DateTime.UtcNow;
+        return expiryDateTimeUtc < DateTime.UtcNow;
     }
 
     public string GetAccessTokenId(ClaimsPrincipal validatedToken)
