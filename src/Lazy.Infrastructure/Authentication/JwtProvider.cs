@@ -17,7 +17,7 @@ public sealed class JwtProvider : IJwtProvider
     private readonly IUserTokenRepository _userTokenRepository;
     private readonly JwtOptions _options;
     private readonly JwtBearerOptions _jwtBearerOptions;
-    private const int TokenLifeTimeInMinutes = 10;
+    private const int TokenLifeTimeInMinutes = 30;
     
 
     public JwtProvider(IOptions<JwtOptions> options,
