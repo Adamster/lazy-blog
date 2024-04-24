@@ -1,4 +1,5 @@
-﻿using Lazy.Application.Abstractions.File;
+﻿using Lazy.Application.Abstractions.Authorization;
+using Lazy.Application.Abstractions.File;
 using Lazy.Application.Abstractions.Messaging;
 using Lazy.Domain.Errors;
 using Lazy.Domain.Repositories;
@@ -11,20 +12,29 @@ public class UploadUserAvatarCommandHandler : ICommandHandler<UploadUserAvatarCo
 {
     private readonly IFileService _fileService;
     private readonly IUserRepository _userRepository;
+    private readonly ICurrentUserContext _currentUserContext;
     private readonly IUnitOfWork _unitOfWork;
 
     public UploadUserAvatarCommandHandler(
         IFileService fileService,
         IUserRepository userRepository,
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork,
+        ICurrentUserContext currentUserContext)
     {
         _fileService = fileService;
         _userRepository = userRepository;
         _unitOfWork = unitOfWork;
+        _currentUserContext = currentUserContext;
     }
 
     public async Task<Result> Handle(UploadUserAvatarCommand request, CancellationToken ct)
     {
+
+        if (!_currentUserContext.IsCurrentUser(request.UserId))
+        {
+            return Result.Failure(DomainErrors.User.UnauthorizedUserUpdate);
+        }
+
         var user = await _userRepository.GetByIdAsync(request.UserId, ct);
         if (user is null)
         {

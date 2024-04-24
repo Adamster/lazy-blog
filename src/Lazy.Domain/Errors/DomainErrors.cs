@@ -11,7 +11,6 @@ public static class DomainErrors
             "User.EmailAlreadyInUse",
             "The specified email is already in use");
 
-
         public static readonly Func<Guid, Error> NotFound = id => new Error(
             "User.NotFound",
             $"The member with the identifier {id} was not found.");
@@ -19,6 +18,10 @@ public static class DomainErrors
         public static readonly Error InvalidCredentials = new(
             "User.InvalidCredentials",
             "The provided credentials are invalid");
+
+        public static readonly Error UnauthorizedUserUpdate = new(
+            "User.NotAuthorizedUpdate",
+            "User can be updated only by the owner");
     }
 
     public static class UserToken
