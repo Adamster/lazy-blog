@@ -93,6 +93,8 @@ try
 
     CreateDbIfNotExists(app);
 
+    app.UseResponseCaching();
+
 // Configure the HTTP request pipeline.
 
     app.UseSwagger();

@@ -52,6 +52,8 @@ public class PostsController : ApiController
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Result<List<PublishedPostResponse>>))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client)]
+
     public async Task<IActionResult> GetPosts(int offset, CancellationToken ct)
     {
         var query = new GetPublishedPostsQuery(offset);

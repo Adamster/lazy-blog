@@ -68,12 +68,7 @@ public class CommentsController : ApiController
 
         Result result = await Sender.Send(command, ct);
 
-        if (result.IsFailure)
-        {
-            return HandleFailure(result);
-        }
-
-        return NoContent();
+        return result.IsFailure ? HandleFailure(result) : NoContent();
     }
 
     [HttpDelete("{id:guid}")]
