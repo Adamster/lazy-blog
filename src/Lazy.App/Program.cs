@@ -1,7 +1,5 @@
 using Lazy.Application.Behaviors;
-using Lazy.Domain.Repositories;
 using Lazy.Persistence;
-using Lazy.Persistence.Repositories;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Scrutor;
@@ -30,7 +28,7 @@ try
     var builder = WebApplication.CreateBuilder(args);
     
     builder.Host.UseSerilog();
-    builder.Services.AddApplicationInsightsTelemetry();
+
     builder
         .Services
         .Scan(
