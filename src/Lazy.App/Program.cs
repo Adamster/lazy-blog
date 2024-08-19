@@ -1,7 +1,5 @@
 using Lazy.Application.Behaviors;
-using Lazy.Domain.Repositories;
 using Lazy.Persistence;
-using Lazy.Persistence.Repositories;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Scrutor;
