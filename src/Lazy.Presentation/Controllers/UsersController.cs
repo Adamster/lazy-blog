@@ -56,7 +56,7 @@ public class UsersController : ApiController
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> UploadAvatar(
         [FromRoute] Guid id,
-        [FromForm] IFormFile file, 
+        IFormFile file, 
         CancellationToken ct)
     {
         var command = new UploadUserAvatarCommand(id, file);

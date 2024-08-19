@@ -191,31 +191,31 @@ public static class DomainErrors
             "Last name is too long");
     }
 
-    public static class Avatar
+    public static class ImageMediaItem
     {
         public static readonly Error NotSupportedExtension = new(
-            "Avatar.TypeNotSupported",
+            "ImageMediaItem.TypeNotSupported",
             "This file type isn't supported");
 
         public static readonly Error NotValidUrl = new(
-            "Avatar.NotValidUrl",
+            "ImageMediaItem.NotValidUrl",
             "This string isn't a valid url");
 
         public static readonly Error EmptyUrl = new(
-            "Avatar.EmptyUrl",
-            "Avatar url is empty");
+            "ImageMediaItem.EmptyUrl",
+            "ImageMediaItem url is empty");
 
         public static readonly Error EmptyFileName = new(
-            "Avatar.EmptyFileName",
-            "Avatar file name is empty");
+            "ImageMediaItem.EmptyFileName",
+            "ImageMediaItem file name is empty");
 
         public static readonly Error UploadFailed = new(
-            "Avatar.UploadFailed",
-            "Avatar upload failed, please try again later");
+            "ImageMediaItem.UploadFailed",
+            "ImageMediaItem upload failed, please try again later");
 
         public static readonly Error ImageFileSizeTooLarge = new(
-            "Avatar.ImageFileSizeTooLarge",
-            $"Avatar file size is too large. Maximum is 7mb");
+            "ImageMediaItem.ImageFileSizeTooLarge",
+            $"ImageMediaItem file size is too large. Maximum is 7mb");
     }
 
     public static class Comment    

@@ -45,8 +45,8 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
 
         builder.OwnsOne(p => p.Avatar, avatarBuilder =>
         {
-            avatarBuilder.Property(x => x.Url).HasMaxLength(Avatar.MaxUrlLength);
-            avatarBuilder.Property(x => x.Filename).HasMaxLength(Avatar.MaxFilenameLength);
+            avatarBuilder.Property(x => x.Url).HasMaxLength(ImageMediaItem.MaxUrlLength);
+            avatarBuilder.Property(x => x.Filename).HasMaxLength(ImageMediaItem.MaxFilenameLength);
         });
 
         builder

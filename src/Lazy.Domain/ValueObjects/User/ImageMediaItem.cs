@@ -4,7 +4,7 @@ using Lazy.Domain.Shared;
 
 namespace Lazy.Domain.ValueObjects.User;
 
-public class Avatar : ValueObject
+public class ImageMediaItem : ValueObject
 {
     public const int MaxSizeInBytes = 7 * 1024 * 1024; //20 mb
     public const int MaxFilenameLength = 300;
@@ -22,11 +22,11 @@ public class Avatar : ValueObject
         ".apng"
     };
 
-    private Avatar()
+    private ImageMediaItem()
     {
     }
 
-    private Avatar(string filename, string url)
+    private ImageMediaItem(string filename, string url)
     {
         Filename = filename;
         Url = url;
@@ -35,39 +35,39 @@ public class Avatar : ValueObject
     public string Filename { get; private set; } = null!;
     public string Url { get; private set; } = null!;
 
-    public static Result<Avatar> Create(string fileName, string url, long fileSizeInBytes, bool ignoreUrlCheck = false)
+    public static Result<ImageMediaItem> Create(string fileName, string url, long fileSizeInBytes, bool ignoreUrlCheck = false)
     {
         var fileExtension = Path.GetExtension(fileName)
             .ToLowerInvariant();
 
         if (string.IsNullOrEmpty(fileName))
         {
-            return Result.Failure<Avatar>(DomainErrors.Avatar.EmptyFileName);
+            return Result.Failure<ImageMediaItem>(DomainErrors.ImageMediaItem.EmptyFileName);
         }
 
         if (!SupportedFileTypes.Contains(fileExtension))
         {
-            return Result.Failure<Avatar>(DomainErrors.Avatar.NotSupportedExtension);
+            return Result.Failure<ImageMediaItem>(DomainErrors.ImageMediaItem.NotSupportedExtension);
         }
 
         if (fileSizeInBytes > MaxSizeInBytes)
         {
-            return Result.Failure<Avatar>(DomainErrors.Avatar.ImageFileSizeTooLarge);
+            return Result.Failure<ImageMediaItem>(DomainErrors.ImageMediaItem.ImageFileSizeTooLarge);
         }
 
         if (string.IsNullOrEmpty(url) && !ignoreUrlCheck)
         {
-            return Result.Failure<Avatar>(DomainErrors.Avatar.EmptyUrl);
+            return Result.Failure<ImageMediaItem>(DomainErrors.ImageMediaItem.EmptyUrl);
         }
 
         var isValidUrl = Uri.TryCreate(url, UriKind.RelativeOrAbsolute, out _);
 
         if (!isValidUrl && !ignoreUrlCheck)
         {
-            return Result.Failure<Avatar>(DomainErrors.Avatar.NotValidUrl);
+            return Result.Failure<ImageMediaItem>(DomainErrors.ImageMediaItem.NotValidUrl);
         }
 
-        return new Avatar(fileName, url);
+        return new ImageMediaItem(fileName, url);
 
     }
 

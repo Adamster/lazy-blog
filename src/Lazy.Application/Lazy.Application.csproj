@@ -21,6 +21,7 @@
     <Folder Include="Abstractions\File\" />
     <Folder Include="Comments\GetCommentById\" />
     <Folder Include="Comments\UpdateComment\" />
+    <Folder Include="Media\CreateMedia\" />
     <Folder Include="Posts\GetPostById\" />
     <Folder Include="Posts\CreatePost\" />
     <Folder Include="Posts\GetPublishedPosts\" />
