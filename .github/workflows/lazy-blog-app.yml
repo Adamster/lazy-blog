@@ -8,24 +8,28 @@ env:
   AZURE_WEBAPP_PACKAGE_PATH: Lazy.App\published
   CONFIGURATION: Release
   DOTNET_CORE_VERSION: 8.0.x
-  WORKING_DIRECTORY: src/Lazy.App/
+  WORKING_DIRECTORY: src/Lazy.App
 jobs:
 
   build:
     runs-on: windows-latest
     steps:
+    - name: List current directory
+      run: ls
+    - name: Change working directory
+      run: cd "${{env.WORKING_DIRECTORY}}"
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: ${{ env.DOTNET_CORE_VERSION }}
     - name: Restore
-      run: dotnet restore "${{ env.WORKING_DIRECTORY }}"
+      run: dotnet restore
     - name: Build
-      run: dotnet build "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} --no-restore
+      run: dotnet build  --configuration ${{ env.CONFIGURATION }} --no-restore
     - name: Test
-      run: dotnet test "${{ env.WORKING_DIRECTORY }}" --no-build
+      run: dotnet test  --no-build
     - name: Publish
-      run: dotnet publish "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} --no-build --output "${{ env.AZURE_WEBAPP_PACKAGE_PATH }}"
+      run: dotnet publish --configuration ${{ env.CONFIGURATION }} --no-build --output "${{ env.AZURE_WEBAPP_PACKAGE_PATH }}"
     - name: Publish Artifacts
       uses: actions/upload-artifact@v1.0.0
       with:
