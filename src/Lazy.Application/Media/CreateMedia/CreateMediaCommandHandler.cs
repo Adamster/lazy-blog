@@ -36,7 +36,7 @@ public class CreateMediaCommandHandler : ICommandHandler<CreateMediaCommand, str
             return Result.Failure<string>(DomainErrors.User.NotFound(request.UserId));
         }
 
-        var mediaItemCandidate = ImageMediaItem.Create(request.File.FileName, string.Empty, request.File.Length, true);
+        var mediaItemCandidate = Avatar.Create(request.File.FileName, string.Empty, request.File.Length, true);
 
         if (mediaItemCandidate.IsFailure)
         {
@@ -47,10 +47,10 @@ public class CreateMediaCommandHandler : ICommandHandler<CreateMediaCommand, str
 
         if (uploadedUrl is null)
         {
-            return Result.Failure<string>(DomainErrors.ImageMediaItem.UploadFailed);
+            return Result.Failure<string>(DomainErrors.Avatar.UploadFailed);
         }
 
-        var mediaItemToUpload = ImageMediaItem.Create(
+        var mediaItemToUpload = Avatar.Create(
             request.File.FileName,
             uploadedUrl,
             request.File.Length);

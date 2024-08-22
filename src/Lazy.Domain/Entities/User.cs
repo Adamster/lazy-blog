@@ -39,7 +39,7 @@ public sealed class User : IdentityUser<Guid>, IAuditableEntity
 
     public LastName LastName { get; set; } = null!;
 
-    public ImageMediaItem? Avatar { get; private set; }
+    public Avatar? Avatar { get; private set; }
 
     public IReadOnlyCollection<Post> Posts => _posts;
     public IReadOnlyCollection<Comment> Comments => _comments;
@@ -82,8 +82,8 @@ public sealed class User : IdentityUser<Guid>, IAuditableEntity
         UserName = userName;
     }
 
-    public void SetAvatar(ImageMediaItem imageMediaItem)
+    public void SetAvatar(Avatar avatar)
     {
-        Avatar = imageMediaItem;
+        Avatar = avatar;
     }
 }

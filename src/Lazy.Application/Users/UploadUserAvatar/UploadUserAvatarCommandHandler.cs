@@ -41,7 +41,7 @@ public class UploadUserAvatarCommandHandler : ICommandHandler<UploadUserAvatarCo
             return Result.Failure(DomainErrors.User.NotFound(request.UserId));
         }
 
-        var avatarCheck = ImageMediaItem.Create(request.File.FileName, string.Empty, request.File.Length, true);
+        var avatarCheck = Avatar.Create(request.File.FileName, string.Empty, request.File.Length, true);
         if (avatarCheck.IsFailure)
         {
             return Result.Failure(avatarCheck.Error);
@@ -52,10 +52,10 @@ public class UploadUserAvatarCommandHandler : ICommandHandler<UploadUserAvatarCo
 
         if (uploadedUrl is null)
         {
-            return Result.Failure(DomainErrors.ImageMediaItem.UploadFailed);
+            return Result.Failure(DomainErrors.Avatar.UploadFailed);
         }
 
-        var newAvatarResult = ImageMediaItem.Create(request.File.FileName, uploadedUrl, request.File.Length);
+        var newAvatarResult = Avatar.Create(request.File.FileName, uploadedUrl, request.File.Length);
         if (newAvatarResult.IsFailure)
         {
             await _fileService.DeleteAsync(request.File.FileName, ct);
