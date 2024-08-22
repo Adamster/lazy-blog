@@ -3,8 +3,6 @@ using Lazy.Application.Abstractions.File;
 using Microsoft.AspNetCore.Http;
 using Azure.Identity;
 using Azure.Storage.Blobs;
-using Azure.Storage.Blobs.Models;
-using Azure.Storage.Blobs.Specialized;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -33,7 +31,7 @@ public class FileService : IFileService
             return null;
         }
 
-        BlobClient? blobClient = blobContainerClient.GetBlobClient($"{userName}/{file.FileName}");
+        BlobClient? blobClient = blobContainerClient.GetBlobClient($"{userName}/{Guid.NewGuid().ToString()}");
         if (blobClient is null)
         {
             _logger.LogError($"{nameof(blobClient)} is null, error creating blobClient for {file.FileName}");
