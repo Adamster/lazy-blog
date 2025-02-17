@@ -20,7 +20,7 @@ public class TagsController : ApiController
     }
 
     [HttpGet("{searchTerm}")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Result<List<TagResponse>>))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<TagResponse>))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> SearchTag(string searchTerm, CancellationToken ct)
     {

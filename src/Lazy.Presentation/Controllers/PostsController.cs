@@ -38,7 +38,7 @@ public class PostsController : ApiController
     
     [AllowAnonymous]
     [HttpGet("{id:guid}")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Result<PostResponse>))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PostResponse))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetPostById(Guid id, CancellationToken ct)
     {
@@ -51,7 +51,7 @@ public class PostsController : ApiController
 
     [AllowAnonymous]
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Result<List<PublishedPostResponse>>))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<PublishedPostResponse>))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client)]
 
@@ -70,7 +70,7 @@ public class PostsController : ApiController
 
     [AllowAnonymous]
     [HttpGet("t/{tag}")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Result<List<PublishedPostResponse>>))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<PublishedPostResponse>))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetPosts(string tag, CancellationToken ct)
     {
@@ -87,7 +87,7 @@ public class PostsController : ApiController
 
     [AllowAnonymous]
     [HttpGet("{slug}")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Result<PostDetailedResponse>))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PostDetailedResponse))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetPostBySlug(string slug, CancellationToken ct)
     {
@@ -100,7 +100,7 @@ public class PostsController : ApiController
 
     [AllowAnonymous]
     [HttpGet("{id:guid}/comments")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Result<List<CommentResponse>>))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<CommentResponse>))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetCommentForPostBySlug(Guid id, CancellationToken ct)
     {
@@ -113,7 +113,7 @@ public class PostsController : ApiController
 
     [AllowAnonymous]
     [HttpGet("{userName}/posts")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Result<UserPostResponse>))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserPostResponse))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetPostByUserName(
         string userName,
@@ -268,6 +268,4 @@ public class PostsController : ApiController
 
         return NoContent();
     }
-
-    
 }
