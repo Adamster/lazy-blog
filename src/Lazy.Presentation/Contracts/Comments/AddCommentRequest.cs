@@ -1,3 +1,8 @@
-﻿namespace Lazy.Presentation.Contracts.Comments;
+﻿using System.ComponentModel.DataAnnotations;
 
-public record AddCommentRequest(Guid PostId, Guid UserId, string Body);
+namespace Lazy.Presentation.Contracts.Comments;
+
+public record AddCommentRequest(
+    [Required] Guid PostId,
+    [Required] Guid UserId,
+    [Required] string Body);

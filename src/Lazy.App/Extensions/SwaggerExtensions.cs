@@ -9,6 +9,7 @@ public static class SwaggerExtensions
     {
         services.AddSwaggerGen(option =>
         {
+            option.SupportNonNullableReferenceTypes();
             option.SwaggerDoc("v1", new OpenApiInfo { Title = "LazyBlog API", Version = "v1" });
             option.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
             {

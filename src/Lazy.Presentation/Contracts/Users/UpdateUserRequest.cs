@@ -1,3 +1,8 @@
-﻿namespace Lazy.Presentation.Contracts.Users;
+﻿using System.ComponentModel.DataAnnotations;
 
-public record UpdateUserRequest(string FirstName, string LastName, string Username);
+namespace Lazy.Presentation.Contracts.Users;
+
+public record UpdateUserRequest(
+   [Required] string FirstName, 
+   [Required] string LastName,
+   [Required] string Username);

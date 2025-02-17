@@ -1,3 +1,6 @@
-﻿namespace Lazy.Presentation.Contracts.Users;
+﻿using System.ComponentModel.DataAnnotations;
 
-public sealed record RefreshTokenRequest(string RefreshToken);
+namespace Lazy.Presentation.Contracts.Users;
+
+public sealed record RefreshTokenRequest(
+    [Required] string RefreshToken);

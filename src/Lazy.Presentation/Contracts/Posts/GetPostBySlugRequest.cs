@@ -1,3 +1,5 @@
-﻿namespace Lazy.Presentation.Contracts.Posts;
+﻿using System.ComponentModel.DataAnnotations;
 
-public record GetPostBySlugRequest(string Slug);
+namespace Lazy.Presentation.Contracts.Posts;
+
+public record GetPostBySlugRequest([Required]string Slug);

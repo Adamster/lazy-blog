@@ -1,8 +1,10 @@
-﻿namespace Lazy.Presentation.Contracts.Users;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Lazy.Presentation.Contracts.Users;
 
 public sealed record RegisterUserRequest(
-    string Email,
-    string FirstName,
-    string LastName,
-    string UserName,
-    string Password);
+    [Required] string Email,
+    [Required] string FirstName,
+    [Required] string LastName,
+    [Required] string UserName,
+    [Required] string Password);
