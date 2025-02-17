@@ -71,7 +71,7 @@ try
         .AddControllers()
         .AddApplicationPart(Lazy.Presentation.AssemblyReference.Assembly);
 
-    builder.Services.AddSwaggerAuthConfiguration();
+    OpenApi.AddOpenApi(builder.Services);
 
     builder.Services.AddCors(o => o.AddPolicy(lazyCorsPolicyName, policyBuilder =>
     {
@@ -97,8 +97,7 @@ try
 
 // Configure the HTTP request pipeline.
 
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    app.MapOpenApi();
     
 
     app.UseHttpsRedirection();

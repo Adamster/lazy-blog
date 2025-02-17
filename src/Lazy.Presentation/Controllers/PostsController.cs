@@ -20,6 +20,7 @@ using Lazy.Presentation.Contracts.Posts;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -220,7 +221,7 @@ public class PostsController : ApiController
     }
 
     [HttpPut("{id:guid}/vote")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(type:typeof(NoContent),StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     
     public async Task<IActionResult> VotePost(Guid id,
