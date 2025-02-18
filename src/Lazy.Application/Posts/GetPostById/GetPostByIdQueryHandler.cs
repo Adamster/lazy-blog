@@ -1,5 +1,6 @@
 ﻿using Lazy.Application.Abstractions.Messaging;
 using Lazy.Application.Tags.SearchTag;
+using Lazy.Application.Users.GetUserById;
 using Lazy.Domain.Entities;
 using Lazy.Domain.Repositories;
 using Lazy.Domain.Shared;
@@ -33,6 +34,7 @@ public class GetPostByIdQueryHandler : IQueryHandler<GetPostByIdQuery, PostRespo
             post.Summary?.Value,
             post.Body.Value,
             post.Slug.Value,
+            new UserResponse(post.User),
             post.Tags.Select(t => new TagResponse(t.Id, t.Value)).ToList(),
             post.CoverUrl);
 
