@@ -8,7 +8,7 @@ namespace Lazy.Persistence.Repositories;
 
 public class PostRepository : IPostRepository
 {
-    private const int PostPageSize = 50;
+    private const int PostPageSize = 12;
 
     private readonly LazyBlogDbContext _dbContext;
     
