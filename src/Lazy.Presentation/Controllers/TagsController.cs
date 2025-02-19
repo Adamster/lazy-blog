@@ -21,7 +21,7 @@ public class TagsController : ApiController
 
     [HttpGet("{searchTerm}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<TagResponse>))]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> SearchTag(string searchTerm, CancellationToken ct)
     {
         var query = new SearchTagQuery(searchTerm);
@@ -34,7 +34,7 @@ public class TagsController : ApiController
     [Authorize]
     [HttpPut("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> UpdateTag(
         Guid id, 
         string tag,

@@ -52,7 +52,7 @@ public class PostsController : ApiController
     [AllowAnonymous]
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<PublishedPostResponse>))]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client)]
 
     public async Task<IActionResult> GetPosts(int offset, CancellationToken ct)
@@ -71,7 +71,7 @@ public class PostsController : ApiController
     [AllowAnonymous]
     [HttpGet("t/{tag}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<PublishedPostResponse>))]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetPosts(string tag, CancellationToken ct)
     {
         var query = new GetPostByTagQuery(tag);
@@ -129,8 +129,8 @@ public class PostsController : ApiController
     }
 
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(Guid))]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CreatePost(
         [FromBody]CreatePostRequest request, 
         CancellationToken ct)
@@ -159,7 +159,7 @@ public class PostsController : ApiController
 
     [HttpPut("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> UpdatePost(
         Guid id,
         [FromBody] UpdatePostRequest request, 
@@ -187,7 +187,7 @@ public class PostsController : ApiController
 
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> DeletePost(Guid id, CancellationToken ct)
     {
         var command = new DeletePostCommand(id);
@@ -205,7 +205,7 @@ public class PostsController : ApiController
     [HttpPut("{id:guid}/count-view")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> AddView(Guid id, CancellationToken ct)
     {
         var command = new AddPostViewCommand(id);
@@ -222,7 +222,7 @@ public class PostsController : ApiController
 
     [HttpPut("{id:guid}/vote")]
     [ProducesResponseType(type:typeof(NoContent),StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     
     public async Task<IActionResult> VotePost(Guid id,
         VoteDirection direction, 
@@ -241,6 +241,8 @@ public class PostsController : ApiController
     }
 
     [HttpPut("{id:guid}/publish")]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> PublishPost(Guid id, CancellationToken ct)
     {
         var command = new PublishPostCommand(id);
@@ -255,6 +257,8 @@ public class PostsController : ApiController
     }
 
     [HttpPut("{id:guid}/hide")]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> HidePost(Guid id, CancellationToken ct)
     {
         var command = new HidePostCommand(id);

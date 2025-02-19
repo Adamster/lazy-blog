@@ -27,6 +27,8 @@ public class CommentsController : ApiController
     }
 
     [HttpGet("{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CommentResponse))]
     public async Task<IActionResult> GetCommentById(Guid id, CancellationToken ct)
     {
         var query = new GetCommentByIdQuery(id);
@@ -37,6 +39,8 @@ public class CommentsController : ApiController
     }
 
     [HttpPost]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> AddComment([FromBody]AddCommentRequest request, 
         CancellationToken ct)
     {
@@ -59,6 +63,8 @@ public class CommentsController : ApiController
     }
 
     [HttpPut]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> UpdateComment([FromBody] UpdateCommentRequest request, CancellationToken ct)
     {
         var command = new UpdateCommentCommand(
@@ -73,7 +79,7 @@ public class CommentsController : ApiController
 
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> DeleteComment(Guid id, CancellationToken ct)
     {
         var command = new DeleteCommentCommand(id);

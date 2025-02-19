@@ -19,8 +19,8 @@ public class MediaController : ApiController
 
     [HttpPost("{id:guid}/upload")]
     [Consumes("multipart/form-data")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> UploadMediaBlob([FromRoute]Guid id,
         IFormFile file,
         CancellationToken ct)

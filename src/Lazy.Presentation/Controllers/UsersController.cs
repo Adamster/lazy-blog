@@ -22,7 +22,7 @@ namespace Lazy.Presentation.Controllers;
 public class UsersController : ApiController
 {
     public UsersController(
-        ISender sender, 
+        ISender sender,
         ILogger<UsersController> logger)
         : base(sender, logger)
     {
@@ -30,6 +30,8 @@ public class UsersController : ApiController
 
     [AllowAnonymous]
     [HttpGet("{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserResponse))]
     public async Task<IActionResult> GetUserById(Guid id, CancellationToken ct)
     {
         var query = new GetUserByIdQuery(id);
@@ -41,6 +43,8 @@ public class UsersController : ApiController
 
     [AllowAnonymous]
     [HttpGet("{username}/available")]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(bool))]
     public async Task<IActionResult> CheckIfUserNameIsAvailable(string username, CancellationToken ct)
     {
         var query = new CheckIfUserNameIsUnique(username);
@@ -53,10 +57,10 @@ public class UsersController : ApiController
     [HttpPost("{id:guid}/avatar")]
     [Consumes("multipart/form-data")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> UploadAvatar(
         [FromRoute] Guid id,
-        IFormFile file, 
+        IFormFile file,
         CancellationToken ct)
     {
         var command = new UploadUserAvatarCommand(id, file);
@@ -68,6 +72,8 @@ public class UsersController : ApiController
 
     [AllowAnonymous]
     [HttpPost("login")]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(LoginResponse))]
     public async Task<IActionResult> LoginUser(
         [FromBody] LoginRequest request,
         CancellationToken ct)
@@ -81,6 +87,8 @@ public class UsersController : ApiController
 
     [AllowAnonymous]
     [HttpPost("refresh")]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(LoginResponse))]
     public async Task<IActionResult> RefreshToken(
         [FromBody] RefreshTokenRequest request,
         CancellationToken cancellationToken)
@@ -90,11 +98,12 @@ public class UsersController : ApiController
         var result = await Sender.Send(command, cancellationToken);
 
         return result.IsFailure ? HandleFailure(result) : Ok(result.Value);
-
     }
 
     [AllowAnonymous]
     [HttpPost("register")]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> RegisterUser(
         [FromBody] RegisterUserRequest request,
         CancellationToken ct)
@@ -120,6 +129,8 @@ public class UsersController : ApiController
     }
 
     [HttpPut("{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> UpdateUser(
         Guid id,
         [FromBody] UpdateUserRequest request,
@@ -145,9 +156,11 @@ public class UsersController : ApiController
 
     [AllowAnonymous]
     [HttpGet("{id:guid}/posts")]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserPostResponse))]
     public async Task<IActionResult> GetPostByUserId(
         Guid id,
-        [FromQuery] int offset, 
+        [FromQuery] int offset,
         CancellationToken ct)
     {
         var query = new GetPostByUserIdQuery(id, offset);
