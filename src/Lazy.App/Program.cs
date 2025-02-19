@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Serilog;
 using AssemblyReference = Lazy.Infrastructure.AssemblyReference;
 
+using Azure.Monitor.OpenTelemetry.AspNetCore;
 
 string lazyCorsPolicyName = "lazy-blog";
 var today = DateTime.Today;
@@ -28,7 +29,10 @@ try
     var builder = WebApplication.CreateBuilder(args);
     
     builder.Host.UseSerilog();
-    builder.Services.AddApplicationInsightsTelemetry();
+
+    // Add OpenTelemetry and configure it to use Azure Monitor.
+    builder.Services.AddOpenTelemetry().UseAzureMonitor();
+    //  builder.Services.AddApplicationInsightsTelemetry();
     builder
         .Services
         .Scan(

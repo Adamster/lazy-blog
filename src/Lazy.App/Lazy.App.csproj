@@ -6,7 +6,6 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>0073829b-30ab-434d-b133-35fe11ea6fac</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-    <ApplicationInsightsResourceId>/subscriptions/f680fe72-4919-46cd-806b-377f4b0c607e/resourceGroups/lazy.blog/providers/microsoft.insights/components/LazyApp-Insights</ApplicationInsightsResourceId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,10 +22,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Azure.Monitor.OpenTelemetry.AspNetCore" Version="1.2.0" />
     <PackageReference Include="FluentValidation" Version="11.11.0" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
     <PackageReference Include="MediatR" Version="12.4.1" />
-    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.22.0" />
        <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="9.0.2" />
        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.2">
@@ -39,6 +38,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="ErrorHandler\" />
     <Folder Include="Extensions\" />
     <Folder Include="OptionsSetup\" />
   </ItemGroup>
