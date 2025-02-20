@@ -53,7 +53,6 @@ public class PostsController : ApiController
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<PublishedPostResponse>))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client)]
 
     public async Task<IActionResult> GetPosts(int offset, CancellationToken ct)
     {
