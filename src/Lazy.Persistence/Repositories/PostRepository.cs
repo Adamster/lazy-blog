@@ -98,5 +98,20 @@ public class PostRepository : IPostRepository
         return posts;   
     }
 
+    public IQueryable<Post> GetIQueryablePostsAsync(int requestOffset, CancellationToken ct)
+    {
+        var posts =  _dbContext.Set<Post>()
+            .AsNoTracking()
+            .Where(p => p.IsPublished)
+            .OrderByDescending(p => p.CreatedOnUtc)
+            .Skip(requestOffset)
+            .Take(PostPageSize)
+            .Include(x => x.User)
+            .ThenInclude(u => u.PostVotes)
+            .Include(x => x.Comments)
+            .Include(x => x.Tags);
+        return posts;
+    }
+
     public void Delete(Post post) => _dbContext.Set<Post>().Remove(post);
 }

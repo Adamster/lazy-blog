@@ -1,6 +1,7 @@
 ﻿using Lazy.Application.Abstractions.Messaging;
 using Lazy.Application.Tags.SearchTag;
 using Lazy.Application.Users.GetUserById;
+using Lazy.Domain.Entities;
 using Lazy.Domain.Repositories;
 using Lazy.Domain.Shared;
 
@@ -17,24 +18,27 @@ public class GetPublishedPostsQueryHandler : IQueryHandler<GetPublishedPostsQuer
 
     public async Task<Result<List<PublishedPostResponse>>> Handle(GetPublishedPostsQuery request, CancellationToken ct)
     {
-        var posts = await _postRepository.GetPostsAsync(request.Offset, ct);
 
-        List<PublishedPostResponse> response = posts
+        IQueryable<Post> postsOptimized =  _postRepository.GetIQueryablePostsAsync(request.Offset, ct);
+
+        List<PublishedPostResponse> response = postsOptimized
             .Select(p =>
                 new PublishedPostResponse(
                     p.Id,
                     p.Title.Value,
-                    p.Summary?.Value,
+                    p.Summary.Value,
                     p.Slug.Value,
                     new UserResponse(p.User),
                     p.Views,
-                    p.Comments.Count,
+                    p.Comments.Count(),
                     p.Rating,
-                    p.User.PostVotes.FirstOrDefault(u => u.PostId == p.Id)?.VoteDirection,
+                    p.User.PostVotes
+                        .Where(v => v.PostId== p.Id)
+                        .Select(v => v.VoteDirection)
+                        .FirstOrDefault(),
                     p.CoverUrl,
                     p.Tags.Select(x => new TagResponse(x.Id, x.Value)).ToList(),
-                    p.CreatedOnUtc))
-            .ToList();
+                    p.CreatedOnUtc)).ToList();
 
         return response;
     }

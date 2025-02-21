@@ -23,4 +23,5 @@ public interface IPostRepository
     Task<IList<Post>> GetPostsByUserIdAsync(Guid userId, int offset, CancellationToken ct);
 
     Task<IList<Post>> GetPostsByUserNameAsync(UserName userName, int offset, CancellationToken ct);
+    IQueryable<Post> GetIQueryablePostsAsync(int requestOffset, CancellationToken ct);
 }
