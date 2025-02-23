@@ -19,7 +19,7 @@ public class TagsController : ApiController
     {
     }
 
-    [HttpGet("{searchTerm}")]
+    [HttpGet("{searchTerm}", Name = "SearchTags")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<TagResponse>))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> SearchTag(string searchTerm, CancellationToken ct)
@@ -32,7 +32,7 @@ public class TagsController : ApiController
     }
 
     [Authorize]
-    [HttpPut("{id:guid}")]
+    [HttpPut("{id:guid}", Name = "UpdateTag")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> UpdateTag(

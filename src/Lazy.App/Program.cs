@@ -15,6 +15,7 @@ using Serilog;
 using AssemblyReference = Lazy.Infrastructure.AssemblyReference;
 
 using Azure.Monitor.OpenTelemetry.AspNetCore;
+using Scalar.AspNetCore;
 
 string lazyCorsPolicyName = "lazy-blog";
 var today = DateTime.Today;
@@ -112,6 +113,8 @@ try
 
     app.UseCors(lazyCorsPolicyName);
     app.MapControllers();
+
+    app.MapScalarApiReference(o => o.WithTheme(ScalarTheme.DeepSpace));
 
     app.Run();
 }

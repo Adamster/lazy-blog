@@ -29,7 +29,7 @@ public class UsersController : ApiController
     }
 
     [AllowAnonymous]
-    [HttpGet("{id:guid}")]
+    [HttpGet("{id:guid}", Name = "GetUserById")]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserResponse))]
     public async Task<IActionResult> GetUserById(Guid id, CancellationToken ct)
@@ -42,7 +42,7 @@ public class UsersController : ApiController
     }
 
     [AllowAnonymous]
-    [HttpGet("{username}/available")]
+    [HttpGet("{username}/available", Name = "CheckUserAvailability")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(bool))]
     public async Task<IActionResult> CheckIfUserNameIsAvailable(string username, CancellationToken ct)
@@ -54,7 +54,7 @@ public class UsersController : ApiController
         return result.IsFailure ? HandleFailure(result) : Ok(result.Value);
     }
 
-    [HttpPost("{id:guid}/avatar")]
+    [HttpPost("{id:guid}/avatar", Name = "UploadUserAvatar")]
     [Consumes("multipart/form-data")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -71,7 +71,7 @@ public class UsersController : ApiController
     }
 
     [AllowAnonymous]
-    [HttpPost("login")]
+    [HttpPost("login", Name = "Login")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(LoginResponse))]
     public async Task<IActionResult> LoginUser(
@@ -86,7 +86,7 @@ public class UsersController : ApiController
     }
 
     [AllowAnonymous]
-    [HttpPost("refresh")]
+    [HttpPost("refresh", Name = "RefreshToken")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(LoginResponse))]
     public async Task<IActionResult> RefreshToken(
@@ -101,7 +101,7 @@ public class UsersController : ApiController
     }
 
     [AllowAnonymous]
-    [HttpPost("register")]
+    [HttpPost("register", Name = "Register")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> RegisterUser(
@@ -128,7 +128,7 @@ public class UsersController : ApiController
             result.Value);
     }
 
-    [HttpPut("{id:guid}")]
+    [HttpPut("{id:guid}", Name = "UpdateUser")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> UpdateUser(
@@ -155,7 +155,7 @@ public class UsersController : ApiController
     }
 
     [AllowAnonymous]
-    [HttpGet("{id:guid}/posts")]
+    [HttpGet("{id:guid}/posts", Name = "GetPostsByUser")]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserPostResponse))]
     public async Task<IActionResult> GetPostByUserId(

@@ -17,7 +17,7 @@ public class MediaController : ApiController
     {
     }
 
-    [HttpPost("{id:guid}/upload")]
+    [HttpPost("{id:guid}/upload", Name = "UploadMedia")]
     [Consumes("multipart/form-data")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
