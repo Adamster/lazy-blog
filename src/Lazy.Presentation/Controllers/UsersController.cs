@@ -155,7 +155,7 @@ public class UsersController : ApiController
     }
 
     [AllowAnonymous]
-    [HttpGet("{id:guid}/posts", Name = "GetPostsByUser")]
+    [HttpGet("{id:guid}/posts", Name = "GetPostsByUserId")]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserPostResponse))]
     public async Task<IActionResult> GetPostByUserId(
