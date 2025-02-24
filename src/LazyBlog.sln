@@ -10,17 +10,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Dockerfile = Dockerfile
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lazy.Domain", "Lazy.Domain\Lazy.Domain.csproj", "{AE9005FE-1652-4BA0-BB8B-375F6CDD7F48}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lazy.Blog.Domain", "Lazy.Blog.Domain\Lazy.Blog.Domain.csproj", "{AE9005FE-1652-4BA0-BB8B-375F6CDD7F48}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lazy.Infrastructure", "Lazy.Infrastructure\Lazy.Infrastructure.csproj", "{F112CD64-D30C-48CF-A437-3D90315A1C24}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lazy.Blog.Infrastructure", "Lazy.Blog.Infrastructure\Lazy.Blog.Infrastructure.csproj", "{F112CD64-D30C-48CF-A437-3D90315A1C24}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lazy.Persistence", "Lazy.Persistence\Lazy.Persistence.csproj", "{2A4CF1D1-682B-4E4A-8427-5A902691CDA1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lazy.Blog.Persistence", "Lazy.Blog.Persistence\Lazy.Blog.Persistence.csproj", "{2A4CF1D1-682B-4E4A-8427-5A902691CDA1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lazy.App", "Lazy.App\Lazy.App.csproj", "{3A69C477-8872-48F1-AF92-5C1765ED7E4C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lazy.Blog.Api", "Lazy.Blog.Api\Lazy.Blog.Api.csproj", "{3A69C477-8872-48F1-AF92-5C1765ED7E4C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lazy.Application", "Lazy.Application\Lazy.Application.csproj", "{0A5A7376-E677-4F7C-945B-92C4F7169CCB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lazy.Blog.Application", "Lazy.Blog.Application\Lazy.Blog.Application.csproj", "{0A5A7376-E677-4F7C-945B-92C4F7169CCB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lazy.Presentation", "Lazy.Presentation\Lazy.Presentation.csproj", "{78F70E3B-33DE-4C91-B8DB-0E39AD74640A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lazy.Blog.Presentation", "Lazy.Blog.Presentation\Lazy.Blog.Presentation.csproj", "{78F70E3B-33DE-4C91-B8DB-0E39AD74640A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
