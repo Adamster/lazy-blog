@@ -45,7 +45,6 @@
   <ItemGroup>
     <Folder Include="ErrorHandler\" />
     <Folder Include="Extensions\" />
-    <Folder Include="OptionsSetup\" />
   </ItemGroup>
 
 </Project>

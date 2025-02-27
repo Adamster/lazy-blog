@@ -86,7 +86,7 @@ public class PostRepository : IPostRepository
     public async Task<IList<Post>> GetPostsByUserNameAsync(UserName userName, int offset, CancellationToken ct)
     {
         List<Post> posts = await _dbContext.Set<Post>()
-            .Where(p => p.User.UserName == userName)
+            .Where(p => p.User.UserName == userName.Value)
             .OrderByDescending(p => p.CreatedOnUtc)
             .Skip(offset)
             .Take(PostPageSize)

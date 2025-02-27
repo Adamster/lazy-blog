@@ -20,10 +20,10 @@ public sealed class User : IdentityUser<Guid>, IAuditableEntity
         : base(email.Value)
     {
         Id = id;
-        Email = email;
+        Email = email.Value;
         FirstName = firstName;
         LastName = lastName;
-        UserName = userName;
+        UserName = userName.Value;
         CreatedOnUtc = DateTime.UtcNow;
     }
 
@@ -31,10 +31,8 @@ public sealed class User : IdentityUser<Guid>, IAuditableEntity
     {
     }
 
-    public new Email Email { get; private set; } = null!;
-
-    public new UserName UserName { get; private set; } = null!;
-
+    
+    
     public FirstName FirstName { get; set; } = null!;
 
     public LastName LastName { get; set; } = null!;
@@ -79,7 +77,7 @@ public sealed class User : IdentityUser<Guid>, IAuditableEntity
     {
         FirstName = firstName;
         LastName = lastName;
-        UserName = userName;
+        UserName = userName.Value;
     }
 
     public void SetAvatar(Avatar avatar)

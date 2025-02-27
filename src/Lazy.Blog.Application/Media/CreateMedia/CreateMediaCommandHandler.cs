@@ -43,7 +43,7 @@ public class CreateMediaCommandHandler : ICommandHandler<CreateMediaCommand, str
             return Result.Failure<string>(mediaItemCandidate.Error);
         }
 
-        var uploadedUrl = await _fileService.UploadAsync(request.File, user.UserName.Value, cancellationToken);
+        var uploadedUrl = await _fileService.UploadAsync(request.File, user.UserName!, cancellationToken);
 
         if (uploadedUrl is null)
         {

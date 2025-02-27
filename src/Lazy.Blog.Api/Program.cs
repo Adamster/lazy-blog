@@ -15,6 +15,9 @@ using Serilog;
 using AssemblyReference = Lazy.Infrastructure.AssemblyReference;
 
 using Azure.Monitor.OpenTelemetry.AspNetCore;
+using Lazy.Application.Abstractions.Email;
+using Lazy.Blog.Api.OptionsSetup;
+using Lazy.Infrastructure.Services.Impl;
 using Scalar.AspNetCore;
 
 string lazyCorsPolicyName = "lazy-blog";
@@ -30,10 +33,10 @@ try
     var builder = WebApplication.CreateBuilder(args);
     
     builder.Host.UseSerilog();
-
-    // Add OpenTelemetry and configure it to use Azure Monitor.
-    builder.Services.AddOpenTelemetry().UseAzureMonitor();
-    //  builder.Services.AddApplicationInsightsTelemetry();
+    
+    builder.Services.AddOpenTelemetry()
+        .UseAzureMonitor();
+    
     builder
         .Services
         .Scan(
@@ -64,9 +67,13 @@ try
     builder.Services.AddSingleton<UpdateAuditableEntitiesInterceptor>();
     builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
     builder.Services.AddSingleton<ICurrentUserContext, CurrentUserContext>();
+    builder.Services.AddSingleton<IEmailService, SendGridEmailSender>();
     
     builder.Services.AddDbContext<LazyBlogDbContext>(
-        (sp, optionsBuilder) => { optionsBuilder.UseSqlServer(connectionString); });
+        (sp, optionsBuilder) =>
+        {
+            optionsBuilder.UseSqlServer(connectionString);
+        });
 
     builder.Services.AddDefaultIdentity<User>()
         .AddEntityFrameworkStores<LazyBlogDbContext>();
@@ -93,18 +100,14 @@ try
     builder.Services.ConfigureOptions<JwtOptionsSetup>();
     builder.Services.ConfigureOptions<JwtBearerOptionsSetup>();
     builder.Services.ConfigureOptions<AzureBlobStorageOptionsSetup>();
+    builder.Services.ConfigureOptions<SendGridOptionsSetup>();
 
     var app = builder.Build();
 
     CreateDbIfNotExists(app);
-
-    app.UseResponseCaching();
-
-// Configure the HTTP request pipeline.
-
+    
     app.MapOpenApi();
     
-
     app.UseHttpsRedirection();
 
     app.UseAuthentication();
@@ -112,6 +115,7 @@ try
     app.UseAuthorization();
 
     app.UseCors(lazyCorsPolicyName);
+    
     app.MapControllers();
 
     app.MapScalarApiReference(o => o.WithTheme(ScalarTheme.DeepSpace));

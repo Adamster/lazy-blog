@@ -22,12 +22,12 @@ public class UserRepository : IUserRepository
         await _dbContext
             .Set<User>()
             .AsNoTracking()
-            .FirstOrDefaultAsync(user => user.Email == email, ct);
+            .FirstOrDefaultAsync(user => user.Email == email.Value, ct);
 
     public async Task<bool> IsEmailUniqueAsync(Email email, CancellationToken ct = default) =>
         !await _dbContext.Set<User>()
             .AsNoTracking()
-            .AnyAsync(user => user.Email == email, ct);
+            .AnyAsync(user => user.Email == email.Value, ct);
 
     public void Add(User user) =>
         _dbContext.Set<User>().Add(user);
@@ -39,6 +39,6 @@ public class UserRepository : IUserRepository
         await _dbContext
             .Set<User>()
             .AsNoTracking()
-            .FirstOrDefaultAsync(user => user.UserName == userName, ct);
+            .FirstOrDefaultAsync(user => user.UserName == userName.Value, ct);
 
 }

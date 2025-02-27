@@ -48,7 +48,7 @@ public class UploadUserAvatarCommandHandler : ICommandHandler<UploadUserAvatarCo
         }
 
         //Add scoped user
-        var uploadedUrl = await _fileService.UploadAsync(request.File, user.UserName.Value, ct);
+        var uploadedUrl = await _fileService.UploadAsync(request.File, user.UserName!, ct);
 
         if (uploadedUrl is null)
         {

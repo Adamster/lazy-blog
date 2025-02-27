@@ -20,7 +20,6 @@
     <ItemGroup>
       <Folder Include="Contracts\Comments\" />
       <Folder Include="Contracts\Posts\" />
-      <Folder Include="Contracts\Users\" />
     </ItemGroup>
 
 </Project>
