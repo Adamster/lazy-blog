@@ -31,7 +31,8 @@ public class UpdateUserCommandHandler(
             return Result.Failure(DomainErrors.User.NotFound(request.Id));
         }
 
-        if (await userRepository.GetByUsernameAsync(userNameResult.Value, ct) is not null)
+        var userNameChanged = user.UserName != request.Username;
+        if (userNameChanged && await userRepository.GetByUsernameAsync(userNameResult.Value, ct) is not null)
         {
             return Result.Failure(DomainErrors.UserName.UserNameAlreadyInUse);
         }
