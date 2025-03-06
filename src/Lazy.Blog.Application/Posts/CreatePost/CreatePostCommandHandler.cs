@@ -9,24 +9,13 @@ using Lazy.Domain.ValueObjects.Post;
 
 namespace Lazy.Application.Posts.CreatePost;
 
-internal sealed class CreatePostCommandHandler : ICommandHandler<CreatePostCommand, PostCreatedResponse>
+internal sealed class CreatePostCommandHandler(
+    IPostRepository postRepository,
+    IUnitOfWork unitOfWork,
+    IUserRepository userRepository,
+    ITagRepository tagRepository)
+    : ICommandHandler<CreatePostCommand, PostCreatedResponse>
 {
-    private readonly IPostRepository _postRepository;
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly IUserRepository _userRepository;
-    private readonly ITagRepository _tagRepository;
-
-    public CreatePostCommandHandler(IPostRepository postRepository,
-        IUnitOfWork unitOfWork, 
-        IUserRepository userRepository,
-        ITagRepository tagRepository)
-    {
-        _postRepository = postRepository;
-        _unitOfWork = unitOfWork;
-        _userRepository = userRepository;
-        _tagRepository = tagRepository;
-    }
-
     public async Task<Result<PostCreatedResponse>> Handle(CreatePostCommand request, CancellationToken ct)
     {
         Result<Title> titleResult = Title.Create(request.Title);
@@ -34,7 +23,7 @@ internal sealed class CreatePostCommandHandler : ICommandHandler<CreatePostComma
         Result<Body> bodyResult = Body.Create(request.Body);
         List<Tag> tags = CreateTags(request.Tags);
 
-        if (await _userRepository.GetByIdAsync(request.UserId, ct) is null)
+        if (await userRepository.GetByIdAsync(request.UserId, ct) is null)
         {
             return Result.Failure<PostCreatedResponse>(DomainErrors.User.NotFound(request.UserId));
         }
@@ -43,7 +32,7 @@ internal sealed class CreatePostCommandHandler : ICommandHandler<CreatePostComma
 
         Guid postId = Guid.NewGuid();
 
-        if (await _postRepository.GetBySlugAsync(slugResult.Value, ct) is not null)
+        if (await postRepository.GetBySlugAsync(slugResult.Value, ct) is not null)
         {
             slugResult = Slug.Create($"{postId.ToByteArray().GetHashCode()}-{slugResult.Value.Value}");
         }
@@ -59,9 +48,9 @@ internal sealed class CreatePostCommandHandler : ICommandHandler<CreatePostComma
             tags,
             request.CoverUrl);
 
-        _postRepository.Add(post);
+        postRepository.Add(post);
 
-        await _unitOfWork.SaveChangesAsync(ct);
+        await unitOfWork.SaveChangesAsync(ct);
 
         return new PostCreatedResponse(post.Id, post.Slug.Value);
     }
@@ -82,7 +71,7 @@ internal sealed class CreatePostCommandHandler : ICommandHandler<CreatePostComma
 
         foreach (var requestTag in requestTags)
         {
-            var existingTag = _tagRepository.GetTagByValue(requestTag.Tag);
+            var existingTag = tagRepository.GetTagByValue(requestTag.Tag);
             if (existingTag is null)
             {
                 var tagResult = Tag.Create(requestTag.Tag);

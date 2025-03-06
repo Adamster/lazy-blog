@@ -3,6 +3,7 @@ using Lazy.Domain.Entities.Identity;
 using Lazy.Domain.Primitives;
 using Lazy.Domain.ValueObjects.User;
 using Microsoft.AspNetCore.Identity;
+// ReSharper disable CollectionNeverUpdated.Local
 
 namespace Lazy.Domain.Entities;
 
@@ -30,12 +31,10 @@ public sealed class User : IdentityUser<Guid>, IAuditableEntity
     private User()
     {
     }
-
     
-    
-    public FirstName FirstName { get; set; } = null!;
+    public FirstName FirstName { get; init; } = null!;
 
-    public LastName LastName { get; set; } = null!;
+    public LastName LastName { get; init; } = null!;
 
     public Avatar? Avatar { get; private set; }
 
@@ -75,8 +74,8 @@ public sealed class User : IdentityUser<Guid>, IAuditableEntity
 
     public void ChangeName(FirstName firstName, LastName lastName, UserName userName)
     {
-        FirstName = firstName;
-        LastName = lastName;
+        FirstName.Update(firstName);
+        LastName.Update(lastName);
         UserName = userName.Value;
     }
 

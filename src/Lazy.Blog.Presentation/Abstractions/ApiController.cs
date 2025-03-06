@@ -7,16 +7,9 @@ using Microsoft.Extensions.Logging;
 namespace Lazy.Presentation.Abstractions;
 
 [ApiController]
-public abstract class ApiController : ControllerBase
+public abstract class ApiController(ISender sender, ILogger<ApiController> logger) : ControllerBase
 {
-    protected readonly ISender Sender;
-    private readonly ILogger<ApiController> _logger;
-
-    protected ApiController(ISender sender, ILogger<ApiController> logger)
-    {
-        Sender = sender;
-        _logger = logger;
-    }
+    protected readonly ISender Sender = sender;
 
     protected IActionResult HandleFailure(Result result) =>
         result switch
@@ -52,7 +45,7 @@ public abstract class ApiController : ControllerBase
             Extensions = { { nameof(errors), errors } }
         };
 
-        _logger.LogError(problemDetails.Detail);
+        logger.LogError(problemDetails.Detail);
         return problemDetails;
     }
 }

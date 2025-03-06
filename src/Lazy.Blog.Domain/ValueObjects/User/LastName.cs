@@ -37,4 +37,6 @@ public class LastName : ValueObject
     {
         yield return Value;
     }
+
+    public void Update(LastName lastName) => Value = lastName.Value;
 }

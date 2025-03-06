@@ -9,35 +9,23 @@ using Lazy.Domain.ValueObjects.Post;
 
 namespace Lazy.Application.Posts.UpdatePost;
 
-public class UpdatePostCommandHandler : ICommandHandler<UpdatePostCommand>
+public class UpdatePostCommandHandler(
+    IPostRepository postRepository,
+    ICurrentUserContext currentUserContext,
+    IUnitOfWork unitOfWork,
+    ITagRepository tagRepository)
+    : ICommandHandler<UpdatePostCommand>
 {
-    private readonly IPostRepository _postRepository;
-    private readonly ITagRepository _tagRepository;
-    private readonly ICurrentUserContext _currentUserContext;
-    private readonly IUnitOfWork _unitOfWork;
-
-    public UpdatePostCommandHandler(
-        IPostRepository postRepository, 
-        ICurrentUserContext currentUserContext,
-        IUnitOfWork unitOfWork, 
-        ITagRepository tagRepository)
-    {
-        _postRepository = postRepository;
-        _currentUserContext = currentUserContext;
-        _unitOfWork = unitOfWork;
-        _tagRepository = tagRepository;
-    }
-
     public async Task<Result> Handle(UpdatePostCommand request, CancellationToken ct)
     {
-        var post = await _postRepository.GetByIdAsync(request.Id, ct);
+        var post = await postRepository.GetByIdAsync(request.Id, ct);
 
         if (post is null)
         {
             return Result.Failure(DomainErrors.Post.NotFound(request.Id));
         }
 
-        if (!_currentUserContext.IsCurrentUser(post.UserId))
+        if (!currentUserContext.IsCurrentUser(post.UserId))
         {
             return Result.Failure(DomainErrors.Post.UnauthorizedPostAccess);
         }
@@ -57,7 +45,7 @@ public class UpdatePostCommandHandler : ICommandHandler<UpdatePostCommand>
                 .ToList();
             
             updatedTags =
-                await _tagRepository.GetTagByIdsAsync(tagIds, ct);
+                await tagRepository.GetTagByIdsAsync(tagIds, ct);
 
             var tagsToCreate = request.Tags
                 .Where(x => x.TagId == Guid.Empty)
@@ -77,9 +65,9 @@ public class UpdatePostCommandHandler : ICommandHandler<UpdatePostCommand>
             updatedTags,
             request.IsPublished);
 
-        _postRepository.Update(post);
+        postRepository.Update(post);
 
-        await _unitOfWork.SaveChangesAsync(ct);
+        await unitOfWork.SaveChangesAsync(ct);
 
         return Result.Success();
     }

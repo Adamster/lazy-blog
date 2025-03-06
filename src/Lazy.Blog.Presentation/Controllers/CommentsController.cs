@@ -2,6 +2,7 @@
 using Lazy.Application.Comments.AddComment;
 using Lazy.Application.Comments.DeleteComment;
 using Lazy.Application.Comments.GetCommentById;
+using Lazy.Application.Comments.GetCommentByPostSlug;
 using Lazy.Application.Comments.UpdateComment;
 using Lazy.Domain.Shared;
 using Lazy.Presentation.Abstractions;
@@ -26,7 +27,7 @@ public class CommentsController : ApiController
     {
     }
 
-    [HttpGet("{id:guid}", Name = "GetCommentById")]
+    [HttpGet("{id:guid}", Name = nameof(GetCommentById))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CommentResponse))]
     public async Task<IActionResult> GetCommentById(Guid id, CancellationToken ct)
@@ -38,7 +39,7 @@ public class CommentsController : ApiController
         return response.IsSuccess ? Ok(response.Value) : NotFound(response.Error);
     }
 
-    [HttpPost(Name = "AddComment")]
+    [HttpPost(Name = nameof(AddComment))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> AddComment([FromBody]AddCommentRequest request, 
@@ -62,7 +63,7 @@ public class CommentsController : ApiController
             result.Value);
     }
 
-    [HttpPut(Name = "UpdateComment")]
+    [HttpPut(Name = nameof(UpdateComment))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> UpdateComment([FromBody] UpdateCommentRequest request, CancellationToken ct)
@@ -77,7 +78,7 @@ public class CommentsController : ApiController
         return result.IsFailure ? HandleFailure(result) : NoContent();
     }
 
-    [HttpDelete("{id:guid}", Name = "DeleteComment")]
+    [HttpDelete("{id:guid}", Name = nameof(DeleteComment))]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> DeleteComment(Guid id, CancellationToken ct)
@@ -93,5 +94,19 @@ public class CommentsController : ApiController
 
         return NoContent();
 
+    }
+    
+    [AllowAnonymous]
+    [Route("~/api/posts/{id:guid}/comments", Name = nameof(GetCommentsByPostId))]
+    [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<CommentResponse>))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetCommentsByPostId(Guid id, CancellationToken ct)
+    {
+        var query = new GetCommentByPostIdQuery(id);
+
+        Result<List<CommentResponse>> response = await Sender.Send(query, ct);
+
+        return response.IsSuccess ? Ok(response.Value) : NotFound(response.Error);
     }
 }

@@ -32,8 +32,10 @@ public class UserRepository : IUserRepository
     public void Add(User user) =>
         _dbContext.Set<User>().Add(user);
 
-    public void Update(User user) =>
+    public void Update(User user)
+    {
         _dbContext.Set<User>().Update(user);
+    }
 
     public async Task<User?> GetByUsernameAsync(UserName userName, CancellationToken ct) =>
         await _dbContext

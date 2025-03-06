@@ -38,4 +38,6 @@ public sealed class FirstName : ValueObject
     {
         yield return Value;
     }
-}
+
+    public void Update(FirstName firstName) => Value = firstName.Value;
+}   

@@ -34,6 +34,7 @@ public class GetPostByIdQueryHandler : IQueryHandler<GetPostByIdQuery, PostRespo
             post.Summary?.Value,
             post.Body.Value,
             post.Slug.Value,
+            post.IsPublished,
             new UserResponse(post.User),
             post.Tags.Select(t => new TagResponse(t.Id, t.Value)).ToList(),
             post.CoverUrl);

@@ -4,11 +4,12 @@ using Lazy.Domain.ValueObjects.Post;
 
 namespace Lazy.Application.Posts.GetPublishedPosts;
 
-public record PublishedPostResponse(
+public record DisplayPostResponse(
     Guid Id,
     string Title,
     string? Summary,
     string Slug,
+    bool IsPublished,
     UserResponse Author,
     long Views,
     int Comments,

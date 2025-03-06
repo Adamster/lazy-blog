@@ -3,4 +3,4 @@ using Lazy.Application.Posts.GetPostById;
 
 namespace Lazy.Application.Posts.GetPublishedPosts;
 
-public record GetPublishedPostsQuery(int Offset) : IQuery<List<PublishedPostResponse>>;
+public record GetPublishedPostsQuery(int Offset) : IQuery<List<DisplayPostResponse>>;

@@ -1,4 +1,5 @@
 ﻿using Lazy.Application.Abstractions.Messaging;
+using Lazy.Application.Posts.Extensions;
 using Lazy.Application.Posts.GetPublishedPosts;
 using Lazy.Application.Users.GetUserById;
 using Lazy.Domain.Entities;
@@ -31,24 +32,10 @@ public class GetPostByIdQueryHandler : IQueryHandler<GetPostByUserIdQuery, UserP
                 $"The user with Id {request.UserId} was not found."));
         }
 
-        var posts = await _postRepository
-           .GetPostsByUserIdAsync(request.UserId, request.Offset, ct);
+        var posts =  _postRepository
+           .GetPostsByUserId(request.UserId, request.Offset, ct);
 
-        var postDetails = posts
-            .Select(p =>
-                new UserPostItem(
-                    p.Id,
-                    p.Title.Value,
-                    p.Summary?.Value,
-                    p.Slug.Value,
-                    p.Views,
-                    p.Comments.Count,
-                    p.Rating,
-                    p.User.PostVotes.FirstOrDefault(u => u.PostId == p.Id)?.VoteDirection,
-                   p.CoverUrl,
-                   p.IsPublished,
-                   p.CreatedOnUtc))
-           .ToList();
+        var postDetails = posts.ToUserPostItemResponse();
 
        var response = new UserPostResponse(new UserResponse(user), postDetails);
        return response;

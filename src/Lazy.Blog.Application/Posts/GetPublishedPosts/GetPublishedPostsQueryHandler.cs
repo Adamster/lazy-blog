@@ -1,45 +1,19 @@
 ﻿using Lazy.Application.Abstractions.Messaging;
-using Lazy.Application.Tags.SearchTag;
-using Lazy.Application.Users.GetUserById;
+using Lazy.Application.Posts.Extensions;
 using Lazy.Domain.Entities;
 using Lazy.Domain.Repositories;
 using Lazy.Domain.Shared;
 
 namespace Lazy.Application.Posts.GetPublishedPosts;
 
-public class GetPublishedPostsQueryHandler : IQueryHandler<GetPublishedPostsQuery, List<PublishedPostResponse>>
+public class GetPublishedPostsQueryHandler(IPostRepository postRepository)
+    : IQueryHandler<GetPublishedPostsQuery, List<DisplayPostResponse>>
 {
-    private readonly IPostRepository _postRepository;
-
-    public GetPublishedPostsQueryHandler(IPostRepository postRepository)
+    public Task<Result<List<DisplayPostResponse>>> Handle(GetPublishedPostsQuery request, CancellationToken ct)
     {
-        _postRepository = postRepository;
-    }
+        IQueryable<Post> postsOptimized =  postRepository.GetPagedPosts(request.Offset, ct);
+        List<DisplayPostResponse> response = postsOptimized.ToListDisplayPostResponse();
 
-    public async Task<Result<List<PublishedPostResponse>>> Handle(GetPublishedPostsQuery request, CancellationToken ct)
-    {
-
-        IQueryable<Post> postsOptimized =  _postRepository.GetIQueryablePostsAsync(request.Offset, ct);
-
-        List<PublishedPostResponse> response = postsOptimized
-            .Select(p =>
-                new PublishedPostResponse(
-                    p.Id,
-                    p.Title.Value,
-                    p.Summary.Value,
-                    p.Slug.Value,
-                    new UserResponse(p.User),
-                    p.Views,
-                    p.Comments.Count(),
-                    p.Rating,
-                    p.User.PostVotes
-                        .Where(v => v.PostId== p.Id)
-                        .Select(v => v.VoteDirection)
-                        .FirstOrDefault(),
-                    p.CoverUrl,
-                    p.Tags.Select(x => new TagResponse(x.Id, x.Value)).ToList(),
-                    p.CreatedOnUtc)).ToList();
-
-        return response;
+        return Task.FromResult<Result<List<DisplayPostResponse>>>(response);
     }
 }

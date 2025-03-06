@@ -14,4 +14,5 @@ public record PostDetailedResponse(
     IList<TagResponse> Tags,
     int Rating,
     long Views,
+    bool IsPublished,
     DateTime CreatedAtUtc);
