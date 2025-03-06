@@ -1,8 +1,10 @@
 ﻿using Lazy.Application.Abstractions.Messaging;
+using Lazy.Domain.Entities;
 using Lazy.Domain.Errors;
 using Lazy.Domain.Repositories;
 using Lazy.Domain.Shared;
 using Lazy.Domain.ValueObjects.User;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 
 namespace Lazy.Application.Users.UpdateUser;
@@ -10,7 +12,8 @@ namespace Lazy.Application.Users.UpdateUser;
 public class UpdateUserCommandHandler(
     IUserRepository userRepository,
     IUnitOfWork unitOfWork,
-    ILogger<UpdateUserCommandHandler> logger)
+    ILogger<UpdateUserCommandHandler> logger,
+    UserManager<User> userManager)
     : ICommandHandler<UpdateUserCommand>
 {
     private readonly ILogger<UpdateUserCommandHandler> _logger = logger;
@@ -39,7 +42,7 @@ public class UpdateUserCommandHandler(
             lastNameResult.Value,
             userNameResult.Value);
 
-        userRepository.Update(user);
+        await userManager.UpdateAsync(user);
 
         await unitOfWork.SaveChangesAsync(ct);
         
