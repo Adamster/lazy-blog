@@ -1,10 +1,12 @@
-﻿using Lazy.Application.Abstractions.Messaging;
+﻿using Lazy.Application.Abstractions.Email;
+using Lazy.Application.Abstractions.Messaging;
 using Lazy.Domain.Entities;
 using Lazy.Domain.Errors;
 using Lazy.Domain.Repositories;
 using Lazy.Domain.Shared;
 using Lazy.Domain.ValueObjects.User;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.Logging;
 
 namespace Lazy.Application.Users.CreateUser;
@@ -15,18 +17,21 @@ internal sealed class CreateUserCommandHandler : ICommandHandler<CreateUserComma
     private readonly IUnitOfWork _unitOfWork;
     private readonly UserManager<User> _userManager;
     private readonly ILogger<CreateUserCommandHandler> _logger;
+    private readonly IEmailService _emailService;
 
 
     public CreateUserCommandHandler(
         IUserRepository userRepository,
         IUnitOfWork unitOfWork, 
         UserManager<User> userManager,
-        ILogger<CreateUserCommandHandler> logger)
+        ILogger<CreateUserCommandHandler> logger,
+        IEmailService emailService)
     {
         _userRepository = userRepository;
         _unitOfWork = unitOfWork;
         _userManager = userManager;
         _logger = logger;
+        _emailService = emailService;
     }
 
     public async Task<Result<Guid>> Handle(CreateUserCommand request, CancellationToken ct)
@@ -68,8 +73,9 @@ internal sealed class CreateUserCommandHandler : ICommandHandler<CreateUserComma
         }
 
         _logger.LogInformation($"New user with email {user.Email} registered");
-
+        
         await _unitOfWork.SaveChangesAsync(ct);
+        await _emailService.SendWelcomeEmail(emailResult.Value.Value, userNameResult.Value.Value);
         return user.Id;
     }
 

@@ -6,4 +6,5 @@ namespace Lazy.Application.Abstractions.Email;
 public interface IEmailService : IEmailSender
 {
     Task SendForgotPasswordEmailAsync(User amnesiaUser, string resetToken);
+    Task SendWelcomeEmail(string userEmail, string userName);
 }
