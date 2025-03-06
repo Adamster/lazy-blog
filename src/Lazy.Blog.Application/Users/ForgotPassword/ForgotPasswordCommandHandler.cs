@@ -1,3 +1,4 @@
+using System.Web;
 using Lazy.Application.Abstractions.Email;
 using Lazy.Application.Abstractions.Messaging;
 using Lazy.Domain.Entities;
@@ -25,7 +26,8 @@ public class ForgotPasswordCommandHandler(
         }
 
         var resetToken = await userManager.GeneratePasswordResetTokenAsync(amnesiaUser);
-        await emailService.SendForgotPasswordEmailAsync(amnesiaUser, resetToken);
+        var encodedToken = HttpUtility.UrlEncode(resetToken);
+        await emailService.SendForgotPasswordEmailAsync(amnesiaUser, encodedToken);
         
         return Result.Success();
     }
