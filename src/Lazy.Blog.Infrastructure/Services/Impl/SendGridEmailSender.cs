@@ -45,7 +45,8 @@ public class SendGridEmailSender(IOptions<SendGridOptions> options, ILogger<Send
         string resetLink = $"https://notlazy.org//reset-password?token={token}";
         string emailContent = ForgotEmailContent.EmailBody
             .Replace("{{reset_link}}", resetLink)
-            .Replace("{{user}}", amnesiaUser.UserName);
+            .Replace("{{user}}", amnesiaUser.UserName)
+            .Replace("{{plain_url}}", resetLink);
 
         await SendEmailAsync(amnesiaUser.Email!, "Password reset", emailContent);
     }
@@ -113,7 +114,7 @@ public class SendGridEmailSender(IOptions<SendGridOptions> options, ILogger<Send
             No worries, though! You can reset your password with just one click (or whenever you feel like it).</p>
 
             <a href='{{reset_link}}' class='button'>🔑 Reset Password</a>
-
+            <p> If link is not working please try this url: {{plain_url}}</p>
             <p>No need to hurry! This link is good for <strong>24 hours</strong> (plenty of time for a nap first).<br>
             If you didn’t request this, just ignore it—doing nothing is totally on brand.</p>
 
