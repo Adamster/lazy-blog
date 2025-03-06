@@ -47,6 +47,7 @@ public class GetPostBySlugHandler : IQueryHandler<GetPostBySlugQuery, PostDetail
             post.Tags.Select(t => new TagResponse(t.Id, t.Value)).ToList(),
             post.Rating,
             post.Views,
+            post.IsPublished,
             post.CreatedOnUtc
         );
 

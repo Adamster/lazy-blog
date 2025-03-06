@@ -9,6 +9,7 @@ public record PostResponse(
     string? Summary,
     string Body,
     string Slug,
+    bool IsPublished,
     UserResponse Author,
     IList<TagResponse> Tags,
     string? CoverUrl);

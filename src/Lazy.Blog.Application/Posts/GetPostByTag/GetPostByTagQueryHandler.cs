@@ -1,4 +1,5 @@
 ﻿using Lazy.Application.Abstractions.Messaging;
+using Lazy.Application.Posts.Extensions;
 using Lazy.Application.Posts.GetPublishedPosts;
 using Lazy.Application.Tags.SearchTag;
 using Lazy.Application.Users.GetUserById;
@@ -9,46 +10,21 @@ using Lazy.Domain.Shared;
 
 namespace Lazy.Application.Posts.GetPostByTag;
 
-public class GetPostByTagQueryHandler : IQueryHandler<GetPostByTagQuery,List<PublishedPostResponse>>
+public class GetPostByTagQueryHandler(
+    IPostRepository postRepository,
+    ITagRepository tagRepository)
+    : IQueryHandler<GetPostByTagQuery, List<DisplayPostResponse>>
 {
-    private readonly IPostRepository _postRepository;
-    private readonly ITagRepository _tagRepository;
-
-    public GetPostByTagQueryHandler(IPostRepository postRepository,
-        ITagRepository tagRepository)
+    public Task<Result<List<DisplayPostResponse>>> Handle(GetPostByTagQuery request, CancellationToken ct)
     {
-        _postRepository = postRepository;
-        _tagRepository = tagRepository;
-    }
-
-
-    public async Task<Result<List<PublishedPostResponse>>> Handle(GetPostByTagQuery request, CancellationToken ct)
-    {
-        Tag? tag = _tagRepository.GetTagByValue(request.Tag);
+        Tag? tag = tagRepository.GetTagByValue(request.Tag);
         if (tag is null)
         {
-            return Result.Failure<List<PublishedPostResponse>>(DomainErrors.Tag.NotFound(request.Tag));
+            return Task.FromResult(Result.Failure<List<DisplayPostResponse>>(DomainErrors.Tag.NotFound(request.Tag)));
         }
 
-        IList<Post> posts = await _postRepository.GetPostsByTagAsync(tag, ct);
-
-        var response = posts
-            .Select(p =>
-                new PublishedPostResponse(
-                    p.Id,
-                    p.Title.Value,
-                    p.Summary?.Value,
-                    p.Slug.Value,
-                    new UserResponse(p.User),
-                    p.Views,
-                    p.Comments.Count,
-                    p.Rating,
-                    p.User.PostVotes.FirstOrDefault(u => u.PostId == p.Id)?.VoteDirection,
-                    p.CoverUrl,
-                    p.Tags.Select(x => new TagResponse(x.Id, x.Value)).ToList(),
-                    p.CreatedOnUtc))
-            .ToList();
-
-        return response;
+        var posts = postRepository.GetPostsByTag(tag, ct);
+        var response = posts.ToListDisplayPostResponse();
+        return Task.FromResult<Result<List<DisplayPostResponse>>>(response);
     }
 }

@@ -9,8 +9,11 @@ using Microsoft.Extensions.Logging;
 
 namespace Lazy.Presentation.Controllers;
 
-public class ResetPasswordController(ISender sender, ILogger<ApiController> logger) : ApiController(sender, logger)
+public class ResetPasswordController: ApiController
 {
+    public ResetPasswordController(ISender sender, ILogger<ApiController> logger) : base(sender, logger)
+    {
+    }
 
     [HttpPost("/reset-password", Name = nameof(ResetPassword))]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -18,7 +21,7 @@ public class ResetPasswordController(ISender sender, ILogger<ApiController> logg
     public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
     {
         var command = new ResetPasswordCommand(request.Token, request.Email, request.NewPassword);
-        Result<bool> result = await sender.Send(command);
+        Result<bool> result = await Sender.Send(command);
         return result.IsFailure ? HandleFailure(result) : Ok();
     }
 }

@@ -50,14 +50,14 @@ public class PostsController : ApiController
     }
 
     [AllowAnonymous]
-    [HttpGet(Name = "GetAllPosts")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<PublishedPostResponse>))]
+    [HttpGet(Name = nameof(GetAllPosts))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<DisplayPostResponse>))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
 
-    public async Task<IActionResult> GetPosts(int offset, CancellationToken ct)
+    public async Task<IActionResult> GetAllPosts(int offset, CancellationToken ct)
     {
         var query = new GetPublishedPostsQuery(offset);
-        Result<List<PublishedPostResponse>> result = await Sender.Send(query, ct);
+        Result<List<DisplayPostResponse>> result = await Sender.Send(query, ct);
 
         if (result.IsFailure)
         {
@@ -68,13 +68,13 @@ public class PostsController : ApiController
     }
 
     [AllowAnonymous]
-    [HttpGet("t/{tag}", Name = "GetPostsByTag")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<PublishedPostResponse>))]
+    [HttpGet("t/{tag}", Name = nameof(GetPostsByTag))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<DisplayPostResponse>))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> GetPosts(string tag, CancellationToken ct)
+    public async Task<IActionResult> GetPostsByTag(string tag, CancellationToken ct)
     {
         var query = new GetPostByTagQuery(tag);
-        Result<List<PublishedPostResponse>> result = await Sender.Send(query, ct);
+        Result<List<DisplayPostResponse>> result = await Sender.Send(query, ct);
 
         if (result.IsFailure)
         {
@@ -85,7 +85,7 @@ public class PostsController : ApiController
     }
 
     [AllowAnonymous]
-    [HttpGet("{slug}", Name = "GetPostsBySlug")]
+    [HttpGet("{slug}", Name = nameof(GetPostBySlug))]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PostDetailedResponse))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetPostBySlug(string slug, CancellationToken ct)
@@ -98,23 +98,10 @@ public class PostsController : ApiController
     }
 
     [AllowAnonymous]
-    [HttpGet("{id:guid}/comments", Name = "GetCommentsByPostId")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<CommentResponse>))]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetCommentForPostBySlug(Guid id, CancellationToken ct)
-    {
-        var query = new GetCommentByPostIdQuery(id);
-
-        Result<List<CommentResponse>> response = await Sender.Send(query, ct);
-
-        return response.IsSuccess ? Ok(response.Value) : NotFound(response.Error);
-    }
-
-    [AllowAnonymous]
-    [HttpGet("{userName}/posts", Name = "GetPostsByUserName")]
+    [HttpGet("{userName}/posts", Name = nameof(GetPostsByUserName))]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserPostResponse))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetPostByUserName(
+    public async Task<IActionResult> GetPostsByUserName(
         string userName,
         [FromQuery]int offset,
         CancellationToken ct)
@@ -127,7 +114,7 @@ public class PostsController : ApiController
 
     }
 
-    [HttpPost(Name = "CreatePost")]
+    [HttpPost(Name = nameof(CreatePost))]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CreatePost(
@@ -184,7 +171,7 @@ public class PostsController : ApiController
         return NoContent();
     }
 
-    [HttpDelete("{id:guid}", Name = "DeletePost")]
+    [HttpDelete("{id:guid}", Name = nameof(DeletePost))]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> DeletePost(Guid id, CancellationToken ct)

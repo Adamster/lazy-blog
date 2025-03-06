@@ -10,9 +10,9 @@ public interface IPostRepository
 
     Task<Post?> GetBySlugAsync(Slug slug, CancellationToken ct);
 
-    Task<IList<Post>> GetPostsAsync(int offset, CancellationToken ct);
+    IQueryable<Post> GetPosts(int offset, CancellationToken ct);
 
-    Task<IList<Post>> GetPostsByTagAsync(Tag tag, CancellationToken ct);
+    IQueryable<Post> GetPostsByTag(Tag tag, CancellationToken ct);
 
     void Add(Post post);
 
@@ -20,8 +20,8 @@ public interface IPostRepository
 
     void Delete(Post post);
 
-    Task<IList<Post>> GetPostsByUserIdAsync(Guid userId, int offset, CancellationToken ct);
+    IQueryable<Post> GetPostsByUserId(Guid userId, int offset, CancellationToken ct);
 
-    Task<IList<Post>> GetPostsByUserNameAsync(UserName userName, int offset, CancellationToken ct);
-    IQueryable<Post> GetIQueryablePostsAsync(int requestOffset, CancellationToken ct);
+    IQueryable<Post> GetPostsByUserName(UserName userName, int offset, CancellationToken ct);
+    IQueryable<Post> GetPagedPosts(int requestOffset, CancellationToken ct);
 }
