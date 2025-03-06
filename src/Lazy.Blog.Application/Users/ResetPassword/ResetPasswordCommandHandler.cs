@@ -1,3 +1,4 @@
+using System.Web;
 using Lazy.Application.Abstractions.Messaging;
 using Lazy.Domain.Entities;
 using Lazy.Domain.Shared;
@@ -22,7 +23,8 @@ public class ResetPasswordCommandHandler : ICommandHandler<ResetPasswordCommand,
             throw new InvalidOperationException("User not found");
         }
 
-        IdentityResult result = await _userManager.ResetPasswordAsync(user, request.Token, request.NewPassword);
+        var decodedToken = HttpUtility.UrlDecode(request.Token);
+        IdentityResult result = await _userManager.ResetPasswordAsync(user, decodedToken, request.NewPassword);
         
         if (!result.Succeeded)
         {
