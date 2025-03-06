@@ -15,13 +15,11 @@ public class UserRepository : IUserRepository
     public async Task<User?> GetByIdAsync(Guid id, CancellationToken ct = default) => 
         await _dbContext
             .Set<User>()
-            .AsNoTracking()
             .FirstOrDefaultAsync(user => user.Id == id, ct);
 
     public async Task<User?> GetByEmailAsync(Email email, CancellationToken ct = default) =>
         await _dbContext
             .Set<User>()
-            .AsNoTracking()
             .FirstOrDefaultAsync(user => user.Email == email.Value, ct);
 
     public async Task<bool> IsEmailUniqueAsync(Email email, CancellationToken ct = default) =>
@@ -40,7 +38,6 @@ public class UserRepository : IUserRepository
     public async Task<User?> GetByUsernameAsync(UserName userName, CancellationToken ct) =>
         await _dbContext
             .Set<User>()
-            .AsNoTracking()
             .FirstOrDefaultAsync(user => user.UserName == userName.Value, ct);
 
 }
