@@ -21,6 +21,13 @@ public class TagRepository : ITagRepository
             .ToListAsync(ct);
     }
 
+    public Task<List<Tag>> GetAllTagsAsync(CancellationToken ct)
+    {
+        return _dbContext.Set<Tag>()
+            .AsNoTracking()
+            .ToListAsync(ct);
+    }
+
     public Tag? GetTagByValue(string tagValue) =>
         _dbContext
             .Set<Tag>()

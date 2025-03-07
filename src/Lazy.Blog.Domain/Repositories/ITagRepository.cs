@@ -5,6 +5,8 @@ namespace Lazy.Domain.Repositories;
 public interface ITagRepository
 {
     Task<List<Tag>> SearchTagAsync(string searchTerm, CancellationToken ct);
+    
+    Task<List<Tag>> GetAllTagsAsync(CancellationToken ct);
 
     Tag? GetTagByValue(string tagValue);
 

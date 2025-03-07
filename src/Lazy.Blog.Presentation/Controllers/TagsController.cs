@@ -1,4 +1,5 @@
 ﻿using Lazy.Application.Comments.GetCommentById;
+using Lazy.Application.Tags.GetAllTags;
 using Lazy.Application.Tags.SearchTag;
 using Lazy.Application.Tags.UpdateTag;
 using Lazy.Domain.Shared;
@@ -45,5 +46,18 @@ public class TagsController : ApiController
         Result result = await Sender.Send(command, ct);
 
         return result.IsFailure ? HandleFailure(result) : NoContent();
+    }
+
+    [AllowAnonymous]
+    [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<TagResponse>))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetTags(CancellationToken ct)
+    {
+        var query = new GetAllTagsQuery();
+        
+        var result = await  Sender.Send(query, ct);
+        
+        return result.IsFailure ? HandleFailure(result) : Ok(result.Value);
     }
 }
