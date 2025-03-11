@@ -11,5 +11,5 @@ public record PostResponse(
     string Slug,
     bool IsPublished,
     UserResponse Author,
-    IList<TagResponse> Tags,
+    IList<TagPostResponse> Tags,
     string? CoverUrl);

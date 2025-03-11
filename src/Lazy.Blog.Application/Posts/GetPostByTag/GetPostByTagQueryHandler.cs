@@ -23,7 +23,7 @@ public class GetPostByTagQueryHandler(
             return Task.FromResult(Result.Failure<List<DisplayPostResponse>>(DomainErrors.Tag.NotFound(request.Tag)));
         }
 
-        var posts = postRepository.GetPostsByTag(tag, ct);
+        var posts = postRepository.GetPostsByTag(tag, request.Offset, ct);
         var response = posts.ToListDisplayPostResponse();
         return Task.FromResult<Result<List<DisplayPostResponse>>>(response);
     }

@@ -12,7 +12,7 @@ public interface IPostRepository
 
     IQueryable<Post> GetPosts(int offset, CancellationToken ct);
 
-    IQueryable<Post> GetPostsByTag(Tag tag, CancellationToken ct);
+    IQueryable<Post> GetPostsByTag(Tag tag, int offset, CancellationToken ct);
 
     void Add(Post post);
 

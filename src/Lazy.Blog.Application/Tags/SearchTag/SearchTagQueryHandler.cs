@@ -23,7 +23,7 @@ public class SearchTagQueryHandler : IQueryHandler<SearchTagQuery, List<TagRespo
             return Enumerable.Empty<TagResponse>().ToList();
         }
         var response = result
-            .Select(x => new TagResponse(x.Id, x.Value))
+            .Select(x => new TagResponse(x.Id, x.Value, x.Posts.Count))
             .ToList();
 
         return response;

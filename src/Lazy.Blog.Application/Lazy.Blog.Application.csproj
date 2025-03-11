@@ -32,7 +32,6 @@
     <Folder Include="Posts\AddPostView\" />
     <Folder Include="Posts\AddPostVote\" />
     <Folder Include="Posts\HidePost\" />
-    <Folder Include="Posts\GetPostByTag\" />
     <Folder Include="Posts\UpdatePost\" />
     <Folder Include="Tags\CreateTag\" />
     <Folder Include="Tags\UpdateTag\" />

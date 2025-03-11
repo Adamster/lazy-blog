@@ -26,7 +26,7 @@ public static class PostMapper
                         .Select(v => v.VoteDirection)
                         .FirstOrDefault(),
                     p.CoverUrl,
-                    p.Tags.Select(x => new TagResponse(x.Id, x.Value)).ToList(),
+                    p.Tags.Select(x => new TagPostResponse(x.Id, x.Value)).ToList(),
                     p.CreatedOnUtc)).ToList();
 
         return result;

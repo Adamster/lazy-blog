@@ -5,19 +5,16 @@ using Lazy.Domain.Shared;
 
 namespace Lazy.Application.Tags.GetAllTags;
 
-public class GetAllTagsQueryHandler : IQueryHandler<GetAllTagsQuery, List<TagResponse>>
+public class GetAllTagsQueryHandler(ITagRepository tagRepository) : IQueryHandler<GetAllTagsQuery, List<TagResponse>>
 {
-    private readonly ITagRepository _tagRepository;
-
-    public GetAllTagsQueryHandler(ITagRepository tagRepository)
+    public Task<Result<List<TagResponse>>> Handle(GetAllTagsQuery request, CancellationToken cancellationToken)
     {
-        _tagRepository = tagRepository;
-    }
+        var result = tagRepository.GetAllTags();
 
-    public async Task<Result<List<TagResponse>>> Handle(GetAllTagsQuery request, CancellationToken cancellationToken)
-    {
-        var result =  await _tagRepository.GetAllTagsAsync(cancellationToken);
+        var tagResponseWithPostCount = result
+            .Select(t => new TagResponse(t.Id, t.Value, t.Posts.Count))
+            .ToList();
 
-        return result.Select(t => new TagResponse(t.Id, t.Value)).ToList();
+        return Task.FromResult<Result<List<TagResponse>>>(tagResponseWithPostCount);
     }
 }

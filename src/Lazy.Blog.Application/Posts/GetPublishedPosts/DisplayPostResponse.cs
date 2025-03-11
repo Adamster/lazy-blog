@@ -16,5 +16,5 @@ public record DisplayPostResponse(
     int Rating,
     VoteDirection? VoteDirection,
     string? CoverUrl,
-    IList<TagResponse> Tags,
+    IList<TagPostResponse> Tags,
     DateTime CreatedAtUtc);

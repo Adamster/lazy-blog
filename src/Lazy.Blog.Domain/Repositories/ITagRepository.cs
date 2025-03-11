@@ -6,7 +6,7 @@ public interface ITagRepository
 {
     Task<List<Tag>> SearchTagAsync(string searchTerm, CancellationToken ct);
     
-    Task<List<Tag>> GetAllTagsAsync(CancellationToken ct);
+    IQueryable<Tag> GetAllTags();
 
     Tag? GetTagByValue(string tagValue);
 

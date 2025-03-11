@@ -1,6 +1,7 @@
 ﻿using Lazy.Domain.Entities;
 using Lazy.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
+using static Lazy.Persistence.Constants.QueryConstants;
 
 namespace Lazy.Persistence.Repositories;
 
@@ -18,16 +19,17 @@ public class TagRepository : ITagRepository
         return _dbContext.Set<Tag>()
             .AsNoTracking()
             .Where(x => x.Value.Contains(searchTerm))
+            .Include(x => x.Posts)
             .ToListAsync(ct);
     }
 
-    public Task<List<Tag>> GetAllTagsAsync(CancellationToken ct)
+    public IQueryable<Tag> GetAllTags()
     {
         return _dbContext.Set<Tag>()
-            .AsNoTracking()
-            .ToListAsync(ct);
+            .Include(t => t.Posts)
+            .AsNoTracking();
     }
-
+    
     public Tag? GetTagByValue(string tagValue) =>
         _dbContext
             .Set<Tag>()

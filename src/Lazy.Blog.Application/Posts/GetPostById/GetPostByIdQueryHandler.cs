@@ -28,6 +28,7 @@ public class GetPostByIdQueryHandler : IQueryHandler<GetPostByIdQuery, PostRespo
                 $"The post with Id {request.PostId} was not found."));
         }
 
+        //TODO check tag response building 
         var response = new PostResponse(
             post.Id,
             post.Title.Value,
@@ -36,7 +37,7 @@ public class GetPostByIdQueryHandler : IQueryHandler<GetPostByIdQuery, PostRespo
             post.Slug.Value,
             post.IsPublished,
             new UserResponse(post.User),
-            post.Tags.Select(t => new TagResponse(t.Id, t.Value)).ToList(),
+            post.Tags.Select(t => new TagPostResponse(t.Id, t.Value)).ToList(),
             post.CoverUrl);
 
         return response;

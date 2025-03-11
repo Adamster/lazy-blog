@@ -49,7 +49,7 @@ public class TagsController : ApiController
     }
 
     [AllowAnonymous]
-    [HttpGet]
+    [HttpGet(Name = nameof(GetTags))]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<TagResponse>))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetTags(CancellationToken ct)
