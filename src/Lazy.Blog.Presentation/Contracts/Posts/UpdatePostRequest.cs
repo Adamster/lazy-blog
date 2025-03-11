@@ -9,5 +9,5 @@ public record UpdatePostRequest(
     [Required] string Body,
     [Required] string Slug,
     string? CoverUrl,
-    List<TagResponse> Tags,
+    List<Guid> Tags,
     bool IsPublished);

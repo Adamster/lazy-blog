@@ -21,7 +21,12 @@ internal sealed class CreatePostCommandHandler(
         Result<Title> titleResult = Title.Create(request.Title);
         Result<Summary> summaryResult = Summary.Create(request.Summary);
         Result<Body> bodyResult = Body.Create(request.Body);
-        List<Tag> tags = CreateTags(request.Tags);
+        List<Tag> tags = await tagRepository.GetTagByIdsAsync(request.Tags, ct);
+
+        if (!tags.Any())
+        {
+            return Result.Failure<PostCreatedResponse>(DomainErrors.Tag.NotFound(request.Tags.First().ToString()));
+        }
 
         if (await userRepository.GetByIdAsync(request.UserId, ct) is null)
         {
@@ -53,36 +58,5 @@ internal sealed class CreatePostCommandHandler(
         await unitOfWork.SaveChangesAsync(ct);
 
         return new PostCreatedResponse(post.Id, post.Slug.Value);
-    }
-
-    private List<Tag> CreateTags(List<TagResponse>? requestTags)
-    {
-        var tags = new List<Tag>();
-
-        if (requestTags is null)
-        {
-            return tags;
-        }
-
-        if (!requestTags.Any())
-        {
-            return tags;
-        }
-
-        foreach (var requestTag in requestTags)
-        {
-            var existingTag = tagRepository.GetTagByValue(requestTag.Tag);
-            if (existingTag is null)
-            {
-                var tagResult = Tag.Create(requestTag.Tag);
-                tags.Add(tagResult.Value);
-            }
-            else
-            {
-                tags.Add(existingTag);
-            }
-        }
-
-        return tags;
     }
 }

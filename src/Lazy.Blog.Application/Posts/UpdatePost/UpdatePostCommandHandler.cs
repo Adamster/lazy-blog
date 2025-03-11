@@ -35,27 +35,13 @@ public class UpdatePostCommandHandler(
         Result<Body> bodyResult = Body.Create(request.Body);
         Result<Slug> slugResult = Slug.Create(request.Slug);
 
-        List<Tag>? updatedTags = null;
-
-        if (request.Tags is not null)
+        List<Tag> updatedTags = await tagRepository.GetTagByIdsAsync(request.Tags, ct);
+        
+        if (!updatedTags.Any())
         {
-            List<Guid> tagIds = request.Tags
-                .Where(x => x.TagId != Guid.Empty)
-                .Select(x => x.TagId)
-                .ToList();
-            
-            updatedTags =
-                await tagRepository.GetTagByIdsAsync(tagIds, ct);
-
-            var tagsToCreate = request.Tags
-                .Where(x => x.TagId == Guid.Empty)
-                .ToList();
-
-            List<Tag> newTags = CreateTags(tagsToCreate);
-
-            updatedTags.AddRange(newTags);
+            return Result.Failure(DomainErrors.Tag.NotFound(request.Tags.First().ToString()));
         }
-
+        
         post.Update(
             titleResult.Value,
             summaryResult.Value,

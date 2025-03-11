@@ -71,9 +71,9 @@ public class PostsController : ApiController
     [HttpGet("t/{tag}", Name = nameof(GetPostsByTag))]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<DisplayPostResponse>))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> GetPostsByTag(string tag, CancellationToken ct)
+    public async Task<IActionResult> GetPostsByTag(string tag, int offset, CancellationToken ct)
     {
-        var query = new GetPostByTagQuery(tag);
+        var query = new GetPostByTagQuery(tag, offset);
         Result<List<DisplayPostResponse>> result = await Sender.Send(query, ct);
 
         if (result.IsFailure)

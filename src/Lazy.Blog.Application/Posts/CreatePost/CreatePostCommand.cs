@@ -8,6 +8,6 @@ public record CreatePostCommand(
     string? Summary,
     string Body,
     bool IsPublished,
-    List<TagResponse>? Tags,
+    List<Guid> Tags,
     string? CoverUrl,
     Guid UserId) : ICommand<PostCreatedResponse>;

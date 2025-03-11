@@ -8,6 +8,6 @@ public record CreatePostRequest(
     [Required]string Summary,
     [Required]string Body,
     [Required]Guid UserId,
-    List<TagResponse>? Tags,
+    List<Guid> Tags,
     string? CoverUrl,
     bool IsPublished = true);
