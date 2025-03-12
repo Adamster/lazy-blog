@@ -1,4 +1,5 @@
-﻿using Lazy.Domain.ValueObjects.Post;
+﻿using Lazy.Application.Tags.SearchTag;
+using Lazy.Domain.ValueObjects.Post;
 
 namespace Lazy.Application.Posts.GetPublishedPosts;
 
@@ -13,4 +14,5 @@ public record UserPostItem(
     VoteDirection? VoteDirection,
     string? CoverUrl,
     bool IsPublished,
+    List<TagPostResponse> Tags,
     DateTime CreatedAtUtc);

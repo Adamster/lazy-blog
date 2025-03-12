@@ -49,6 +49,7 @@ public static class PostMapper
                         .FirstOrDefault(),
                     p.CoverUrl,
                     p.IsPublished,
+                    p.Tags.Select(t => new TagPostResponse(t.Id, t.Value)).ToList(),
                     p.CreatedOnUtc))
             .ToList();
         

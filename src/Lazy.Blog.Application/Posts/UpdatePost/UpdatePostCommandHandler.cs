@@ -42,6 +42,8 @@ public class UpdatePostCommandHandler(
             return Result.Failure(DomainErrors.Tag.NotFound(request.Tags.First().ToString()));
         }
         
+        tagRepository.Attach(updatedTags);
+        
         post.Update(
             titleResult.Value,
             summaryResult.Value,
@@ -56,23 +58,5 @@ public class UpdatePostCommandHandler(
         await unitOfWork.SaveChangesAsync(ct);
 
         return Result.Success();
-    }
-
-    private List<Tag> CreateTags(List<TagResponse> tagsToCreate)
-    {
-        var tags = new List<Tag>();
-
-        if (tags.Any())
-        {
-            return tags;
-        }
-
-        foreach (var requestedTag in tagsToCreate)
-        {
-            var tagResult = Tag.Create(requestedTag.Tag);
-            tags.Add(tagResult.Value);
-        }
-
-        return tags;
     }
 }
