@@ -28,13 +28,13 @@ public class PostRepository(LazyBlogDbContext dbContext) : IPostRepository
         IQueryable<Post> posts = dbContext.Set<Post>()
             .Where(p => p.IsPublished)
             .OrderByDescending(p => p.CreatedOnUtc)
-            .Skip(offset)
-            .Take(PageSize)
             .AsNoTracking()
             .Include(x => x.User)
             .ThenInclude(u => u.PostVotes)
             .Include(x => x.Comments)
-            .Include(x => x.Tags);
+            .Include(x => x.Tags)
+            .Skip(offset)
+            .Take(PageSize);
 
         return posts;
     }
@@ -43,15 +43,14 @@ public class PostRepository(LazyBlogDbContext dbContext) : IPostRepository
     {
         IQueryable<Post> posts = dbContext.Set<Post>()
             .AsNoTracking()
-            .Skip(offset)
-            .Take(PageSize)
             .Include(x => x.Tags)
-            .Where(p => p.IsPublished)
-            .Where(p => p.Tags.Contains(tag))
+            .Where(p => p.IsPublished && p.Tags.Contains(tag))
             .OrderByDescending(p => p.CreatedOnUtc)
             .Include(x => x.User)
             .ThenInclude(u => u.PostVotes)
-            .Include(x => x.Comments);
+            .Include(x => x.Comments)
+            .Skip(offset)
+            .Take(PageSize);
 
         return posts;
     }
@@ -67,11 +66,11 @@ public class PostRepository(LazyBlogDbContext dbContext) : IPostRepository
         IQueryable<Post> posts = dbContext.Set<Post>()
             .Where(p => p.UserId == userId)
             .OrderByDescending(p => p.CreatedOnUtc)
-            .Skip(offset)
-            .Take(PageSize)
             .Include(x => x.User)
             .ThenInclude(u => u.PostVotes)
-            .Include(x => x.Comments);
+            .Include(x => x.Comments)
+            .Skip(offset)
+            .Take(PageSize);
 
         return posts;
     }
@@ -81,12 +80,12 @@ public class PostRepository(LazyBlogDbContext dbContext) : IPostRepository
         IQueryable<Post> posts = dbContext.Set<Post>()
             .Where(p => p.User.UserName == userName.Value)
             .OrderByDescending(p => p.CreatedOnUtc)
-            .Skip(offset)
-            .Take(PageSize)
             .AsNoTracking()
             .Include(x => x.User)
             .Include(x => x.Comments)
-            .Include(p => p.Tags);
+            .Include(p => p.Tags)
+            .Skip(offset)
+            .Take(PageSize);
 
         return posts;
     }
@@ -97,12 +96,12 @@ public class PostRepository(LazyBlogDbContext dbContext) : IPostRepository
             .AsNoTracking()
             .Where(p => p.IsPublished)
             .OrderByDescending(p => p.CreatedOnUtc)
-            .Skip(requestOffset)
-            .Take(PageSize)
             .Include(x => x.User)
             .ThenInclude(u => u.PostVotes)
             .Include(x => x.Comments)
-            .Include(x => x.Tags);
+            .Include(x => x.Tags)
+            .Skip(requestOffset)
+            .Take(PageSize);
         return posts;
     }
 
