@@ -29,7 +29,7 @@ public class TagRepository : ITagRepository
             .Include(t => t.Posts)
             .AsNoTracking();
     }
-    
+
     public Tag? GetTagByValue(string tagValue) =>
         _dbContext
             .Set<Tag>()
@@ -45,11 +45,10 @@ public class TagRepository : ITagRepository
 
     public Task<List<Tag>> GetTagByIdsAsync(List<Guid> tagIds, CancellationToken ct)
     {
-        var result = _dbContext
-            .Set<Tag>()
-            .Join(tagIds, t => t.Id, tagId => tagId, (t, tag) => t)
-            .ToList();
-        return Task.FromResult(result);
+        var tags = _dbContext.Set<Tag>()
+            .Where(x => tagIds.Contains(x.Id))
+            .ToListAsync(ct);
+        return tags;
     }
 
     public void Update(Tag tag)
