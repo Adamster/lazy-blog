@@ -41,7 +41,9 @@ internal sealed class CreatePostCommandHandler(
         {
             slugResult = Slug.Create($"{postId.ToByteArray().GetHashCode()}-{slugResult.Value.Value}");
         }
-
+        
+        tagRepository.Attach(tags);
+        
         Post post = Post.Create(
             postId,
             titleResult.Value,

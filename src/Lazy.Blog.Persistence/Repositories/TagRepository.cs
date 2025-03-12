@@ -55,4 +55,12 @@ public class TagRepository : ITagRepository
     {
         _dbContext.Set<Tag>().Update(tag);
     }
+
+    public void Attach(List<Tag> requestTags)
+    {
+        foreach (var tag in requestTags)
+        {
+            _dbContext.Attach(tag);
+        }
+    }
 }

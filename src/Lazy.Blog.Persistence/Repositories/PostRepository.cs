@@ -19,6 +19,7 @@ public class PostRepository(LazyBlogDbContext dbContext) : IPostRepository
         await dbContext
             .Set<Post>()
             .Include(p => p.User)
+            .Include(p => p.Tags)
             .AsNoTracking()
             .FirstOrDefaultAsync(post => post.Slug == slug, ct);
 
@@ -84,7 +85,8 @@ public class PostRepository(LazyBlogDbContext dbContext) : IPostRepository
             .Take(PageSize)
             .AsNoTracking()
             .Include(x => x.User)
-            .Include(x => x.Comments);
+            .Include(x => x.Comments)
+            .Include(p => p.Tags);
 
         return posts;
     }
