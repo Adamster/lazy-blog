@@ -43,12 +43,13 @@ public class TagRepository : ITagRepository
             .FirstOrDefault(t => t.Id == tagId);
     }
 
-    public async Task<List<Tag>> GetTagByIdsAsync(IEnumerable<Guid> tagIds, CancellationToken ct)
+    public Task<List<Tag>> GetTagByIdsAsync(List<Guid> tagIds, CancellationToken ct)
     {
-        return await _dbContext.Set<Tag>()
-            .AsNoTracking()
-            .Where(t => tagIds.Any(id => id == t.Id))
-            .ToListAsync(ct);
+        var result = _dbContext
+            .Set<Tag>()
+            .Join(tagIds, t => t.Id, tagId => tagId, (t, tag) => t)
+            .ToList();
+        return Task.FromResult(result);
     }
 
     public void Update(Tag tag)

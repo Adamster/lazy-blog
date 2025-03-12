@@ -11,7 +11,7 @@ public interface ITagRepository
     Tag? GetTagByValue(string tagValue);
 
     Tag? GetTagById(Guid tagId);
-    Task<List<Tag>> GetTagByIdsAsync(IEnumerable<Guid> tagIds, CancellationToken ct);
+    Task<List<Tag>> GetTagByIdsAsync(List<Guid> tagIds, CancellationToken ct);
     void Update(Tag tag);
     void Attach(List<Tag> requestTags);
 }
