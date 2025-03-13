@@ -25,7 +25,7 @@ public class GetCommentByIdQueryHandler : IQueryHandler<GetCommentByIdQuery, Com
         }
 
         return new CommentResponse(comment.Id, new UserResponse(comment.User),
-            "https://metro.co.uk/wp-content/uploads/2015/06/ad_174020392-e1487698550420.jpg", //temp solution :D
+            comment.User.Avatar?.Url,
             comment.CommentText.Value,
             comment.CreatedOnUtc);
     }

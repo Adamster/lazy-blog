@@ -17,7 +17,7 @@ public static class PostMapper
                     p.Summary!.Value,
                     p.Slug.Value,
                     p.IsPublished,
-                    new UserResponse(p.User),
+                    UserResponse.FromPost(p),
                     p.Views,
                     p.Comments.Count,
                     p.Rating,
