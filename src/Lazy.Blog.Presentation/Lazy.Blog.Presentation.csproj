@@ -19,6 +19,7 @@
 
     <ItemGroup>
       <Folder Include="Contracts\Comments\" />
+      <Folder Include="Contracts\Identity\" />
       <Folder Include="Contracts\Posts\" />
     </ItemGroup>
 

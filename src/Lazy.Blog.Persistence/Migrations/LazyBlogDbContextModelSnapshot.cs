@@ -17,12 +17,12 @@ namespace Lazy.Persistence.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.8")
+                .HasAnnotation("ProductVersion", "9.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Lazy.Blog.Domain.Entities.Comment", b =>
+            modelBuilder.Entity("Lazy.Domain.Entities.Comment", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -53,7 +53,7 @@ namespace Lazy.Persistence.Migrations
                     b.ToTable("Comments", (string)null);
                 });
 
-            modelBuilder.Entity("Lazy.Blog.Domain.Entities.Identity.Role", b =>
+            modelBuilder.Entity("Lazy.Domain.Entities.Identity.Role", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -79,9 +79,21 @@ namespace Lazy.Persistence.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("Roles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("8c754b8a-0f8e-4110-ada5-9d12a5b13cf1"),
+                            Name = "Admin"
+                        },
+                        new
+                        {
+                            Id = new Guid("a37f312c-5513-40af-8907-578c0bd9b143"),
+                            Name = "Member"
+                        });
                 });
 
-            modelBuilder.Entity("Lazy.Blog.Domain.Entities.Identity.RoleClaim", b =>
+            modelBuilder.Entity("Lazy.Domain.Entities.Identity.RoleClaim", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -105,7 +117,7 @@ namespace Lazy.Persistence.Migrations
                     b.ToTable("RoleClaims", (string)null);
                 });
 
-            modelBuilder.Entity("Lazy.Blog.Domain.Entities.Identity.UserClaim", b =>
+            modelBuilder.Entity("Lazy.Domain.Entities.Identity.UserClaim", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -129,7 +141,7 @@ namespace Lazy.Persistence.Migrations
                     b.ToTable("UserClaims", (string)null);
                 });
 
-            modelBuilder.Entity("Lazy.Blog.Domain.Entities.Identity.UserLogin", b =>
+            modelBuilder.Entity("Lazy.Domain.Entities.Identity.UserLogin", b =>
                 {
                     b.Property<string>("LoginProvider")
                         .HasMaxLength(128)
@@ -152,7 +164,7 @@ namespace Lazy.Persistence.Migrations
                     b.ToTable("UserLogins", (string)null);
                 });
 
-            modelBuilder.Entity("Lazy.Blog.Domain.Entities.Identity.UserRole", b =>
+            modelBuilder.Entity("Lazy.Domain.Entities.Identity.UserRole", b =>
                 {
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -167,7 +179,7 @@ namespace Lazy.Persistence.Migrations
                     b.ToTable("UserRoles", (string)null);
                 });
 
-            modelBuilder.Entity("Lazy.Blog.Domain.Entities.Identity.UserToken", b =>
+            modelBuilder.Entity("Lazy.Domain.Entities.Identity.UserToken", b =>
                 {
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(450)");
@@ -207,7 +219,7 @@ namespace Lazy.Persistence.Migrations
                     b.ToTable("Tokens", (string)null);
                 });
 
-            modelBuilder.Entity("Lazy.Blog.Domain.Entities.MediaItem", b =>
+            modelBuilder.Entity("Lazy.Domain.Entities.MediaItem", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -233,7 +245,7 @@ namespace Lazy.Persistence.Migrations
                     b.ToTable("MediaItems", (string)null);
                 });
 
-            modelBuilder.Entity("Lazy.Blog.Domain.Entities.Post", b =>
+            modelBuilder.Entity("Lazy.Domain.Entities.Post", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -290,7 +302,7 @@ namespace Lazy.Persistence.Migrations
                     b.ToTable("Posts", (string)null);
                 });
 
-            modelBuilder.Entity("Lazy.Blog.Domain.Entities.PostVote", b =>
+            modelBuilder.Entity("Lazy.Domain.Entities.PostVote", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -321,7 +333,7 @@ namespace Lazy.Persistence.Migrations
                     b.ToTable("PostVotes", (string)null);
                 });
 
-            modelBuilder.Entity("Lazy.Blog.Domain.Entities.Tag", b =>
+            modelBuilder.Entity("Lazy.Domain.Entities.Tag", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -348,7 +360,7 @@ namespace Lazy.Persistence.Migrations
                     b.ToTable("Tags", (string)null);
                 });
 
-            modelBuilder.Entity("Lazy.Blog.Domain.Entities.User", b =>
+            modelBuilder.Entity("Lazy.Domain.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -365,9 +377,7 @@ namespace Lazy.Persistence.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
@@ -415,14 +425,14 @@ namespace Lazy.Persistence.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("UserName")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("Email")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[Email] IS NOT NULL");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -433,7 +443,8 @@ namespace Lazy.Persistence.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.HasIndex("UserName")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[UserName] IS NOT NULL");
 
                     b.ToTable("Users", (string)null);
                 });
@@ -453,15 +464,15 @@ namespace Lazy.Persistence.Migrations
                     b.ToTable("PostTag");
                 });
 
-            modelBuilder.Entity("Lazy.Blog.Domain.Entities.Comment", b =>
+            modelBuilder.Entity("Lazy.Domain.Entities.Comment", b =>
                 {
-                    b.HasOne("Lazy.Blog.Domain.Entities.Post", "Post")
+                    b.HasOne("Lazy.Domain.Entities.Post", "Post")
                         .WithMany("Comments")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Lazy.Blog.Domain.Entities.User", "User")
+                    b.HasOne("Lazy.Domain.Entities.User", "User")
                         .WithMany("Comments")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -472,9 +483,9 @@ namespace Lazy.Persistence.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Lazy.Blog.Domain.Entities.Identity.RoleClaim", b =>
+            modelBuilder.Entity("Lazy.Domain.Entities.Identity.RoleClaim", b =>
                 {
-                    b.HasOne("Lazy.Blog.Domain.Entities.Identity.Role", "Role")
+                    b.HasOne("Lazy.Domain.Entities.Identity.Role", "Role")
                         .WithMany("RoleClaims")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -483,9 +494,9 @@ namespace Lazy.Persistence.Migrations
                     b.Navigation("Role");
                 });
 
-            modelBuilder.Entity("Lazy.Blog.Domain.Entities.Identity.UserClaim", b =>
+            modelBuilder.Entity("Lazy.Domain.Entities.Identity.UserClaim", b =>
                 {
-                    b.HasOne("Lazy.Blog.Domain.Entities.User", "User")
+                    b.HasOne("Lazy.Domain.Entities.User", "User")
                         .WithMany("Claims")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -494,9 +505,9 @@ namespace Lazy.Persistence.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Lazy.Blog.Domain.Entities.Identity.UserLogin", b =>
+            modelBuilder.Entity("Lazy.Domain.Entities.Identity.UserLogin", b =>
                 {
-                    b.HasOne("Lazy.Blog.Domain.Entities.User", "User")
+                    b.HasOne("Lazy.Domain.Entities.User", "User")
                         .WithMany("Logins")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -505,15 +516,15 @@ namespace Lazy.Persistence.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Lazy.Blog.Domain.Entities.Identity.UserRole", b =>
+            modelBuilder.Entity("Lazy.Domain.Entities.Identity.UserRole", b =>
                 {
-                    b.HasOne("Lazy.Blog.Domain.Entities.Identity.Role", "Role")
+                    b.HasOne("Lazy.Domain.Entities.Identity.Role", "Role")
                         .WithMany("UserRoles")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Lazy.Blog.Domain.Entities.User", "User")
+                    b.HasOne("Lazy.Domain.Entities.User", "User")
                         .WithMany("UserRoles")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -524,9 +535,9 @@ namespace Lazy.Persistence.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Lazy.Blog.Domain.Entities.Identity.UserToken", b =>
+            modelBuilder.Entity("Lazy.Domain.Entities.Identity.UserToken", b =>
                 {
-                    b.HasOne("Lazy.Blog.Domain.Entities.User", "User")
+                    b.HasOne("Lazy.Domain.Entities.User", "User")
                         .WithMany("Tokens")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -535,9 +546,9 @@ namespace Lazy.Persistence.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Lazy.Blog.Domain.Entities.MediaItem", b =>
+            modelBuilder.Entity("Lazy.Domain.Entities.MediaItem", b =>
                 {
-                    b.HasOne("Lazy.Blog.Domain.Entities.User", "User")
+                    b.HasOne("Lazy.Domain.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -546,9 +557,9 @@ namespace Lazy.Persistence.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Lazy.Blog.Domain.Entities.Post", b =>
+            modelBuilder.Entity("Lazy.Domain.Entities.Post", b =>
                 {
-                    b.HasOne("Lazy.Blog.Domain.Entities.User", "User")
+                    b.HasOne("Lazy.Domain.Entities.User", "User")
                         .WithMany("Posts")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -557,15 +568,15 @@ namespace Lazy.Persistence.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Lazy.Blog.Domain.Entities.PostVote", b =>
+            modelBuilder.Entity("Lazy.Domain.Entities.PostVote", b =>
                 {
-                    b.HasOne("Lazy.Blog.Domain.Entities.Post", "Post")
+                    b.HasOne("Lazy.Domain.Entities.Post", "Post")
                         .WithMany()
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Lazy.Blog.Domain.Entities.User", "User")
+                    b.HasOne("Lazy.Domain.Entities.User", "User")
                         .WithMany("PostVotes")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -576,9 +587,9 @@ namespace Lazy.Persistence.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Lazy.Blog.Domain.Entities.User", b =>
+            modelBuilder.Entity("Lazy.Domain.Entities.User", b =>
                 {
-                    b.OwnsOne("Lazy.Blog.Domain.ValueObjects.User.Avatar", "Avatar", b1 =>
+                    b.OwnsOne("Lazy.Domain.ValueObjects.User.Avatar", "Avatar", b1 =>
                         {
                             b1.Property<Guid>("UserId")
                                 .HasColumnType("uniqueidentifier");
@@ -606,32 +617,32 @@ namespace Lazy.Persistence.Migrations
 
             modelBuilder.Entity("PostTag", b =>
                 {
-                    b.HasOne("Lazy.Blog.Domain.Entities.Post", null)
+                    b.HasOne("Lazy.Domain.Entities.Post", null)
                         .WithMany()
                         .HasForeignKey("PostsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Lazy.Blog.Domain.Entities.Tag", null)
+                    b.HasOne("Lazy.Domain.Entities.Tag", null)
                         .WithMany()
                         .HasForeignKey("TagsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Lazy.Blog.Domain.Entities.Identity.Role", b =>
+            modelBuilder.Entity("Lazy.Domain.Entities.Identity.Role", b =>
                 {
                     b.Navigation("RoleClaims");
 
                     b.Navigation("UserRoles");
                 });
 
-            modelBuilder.Entity("Lazy.Blog.Domain.Entities.Post", b =>
+            modelBuilder.Entity("Lazy.Domain.Entities.Post", b =>
                 {
                     b.Navigation("Comments");
                 });
 
-            modelBuilder.Entity("Lazy.Blog.Domain.Entities.User", b =>
+            modelBuilder.Entity("Lazy.Domain.Entities.User", b =>
                 {
                     b.Navigation("Claims");
 
