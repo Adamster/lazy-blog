@@ -1,10 +1,10 @@
 ﻿using Lazy.Domain.Shared;
+using Microsoft.AspNetCore.Identity;
 
 namespace Lazy.Domain.Errors;
 
 public static class DomainErrors
 {
-
     public static class User
     {
         public static readonly Error EmailAlreadyInUse = new(
@@ -22,6 +22,11 @@ public static class DomainErrors
         public static readonly Error UnauthorizedUserUpdate = new(
             "User.NotAuthorizedUpdate",
             "User can be updated only by the owner");
+
+        public static Error ChangePasswordFailed(IdentityError first)
+        {
+            return new(first.Code, first.Description);
+        }
     }
 
     public static class UserToken
@@ -114,7 +119,6 @@ public static class DomainErrors
         public static readonly Func<string, Error> NotFound = value => new Error(
             "Tag.NotFound",
             $"The tag with the value {value} was not found.");
-
     }
 
     public static class Body
@@ -155,7 +159,7 @@ public static class DomainErrors
         public static readonly Error Empty = new(
             "FirstName.Empty",
             "First name is empty");
-        
+
         public static readonly Error TooLong = new(
             "FirstName.TooLong",
             "FirstName name is too long");
@@ -166,7 +170,7 @@ public static class DomainErrors
         public static readonly Error Empty = new(
             "UserName.Empty",
             "User name is empty");
-        
+
         public static readonly Error TooLong = new(
             "UserName.TooLong",
             "User name is too long");
@@ -179,7 +183,7 @@ public static class DomainErrors
             "User.NotFound",
             $"The member with the username {username} was not found.");
     }
-    
+
     public static class LastName
     {
         public static readonly Error Empty = new(
@@ -218,7 +222,7 @@ public static class DomainErrors
             $"Avatar file size is too large. Maximum is 7mb");
     }
 
-    public static class Comment    
+    public static class Comment
     {
         public static readonly Func<Guid, Error> NotFound = id => new Error(
             "Comment.NotFound",

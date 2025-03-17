@@ -17,11 +17,22 @@ public class UserTokenRepository : IUserTokenRepository
         await _dbContext.Set<UserToken>()
             .SingleOrDefaultAsync(x => x.Value == requestRefreshToken, cancellationToken);
 
-    public void Update(UserToken storedRefreshToken) 
-        => _dbContext.Set<UserToken>().Update(storedRefreshToken);
+    public void Update(UserToken storedRefreshToken)
+    {
+        _dbContext.Set<UserToken>().Attach(storedRefreshToken);
+        _dbContext.Set<UserToken>().Update(storedRefreshToken);
+    }
+    
 
     public async Task AddAsync(UserToken userToken, CancellationToken cancellationToken)
     {
         await _dbContext.Set<UserToken>().AddAsync(userToken, cancellationToken);
+    }
+
+    public async Task<List<UserToken>> GetAllByUserIdAsync(Guid userId, CancellationToken cancellationToken)
+    {
+        return await _dbContext.Set<UserToken>()
+            .Where(x => !x.IsUsed && x.UserId == userId)
+            .ToListAsync(cancellationToken);
     }
 }

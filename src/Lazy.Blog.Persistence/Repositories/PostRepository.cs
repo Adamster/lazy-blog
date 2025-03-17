@@ -33,7 +33,6 @@ public class PostRepository(LazyBlogDbContext dbContext) : IPostRepository
             .ThenInclude(u => u.PostVotes)
             .Include(x => x.Comments)
             .Include(x => x.Tags)
-            .AsSplitQuery()
             .Skip(offset)
             .Take(PageSize);
 
@@ -50,7 +49,6 @@ public class PostRepository(LazyBlogDbContext dbContext) : IPostRepository
             .Include(x => x.User)
             .ThenInclude(u => u.PostVotes)
             .Include(x => x.Comments)
-            .AsSplitQuery()
             .Skip(offset)
             .Take(PageSize);
 
@@ -104,7 +102,6 @@ public class PostRepository(LazyBlogDbContext dbContext) : IPostRepository
             .ThenInclude(u => u.PostVotes)
             .Include(x => x.Comments)
             .Include(x => x.Tags)
-            .AsSplitQuery()
             .Skip(requestOffset)
             .Take(PageSize);
         return posts;

@@ -7,4 +7,6 @@ public interface IUserTokenRepository
    Task<UserToken?> GetByRefreshTokenAsync(string requestRefreshToken, CancellationToken cancellationToken);
    void Update(UserToken storedRefreshToken);
    Task AddAsync(UserToken userToken, CancellationToken cancellationToken);
+   
+   Task<List<UserToken>> GetAllByUserIdAsync(Guid userId, CancellationToken cancellationToken);
 }
