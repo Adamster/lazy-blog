@@ -68,6 +68,8 @@ try
     builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
     builder.Services.AddSingleton<ICurrentUserContext, CurrentUserContext>();
     builder.Services.AddSingleton<IEmailService, SendGridEmailSender>();
+
+    builder.Services.AddProblemDetails();
     
     builder.Services.AddDbContext<LazyBlogDbContext>(
         (sp, optionsBuilder) =>
@@ -120,6 +122,15 @@ try
 
     app.MapScalarApiReference(o => o.WithTheme(ScalarTheme.DeepSpace));
 
+    app.UseExceptionHandler();
+    app.UseStatusCodePages();
+    
+    
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseDeveloperExceptionPage();
+    }
+    
     app.Run();
 }
 catch (Exception ex)

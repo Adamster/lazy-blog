@@ -25,7 +25,7 @@ public sealed class JwtProvider(
 
     public async Task<TokenResponse> GenerateAsync(User user, CancellationToken cancellationToken)
     {
-        var claims = new Claim[]
+        var claims = new List<Claim>
         {
             new (JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new (JwtRegisteredClaimNames.Sub, user.Id.ToString()),
