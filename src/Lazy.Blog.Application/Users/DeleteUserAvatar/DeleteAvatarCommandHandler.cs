@@ -40,7 +40,7 @@ public class DeleteAvatarCommandHandler : ICommandHandler<DeleteAvatarCommand>
             return Result.Failure(DomainErrors.Avatar.AvatarAlreadyEmpty);
         }
 
-        var isDeleted = await _fileService.DeleteByUrlAsync(avatarToDelete.Url, cancellationToken);
+        var isDeleted = await _fileService.DeleteByFilenameAsync(avatarToDelete.Filename, cancellationToken);
 
         if (!isDeleted)
         {
