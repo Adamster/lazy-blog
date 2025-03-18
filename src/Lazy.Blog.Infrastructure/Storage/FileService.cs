@@ -31,7 +31,7 @@ public class FileService : IFileService
             return null;
         }
 
-        BlobClient? blobClient = blobContainerClient.GetBlobClient($"{userName}/{Guid.NewGuid().ToString()}.{Path.GetExtension(file.FileName)}");
+        BlobClient? blobClient = blobContainerClient.GetBlobClient($"{userName}/{Guid.NewGuid().ToString()}{Path.GetExtension(file.FileName)}");
         if (blobClient is null)
         {
             _logger.LogError($"{nameof(blobClient)} is null, error creating blobClient for {file.FileName}");

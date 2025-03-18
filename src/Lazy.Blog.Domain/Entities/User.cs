@@ -39,7 +39,7 @@ public sealed class User : IdentityUser<Guid>, IAuditableEntity
 
     public Avatar? Avatar { get; private set; }
 
-    public Biography? Biography { get; init; }
+    public Biography? Biography { get; private set; }
 
     public IReadOnlyCollection<Post> Posts => _posts;
     public IReadOnlyCollection<Comment> Comments => _comments;
@@ -81,6 +81,12 @@ public sealed class User : IdentityUser<Guid>, IAuditableEntity
     {
         FirstName.Update(firstName);
         LastName.Update(lastName);
+
+        if (Biography is null && biography is not null)
+        {
+            Biography = Biography.Create(biography.Value!).Value;
+        }
+        
         Biography?.Update(biography);
         UserName = userName.Value;
     }
