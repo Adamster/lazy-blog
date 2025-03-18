@@ -1,8 +1,6 @@
 ﻿using Lazy.Application.Abstractions.Messaging;
 using Lazy.Application.Posts.Extensions;
 using Lazy.Application.Posts.GetPublishedPosts;
-using Lazy.Application.Tags.SearchTag;
-using Lazy.Application.Users.GetUserById;
 using Lazy.Domain.Entities;
 using Lazy.Domain.Errors;
 using Lazy.Domain.Repositories;

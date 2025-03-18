@@ -91,7 +91,7 @@ public class PostRepository(LazyBlogDbContext dbContext) : IPostRepository
 
         if (!includeDrafts)
         {
-            posts = posts.Where(p => !p.IsPublished);
+            posts = posts.Where(p => p.IsPublished);
         }
 
         return posts;
