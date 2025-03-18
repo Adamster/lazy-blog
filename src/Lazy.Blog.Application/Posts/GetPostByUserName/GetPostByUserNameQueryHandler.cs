@@ -34,10 +34,12 @@ public class GetPostByUserNameQueryHandler(
 
 
         var posts = postRepository.GetPostsByUserName(userNameResult.Value, request.Offset, ct, includeDraftPosts);
+        
+        int postCount = await postRepository.GetPostCountByUserIdAsync(user.Id, ct);
 
         List<UserPostItem> postsDetails = posts.ToUserPostItemResponse();
 
-        var response = new UserPostResponse(new UserResponse(user), postsDetails);
+        var response = new UserPostResponse(new UserResponse(user), postsDetails, postCount);
         return response;
     }
 }

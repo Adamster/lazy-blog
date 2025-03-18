@@ -28,6 +28,7 @@ public class TagRepository : ITagRepository
         return _dbContext.Set<Tag>()
             .Include(t => t.Posts)
             .AsNoTracking();
+
     }
 
     public Tag? GetTagByValue(string tagValue) =>

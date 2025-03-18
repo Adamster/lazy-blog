@@ -51,7 +51,7 @@ public class PostRepository(LazyBlogDbContext dbContext) : IPostRepository
             .Include(x => x.Comments)
             .Skip(offset)
             .Take(PageSize);
-
+        
         return posts;
     }
 
@@ -112,5 +112,13 @@ public class PostRepository(LazyBlogDbContext dbContext) : IPostRepository
         return posts;
     }
 
+    public async Task<int> GetPostCountByUserIdAsync(Guid userId, CancellationToken ct)
+    {
+        var postCount = await dbContext.Set<Post>()
+            .Where(p => p.UserId == userId && p.IsPublished)
+            .CountAsync(cancellationToken: ct);
+        return postCount;
+    }
+    
     public void Delete(Post post) => dbContext.Set<Post>().Remove(post);
 }

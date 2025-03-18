@@ -14,7 +14,7 @@ public class GetPostByIdQueryHandler : IQueryHandler<GetPostByUserIdQuery, UserP
     private readonly IUserRepository _userRepository;
 
     public GetPostByIdQueryHandler(
-        IPostRepository postRepository, 
+        IPostRepository postRepository,
         IUserRepository userRepository)
     {
         _postRepository = postRepository;
@@ -32,12 +32,14 @@ public class GetPostByIdQueryHandler : IQueryHandler<GetPostByUserIdQuery, UserP
                 $"The user with Id {request.UserId} was not found."));
         }
 
-        var posts =  _postRepository
-           .GetPostsByUserId(request.UserId, request.Offset, ct);
+        var posts = _postRepository
+            .GetPostsByUserId(request.UserId, request.Offset, ct);
 
         var postDetails = posts.ToUserPostItemResponse();
 
-       var response = new UserPostResponse(new UserResponse(user), postDetails);
-       return response;
+        int postCount = await _postRepository.GetPostCountByUserIdAsync(user.Id, ct);
+
+        var response = new UserPostResponse(new UserResponse(user), postDetails, postCount);
+        return response;
     }
 }

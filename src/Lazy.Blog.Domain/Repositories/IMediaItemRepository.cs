@@ -9,4 +9,6 @@ public interface IMediaItemRepository
     Task Add(MediaItem item);
 
     void Delete(MediaItem item);
+    Task<MediaItem?> GetByUrlAsync(string requestBlobUrl, CancellationToken cancellationToken);
+    Task<List<MediaItem>> GetByUserId(Guid userId, CancellationToken cancellationToken);
 }

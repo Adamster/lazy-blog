@@ -247,4 +247,19 @@ public static class DomainErrors
             "Biography.TooLong",
             "Biography is too long");
     }
+
+    public static class MediaItem
+    {
+        public static readonly Error DeleteFailed = new(
+            "MediaItem.DeleteFailed",
+            "Delete failed, please try again later");
+
+        public static readonly Error NotFound = new(
+            "MediaItem.NotFound",
+            "Media item not found");
+
+        public static readonly Error Unauthorized = new(
+            "MediaItem.UnauthorizedAccess",
+            "Media item access unauthorized");
+    }
 }

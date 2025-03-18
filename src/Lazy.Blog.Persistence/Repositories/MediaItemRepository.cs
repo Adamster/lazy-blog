@@ -20,4 +20,16 @@ public class MediaItemRepository : IMediaItemRepository
     public async Task Add(MediaItem item) => await _dbContext.Set<MediaItem>().AddAsync(item);
 
     public void Delete(MediaItem item) => _dbContext.Set<MediaItem>().Remove(item);
+    public Task<MediaItem?> GetByUrlAsync(string requestBlobUrl, CancellationToken cancellationToken)
+    {
+      return _dbContext.Set<MediaItem>()
+          .FirstOrDefaultAsync(mi => mi.UploadedUrl == requestBlobUrl, cancellationToken: cancellationToken);
+    }
+
+    public Task<List<MediaItem>> GetByUserId(Guid userId, CancellationToken cancellationToken)
+    {
+        return _dbContext.Set<MediaItem>()
+            .Where(mi => mi.UserId == userId)
+            .ToListAsync(cancellationToken: cancellationToken);
+    }
 }

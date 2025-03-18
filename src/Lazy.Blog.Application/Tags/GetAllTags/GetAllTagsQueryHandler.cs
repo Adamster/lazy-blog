@@ -12,7 +12,7 @@ public class GetAllTagsQueryHandler(ITagRepository tagRepository) : IQueryHandle
         var result = tagRepository.GetAllTags();
 
         var tagResponseWithPostCount = result
-            .Select(t => new TagResponse(t.Id, t.Value, t.Posts.Count))
+            .Select(t => new TagResponse(t.Id, t.Value, t.Posts.Count(p => p.IsPublished)))
             .ToList();
 
         return Task.FromResult<Result<List<TagResponse>>>(tagResponseWithPostCount);

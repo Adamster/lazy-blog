@@ -65,6 +65,13 @@ public class FileService : IFileService
         return deleteResult?.Value ?? false;
     }
 
+    public async Task<bool> DeleteByBlobUrl(string requestBlobUrl, string userName, CancellationToken ct)
+    {
+        var blobUri =  new Uri(requestBlobUrl);
+        var blobName = blobUri.Segments[^1];
+        return await DeleteByFilenameAsync(blobName, userName, ct);
+    }
+
     private BlobServiceClient GetBlobServiceClient()
     {
         //TODO use keys approach for local development
