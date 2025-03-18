@@ -17,7 +17,7 @@ public sealed class User : IdentityUser<Guid>, IAuditableEntity
     private readonly List<UserRole> _userRoles = new();
     private readonly List<PostVote> _postVotes = new();
 
-    private User(Guid id, Email email, FirstName firstName, LastName lastName, UserName userName)
+    private User(Guid id, Email email, FirstName firstName, LastName lastName, UserName userName, Biography? biography)
         : base(email.Value)
     {
         Id = id;
@@ -25,6 +25,7 @@ public sealed class User : IdentityUser<Guid>, IAuditableEntity
         FirstName = firstName;
         LastName = lastName;
         UserName = userName.Value;
+        Biography = biography;
         CreatedOnUtc = DateTime.UtcNow;
     }
 
@@ -37,6 +38,8 @@ public sealed class User : IdentityUser<Guid>, IAuditableEntity
     public LastName LastName { get; init; } = null!;
 
     public Avatar? Avatar { get; private set; }
+
+    public Biography? Biography { get; init; }
 
     public IReadOnlyCollection<Post> Posts => _posts;
     public IReadOnlyCollection<Comment> Comments => _comments;
@@ -60,22 +63,25 @@ public sealed class User : IdentityUser<Guid>, IAuditableEntity
         Email email,
         FirstName firstName,
         LastName lastName,
-        UserName userName)
+        UserName userName,
+        Biography? biography)
     {
         var user = new User(
             id,
             email,
             firstName,
             lastName,
-            userName);
+            userName, 
+            biography);
 
         return user;
     }
 
-    public void ChangeName(FirstName firstName, LastName lastName, UserName userName)
+    public void UpdateUser(FirstName firstName, LastName lastName, UserName userName, Biography? biography)
     {
         FirstName.Update(firstName);
         LastName.Update(lastName);
+        Biography?.Update(biography);
         UserName = userName.Value;
     }
 

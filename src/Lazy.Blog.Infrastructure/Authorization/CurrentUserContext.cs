@@ -47,11 +47,17 @@ public sealed class CurrentUserContext : ICurrentUserContext
             throw new NullReferenceException($"{nameof(_httpContextAccessor.HttpContext)} is null");
         }
 
-        Claim currentUserClaim = _httpContextAccessor
+        Claim? currentUserClaim = _httpContextAccessor
             .HttpContext
             .User
             .Claims
-            .Single(c => c.Type == ClaimTypes.NameIdentifier);
+            .SingleOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+
+
+        if (currentUserClaim is null)
+        {
+            return Guid.Empty;
+        }
 
         return new Guid(currentUserClaim.Value);
     }

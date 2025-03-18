@@ -76,7 +76,7 @@ public class PostRepository(LazyBlogDbContext dbContext) : IPostRepository
         return posts;
     }
 
-    public IQueryable<Post> GetPostsByUserName(UserName userName, int offset, CancellationToken ct)
+    public IQueryable<Post> GetPostsByUserName(UserName userName, int offset, CancellationToken ct, bool includeDrafts)
     {
         IQueryable<Post> posts = dbContext.Set<Post>()
             .Where(p => p.User.UserName == userName.Value)
@@ -88,6 +88,11 @@ public class PostRepository(LazyBlogDbContext dbContext) : IPostRepository
             .AsSplitQuery()
             .Skip(offset)
             .Take(PageSize);
+
+        if (!includeDrafts)
+        {
+            posts = posts.Where(p => !p.IsPublished);
+        }
 
         return posts;
     }

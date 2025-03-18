@@ -8,6 +8,7 @@ public record UserResponse(
     string FirstName,
     string LastName,
     string UserName,
+    string? Biography,
     string? AvatarUrl,
     DateTime CreatedOnUtc)
 {
@@ -19,6 +20,7 @@ public record UserResponse(
             post.User.FirstName.Value,
             post.User.LastName.Value,
             post.User.UserName!,
+            post.User.Biography?.Value,
             post.User.Avatar?.Url,
             post.User.CreatedOnUtc);
     }
@@ -30,6 +32,7 @@ public record UserResponse(
             user.FirstName.Value,
             user.LastName.Value,
             user.UserName!,
+            user.Biography?.Value,
             user.Avatar?.Url,
             user.CreatedOnUtc)
     {

@@ -232,4 +232,11 @@ public static class DomainErrors
             "Comment.NotAuthorizedUpdate",
             "Comment can be updated only by comment author");
     }
+
+    public static class Biography
+    {
+        public static readonly Error TooLong = new(
+            "Biography.TooLong",
+            "Biography is too long");
+    }
 }

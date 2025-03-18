@@ -29,7 +29,7 @@ public class UsersController : ApiController
     }
 
     [AllowAnonymous]
-    [HttpGet("{id:guid}", Name = "GetUserById")]
+    [HttpGet("{id:guid}", Name = nameof(GetUserById))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserResponse))]
     public async Task<IActionResult> GetUserById(Guid id, CancellationToken ct)
@@ -86,7 +86,7 @@ public class UsersController : ApiController
     }
 
     [AllowAnonymous]
-    [HttpPost("refresh", Name = "RefreshToken")]
+    [HttpPost("refresh", Name = nameof(RefreshToken))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(LoginResponse))]
     public async Task<IActionResult> RefreshToken(
@@ -113,6 +113,7 @@ public class UsersController : ApiController
             request.FirstName,
             request.LastName,
             request.UserName,
+            request.Biography,
             request.Password);
 
         Result<Guid> result = await Sender.Send(command, ct);
@@ -128,7 +129,7 @@ public class UsersController : ApiController
             result.Value);
     }
 
-    [HttpPut("{id:guid}", Name = "UpdateUser")]
+    [HttpPut("{id:guid}", Name = nameof(UpdateUser))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> UpdateUser(
@@ -140,7 +141,8 @@ public class UsersController : ApiController
             id,
             request.FirstName,
             request.LastName,
-            request.UserName);
+            request.UserName,
+            request.Biography);
 
         Result result = await Sender.Send(
             command,
@@ -155,10 +157,10 @@ public class UsersController : ApiController
     }
 
     [AllowAnonymous]
-    [HttpGet("{id:guid}/posts", Name = "GetPostsByUserId")]
+    [HttpGet("{id:guid}/posts", Name = nameof(GetPostsByUserId))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserPostResponse))]
-    public async Task<IActionResult> GetPostByUserId(
+    public async Task<IActionResult> GetPostsByUserId(
         Guid id,
         [FromQuery] int offset,
         CancellationToken ct)
@@ -166,7 +168,6 @@ public class UsersController : ApiController
         var query = new GetPostByUserIdQuery(id, offset);
 
         Result<UserPostResponse> response = await Sender.Send(query, ct);
-
         return response.IsSuccess ? Ok(response.Value) : NotFound(response.Error);
     }
 }

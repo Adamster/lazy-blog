@@ -1,4 +1,5 @@
-﻿using Lazy.Application.Abstractions.Messaging;
+﻿using Lazy.Application.Abstractions.Authorization;
+using Lazy.Application.Abstractions.Messaging;
 using Lazy.Application.Posts.Extensions;
 using Lazy.Application.Posts.GetPostByUserId;
 using Lazy.Application.Posts.GetPublishedPosts;
@@ -11,7 +12,8 @@ namespace Lazy.Application.Posts.GetPostByUserName;
 
 public class GetPostByUserNameQueryHandler(
     IPostRepository postRepository,
-    IUserRepository userRepository)
+    IUserRepository userRepository,
+    ICurrentUserContext currentUserContext)
     : IQueryHandler<GetPostByUserNameQuery, UserPostResponse>
 {
     public async Task<Result<UserPostResponse>> Handle(GetPostByUserNameQuery request, CancellationToken ct)
@@ -26,7 +28,12 @@ public class GetPostByUserNameQueryHandler(
                 $"The user with Username {request.UserName} was not found."));
         }
 
-        var posts = postRepository.GetPostsByUserName(userNameResult.Value, request.Offset, ct);
+        var currentUserId = currentUserContext.GetCurrentUserId();
+
+        var includeDraftPosts = currentUserId == user.Id;
+
+
+        var posts = postRepository.GetPostsByUserName(userNameResult.Value, request.Offset, ct, includeDraftPosts);
 
         List<UserPostItem> postsDetails = posts.ToUserPostItemResponse();
 

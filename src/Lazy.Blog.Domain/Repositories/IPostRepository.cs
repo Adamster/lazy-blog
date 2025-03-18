@@ -22,6 +22,6 @@ public interface IPostRepository
 
     IQueryable<Post> GetPostsByUserId(Guid userId, int offset, CancellationToken ct);
 
-    IQueryable<Post> GetPostsByUserName(UserName userName, int offset, CancellationToken ct);
+    IQueryable<Post> GetPostsByUserName(UserName userName, int offset, CancellationToken ct, bool includeDrafts = false);
     IQueryable<Post> GetPagedPosts(int requestOffset, CancellationToken ct);
 }

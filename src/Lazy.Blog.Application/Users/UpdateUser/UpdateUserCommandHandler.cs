@@ -16,17 +16,21 @@ public class UpdateUserCommandHandler(
     UserManager<User> userManager)
     : ICommandHandler<UpdateUserCommand>
 {
-    private readonly ILogger<UpdateUserCommandHandler> _logger = logger;
-
     public async Task<Result> Handle(UpdateUserCommand request, CancellationToken ct)
     {
         var userNameResult = UserName.Create(request.Username);
         var firstNameResult = FirstName.Create(request.FirstName);
         var lastNameResult = LastName.Create(request.LastName);
-        
+        Result<Biography>? biographyResult = null;
+
+        if (request.Biography is not null)
+        {
+            biographyResult = Biography.Create(request.Biography);
+        }
+
         var user = await userRepository.GetByIdAsync(request.Id, ct);
 
-        if (user == null)
+        if (user is null)
         {
             return Result.Failure(DomainErrors.User.NotFound(request.Id));
         }
@@ -34,19 +38,22 @@ public class UpdateUserCommandHandler(
         var userNameChanged = user.UserName != request.Username;
         if (userNameChanged && await userRepository.GetByUsernameAsync(userNameResult.Value, ct) is not null)
         {
+            logger.LogError("Username {0} already taken", request.Username);
             return Result.Failure(DomainErrors.UserName.UserNameAlreadyInUse);
         }
-        
-        _logger.LogInformation($"Updating user {user.UserName} information");
-        user.ChangeName(
+
+        logger.LogInformation($"Updating user {user.UserName} information");
+
+        user.UpdateUser(
             firstNameResult.Value,
             lastNameResult.Value,
-            userNameResult.Value);
+            userNameResult.Value,
+            biographyResult?.Value);
 
         await userManager.UpdateAsync(user);
 
         await unitOfWork.SaveChangesAsync(ct);
-        
+
         return Result.Success();
     }
 }

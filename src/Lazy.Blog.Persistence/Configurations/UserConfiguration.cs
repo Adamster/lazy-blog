@@ -33,6 +33,11 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
             .HasConversion(x => x.Value, v => LastName.Create(v).Value)
             .HasMaxLength(LastName.MaxLength);
 
+        builder
+            .Property(x => x.Biography)
+            .HasConversion(x => x.Value, v => Biography.Create(v).Value)
+            .HasMaxLength(Biography.MaxLength);
+
         builder.Property(x => x.UserName)
             .HasMaxLength(UserName.MaxLength);
 
