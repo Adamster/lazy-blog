@@ -6,5 +6,5 @@ public interface IFileService
 {
     Task<string?> UploadAsync(IFormFile file, string userName, CancellationToken ct);
 
-    Task<bool> DeleteByFilenameAsync(string fileName, CancellationToken ct);
+    Task<bool> DeleteByFilenameAsync(string fileName, string userName, CancellationToken ct);
 }

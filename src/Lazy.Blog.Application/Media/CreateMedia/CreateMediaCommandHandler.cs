@@ -49,18 +49,7 @@ public class CreateMediaCommandHandler : ICommandHandler<CreateMediaCommand, str
         {
             return Result.Failure<string>(DomainErrors.Avatar.UploadFailed);
         }
-
-        var mediaItemToUpload = Avatar.Create(
-            request.File.FileName,
-            uploadedUrl,
-            request.File.Length);
-
-        if (mediaItemToUpload.IsFailure)
-        {
-            await _fileService.DeleteByFilenameAsync(request.File.FileName, cancellationToken);
-            return Result.Failure<string>(mediaItemToUpload.Error);
-        }
-
+        
         var mediaItem = MediaItem.Create(user, uploadedUrl);
 
         await _mediaItemRepository.Add(mediaItem);

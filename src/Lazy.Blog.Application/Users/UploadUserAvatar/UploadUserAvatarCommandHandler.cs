@@ -56,11 +56,7 @@ public class UploadUserAvatarCommandHandler : ICommandHandler<UploadUserAvatarCo
         }
 
         var newAvatarResult = Avatar.Create(request.File.FileName, uploadedUrl, request.File.Length);
-        if (newAvatarResult.IsFailure)
-        {
-            await _fileService.DeleteByFilenameAsync(request.File.FileName, ct);
-            return Result.Failure(newAvatarResult.Error);
-        }
+       
         user.SetAvatar(newAvatarResult.Value);
 
         _userRepository.Update(user);

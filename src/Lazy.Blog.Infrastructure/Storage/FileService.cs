@@ -34,7 +34,7 @@ public class FileService : IFileService
 
         BlobClient? blobClient =
             blobContainerClient.GetBlobClient(
-                $"{userName}/{file.FileName}{Path.GetExtension(file.FileName)}");
+                $"{userName}/{file.FileName}");
         if (blobClient is null)
         {
             _logger.LogError($"{nameof(blobClient)} is null, error creating blobClient for {file.FileName}");
@@ -56,12 +56,12 @@ public class FileService : IFileService
         }
     }
 
-    public async Task<bool> DeleteByFilenameAsync(string fileName, CancellationToken ct)
+    public async Task<bool> DeleteByFilenameAsync(string fileName, string userName, CancellationToken ct)
     {
         var blobServiceClient = GetBlobServiceClient();
         var blobContainerClient = blobServiceClient.GetBlobContainerClient(_options.ImageContainerName);
 
-        var deleteResult = await blobContainerClient.DeleteBlobIfExistsAsync(fileName, cancellationToken: ct);
+        var deleteResult = await blobContainerClient.DeleteBlobIfExistsAsync($"{userName}/{fileName}", cancellationToken: ct);
         return deleteResult?.Value ?? false;
     }
 
