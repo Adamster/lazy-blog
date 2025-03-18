@@ -1,6 +1,7 @@
 ﻿using Lazy.Application.Posts.GetPostByUserId;
 using Lazy.Application.Users.CheckIfUserNameIsUnique;
 using Lazy.Application.Users.CreateUser;
+using Lazy.Application.Users.DeleteUserAvatar;
 using Lazy.Application.Users.GetUserById;
 using Lazy.Application.Users.Login;
 using Lazy.Application.Users.RefreshToken;
@@ -64,6 +65,16 @@ public class UsersController : ApiController
         CancellationToken ct)
     {
         var command = new UploadUserAvatarCommand(id, file);
+
+        var result = await Sender.Send(command, ct);
+
+        return result.IsFailure ? HandleFailure(result) : NoContent();
+    }
+
+    [HttpDelete("{id:guid}/avatar", Name = "DeleteUserAvatar")]
+    public async Task<IActionResult> DeleteUserAvatar([FromRoute] Guid id, CancellationToken ct)
+    {
+        var command = new DeleteAvatarCommand(id);
 
         var result = await Sender.Send(command, ct);
 

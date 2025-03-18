@@ -95,4 +95,9 @@ public sealed class User : IdentityUser<Guid>, IAuditableEntity
     {
         Avatar = avatar;
     }
+
+    public void DeleteAvatar()
+    {
+        Avatar = null;
+    }
 }

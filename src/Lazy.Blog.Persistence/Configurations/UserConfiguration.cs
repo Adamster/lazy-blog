@@ -35,7 +35,7 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
 
         builder
             .Property(x => x.Biography)
-            .HasConversion(x => x.Value, v => Biography.Create(v).Value)
+            .HasConversion(x => x!.Value, v => Biography.Create(v!).Value)
             .HasMaxLength(Biography.MaxLength);
 
         builder.Property(x => x.UserName)

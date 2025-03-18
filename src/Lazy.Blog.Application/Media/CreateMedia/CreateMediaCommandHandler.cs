@@ -57,7 +57,7 @@ public class CreateMediaCommandHandler : ICommandHandler<CreateMediaCommand, str
 
         if (mediaItemToUpload.IsFailure)
         {
-            await _fileService.DeleteAsync(request.File.FileName, cancellationToken);
+            await _fileService.DeleteByFilenameAsync(request.File.FileName, cancellationToken);
             return Result.Failure<string>(mediaItemToUpload.Error);
         }
 

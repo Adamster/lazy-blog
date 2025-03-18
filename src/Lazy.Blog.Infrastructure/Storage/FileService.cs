@@ -22,7 +22,8 @@ public class FileService : IFileService
     public async Task<string?> UploadAsync(IFormFile file, string userName, CancellationToken ct)
     {
         BlobServiceClient blobServiceClient = GetBlobServiceClient();
-        BlobContainerClient? blobContainerClient = blobServiceClient.GetBlobContainerClient(_options.ImageContainerName);
+        BlobContainerClient? blobContainerClient =
+            blobServiceClient.GetBlobContainerClient(_options.ImageContainerName);
         if (blobContainerClient is null)
         {
             _logger.LogError(
@@ -31,7 +32,9 @@ public class FileService : IFileService
             return null;
         }
 
-        BlobClient? blobClient = blobContainerClient.GetBlobClient($"{userName}/{Guid.NewGuid().ToString()}{Path.GetExtension(file.FileName)}");
+        BlobClient? blobClient =
+            blobContainerClient.GetBlobClient(
+                $"{userName}/{Guid.NewGuid().ToString()}{Path.GetExtension(file.FileName)}");
         if (blobClient is null)
         {
             _logger.LogError($"{nameof(blobClient)} is null, error creating blobClient for {file.FileName}");
@@ -47,17 +50,28 @@ public class FileService : IFileService
         }
         catch (RequestFailedException exception)
         {
-            _logger.LogError(exception,$"Upload failed with message: {exception.Message}, error code: {exception.ErrorCode}");
+            _logger.LogError(exception,
+                $"Upload failed with message: {exception.Message}, error code: {exception.ErrorCode}");
             return null;
         }
     }
 
-    public async Task DeleteAsync(string fileName, CancellationToken ct)
+    public async Task<bool> DeleteByFilenameAsync(string fileName, CancellationToken ct)
     {
         var blobServiceClient = GetBlobServiceClient();
         var blobContainerClient = blobServiceClient.GetBlobContainerClient(_options.ImageContainerName);
 
-        await blobContainerClient.DeleteBlobIfExistsAsync(fileName, cancellationToken: ct);
+        var deleteResult = await blobContainerClient.DeleteBlobIfExistsAsync(fileName, cancellationToken: ct);
+        return deleteResult?.Value ?? false;
+    }
+
+    public async Task<bool> DeleteByUrlAsync(string url, CancellationToken cancellationToken)
+    {
+        var blobServiceClient = GetBlobServiceClient();
+        var blobContainerClient = blobServiceClient.GetBlobContainerClient(_options.ImageContainerName);
+        
+        var deleteResult = await blobContainerClient.DeleteBlobIfExistsAsync(url, cancellationToken: cancellationToken);
+        return deleteResult?.Value ?? false;
     }
 
     private BlobServiceClient GetBlobServiceClient()
@@ -68,6 +82,5 @@ public class FileService : IFileService
             new DefaultAzureCredential());
 
         return client;
-
     }
 }
