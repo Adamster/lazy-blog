@@ -8,6 +8,9 @@ public class ChangePasswordCommandValidator : AbstractValidator<ChangePasswordCo
     {
         RuleFor(x => x.OldPassword).NotEmpty();
         RuleFor(x => x.NewPassword).NotEmpty();
-        RuleFor(x => x.OldPassword).NotEqual(x => x.NewPassword);
+        
+        RuleFor(x => x.OldPassword)
+            .NotEqual(x => x.NewPassword)
+            .WithMessage("You can't use the  same old password");
     }
 }
