@@ -23,8 +23,8 @@ public class ResetPasswordCommandHandler : ICommandHandler<ResetPasswordCommand,
             throw new InvalidOperationException("User not found");
         }
 
-        var decodedToken = HttpUtility.UrlDecode(request.Token);
-        IdentityResult result = await _userManager.ResetPasswordAsync(user, decodedToken, request.NewPassword);
+      
+        IdentityResult result = await _userManager.ResetPasswordAsync(user, request.Token, request.NewPassword);
         
         if (!result.Succeeded)
         {
