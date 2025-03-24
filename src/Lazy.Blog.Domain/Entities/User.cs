@@ -9,13 +9,13 @@ namespace Lazy.Domain.Entities;
 
 public sealed class User : IdentityUser<Guid>, IAuditableEntity
 {
-    private readonly List<Post> _posts = new();
-    private readonly List<Comment> _comments = new();
-    private readonly List<UserClaim> _claims = new();
-    private readonly List<UserLogin> _logins = new();
-    private readonly List<UserToken> _tokens = new();
-    private readonly List<UserRole> _userRoles = new();
-    private readonly List<PostVote> _postVotes = new();
+    private readonly List<Post> _posts = [];
+    private readonly List<Comment> _comments = [];
+    private readonly List<UserClaim> _claims = [];
+    private readonly List<UserLogin> _logins = [];
+    private readonly List<UserToken> _tokens = [];
+    private readonly List<UserRole> _userRoles = [];
+    private readonly List<PostVote> _postVotes = [];
 
     private User(Guid id, Email email, FirstName firstName, LastName lastName, UserName userName, Biography? biography)
         : base(email.Value)

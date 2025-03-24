@@ -1,6 +1,6 @@
 ﻿using Lazy.Application.Abstractions.Messaging;
 using Lazy.Application.Comments.GetCommentById;
-using Lazy.Application.Users.GetUserById;
+using Lazy.Application.Users.Extensions;
 using Lazy.Domain.Entities;
 using Lazy.Domain.Errors;
 using Lazy.Domain.Repositories;
@@ -14,7 +14,7 @@ public class GetCommentByPostIdQueryHandler : IQueryHandler<GetCommentByPostIdQu
     private readonly ICommentRepository _commentRepository;
 
     public GetCommentByPostIdQueryHandler(
-        IPostRepository postRepository, 
+        IPostRepository postRepository,
         ICommentRepository commentRepository)
     {
         _postRepository = postRepository;
@@ -30,19 +30,15 @@ public class GetCommentByPostIdQueryHandler : IQueryHandler<GetCommentByPostIdQu
             return Result.Failure<List<CommentResponse>>(DomainErrors.Post.NotFound(request.PostId));
         }
 
-        var tmpAvatarUrl = "https://metro.co.uk/wp-content/uploads/2015/06/ad_174020392-e1487698550420.jpg";
         List<Comment> comments = await _commentRepository.GetAllAsync(post.Id, ct);
 
-        List<CommentResponse> response = 
-            comments.Select(
-                    c => new CommentResponse
-                    (
-                        c.Id, 
-                        new UserResponse(c.User),
-                        tmpAvatarUrl, 
-                        c.CommentText.Value, 
+        List<CommentResponse> response = comments.Select(c
+                => new CommentResponse(
+                        c.Id,
+                        c.User.ToUserCommentResponse(),
+                        c.CommentText.Value,
                         c.CreatedOnUtc))
-                .ToList();
+            .ToList();
 
         return response;
     }

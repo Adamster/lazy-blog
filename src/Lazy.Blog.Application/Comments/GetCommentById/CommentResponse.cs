@@ -4,8 +4,6 @@ namespace Lazy.Application.Comments.GetCommentById;
 
 public record CommentResponse(
     Guid Id,
-    UserResponse User,
-    string? UserAvatarUrl,
+    UserCommentResponse User,
     string Body,
-    DateTime CreatedAtUtc
-);
+    DateTime CreatedAtUtc);
