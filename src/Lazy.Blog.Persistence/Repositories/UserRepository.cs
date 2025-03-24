@@ -15,6 +15,7 @@ public class UserRepository : IUserRepository
     public async Task<User?> GetByIdAsync(Guid id, CancellationToken ct = default) => 
         await _dbContext
             .Set<User>()
+            .AsNoTracking()
             .FirstOrDefaultAsync(user => user.Id == id, ct);
 
     public async Task<User?> GetByEmailAsync(Email email, CancellationToken ct = default) =>
@@ -30,10 +31,7 @@ public class UserRepository : IUserRepository
     public void Add(User user) =>
         _dbContext.Set<User>().Add(user);
 
-    public void Update(User user)
-    {
-        _dbContext.Set<User>().Update(user);
-    }
+    public void Update(User user) => _dbContext.Set<User>().Update(user);
 
     public async Task<User?> GetByUsernameAsync(UserName userName, CancellationToken ct) =>
         await _dbContext
