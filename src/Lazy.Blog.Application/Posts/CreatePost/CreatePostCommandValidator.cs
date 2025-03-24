@@ -11,8 +11,6 @@ public class CreatePostCommandValidator : AbstractValidator<CreatePostCommand>
 
         RuleFor(x => x.Summary).MaximumLength(Summary.MaxLength);
 
-        RuleFor(x => x.Tags).NotEmpty();
-
         RuleFor(x => x.Body).NotEmpty();
     }
 }

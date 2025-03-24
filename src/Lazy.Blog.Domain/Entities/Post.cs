@@ -6,8 +6,8 @@ namespace Lazy.Domain.Entities;
 
 public sealed class Post : AggregateRoot, IAuditableEntity
 {
-    private readonly List<Comment> _comments = new();
-    private readonly List<Tag> _tags = new();
+    private readonly List<Comment> _comments = [];
+    private readonly List<Tag> _tags = [];
 
     public Post(
         Guid id,
@@ -117,15 +117,9 @@ public sealed class Post : AggregateRoot, IAuditableEntity
         }
     }
 
-    private void UpVote()
-    {
-        Rating++;
-    }
+    private void UpVote() => Rating++;
 
-    private void DownVote()
-    {
-        Rating--;
-    }
+    private void DownVote() => Rating--;
 
     public void Vote(VoteDirection postVoteVoteDirection)
     {
@@ -142,13 +136,7 @@ public sealed class Post : AggregateRoot, IAuditableEntity
         }
     }
 
-    public void Hide()
-    {
-        IsPublished = false;
-    }
+    public void Hide() => IsPublished = false;
 
-    public void Publish()
-    {
-        IsPublished = true;
-    }
+    public void Publish() => IsPublished = true;
 }

@@ -12,22 +12,16 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Lazy.Infrastructure.Authentication;
 
-public sealed class JwtProvider : IJwtProvider
+public sealed class JwtProvider(
+    IOptions<JwtOptions> options,
+    IUserTokenRepository userTokenRepository,
+    IOptions<JwtBearerOptions> jwtBearerOptions)
+    : IJwtProvider
 {
-    private readonly IUserTokenRepository _userTokenRepository;
-    private readonly JwtOptions _options;
-    private readonly JwtBearerOptions _jwtBearerOptions;
+    private readonly JwtOptions _options = options.Value;
+    private readonly JwtBearerOptions _jwtBearerOptions = jwtBearerOptions.Value;
     private const int TokenLifeTimeInMinutes = 30;
-    
 
-    public JwtProvider(IOptions<JwtOptions> options,
-        IUserTokenRepository userTokenRepository, 
-        IOptions<JwtBearerOptions> jwtBearerOptions)
-    {
-        _userTokenRepository = userTokenRepository;
-        _jwtBearerOptions = jwtBearerOptions.Value;
-        _options = options.Value;
-    }
 
     public async Task<TokenResponse> GenerateAsync(User user, CancellationToken cancellationToken)
     {
@@ -57,7 +51,7 @@ public sealed class JwtProvider : IJwtProvider
 
         var userToken = new UserToken(token.Id, user);
 
-        await _userTokenRepository.AddAsync(userToken, cancellationToken);
+        await userTokenRepository.AddAsync(userToken, cancellationToken);
 
         return new TokenResponse(tokenValue, userToken.Value!);
     }
@@ -118,9 +112,9 @@ public sealed class JwtProvider : IJwtProvider
         return userId;
     }
 
-    private bool IsJwtWithValidSecurityAlgorithm(SecurityToken validatedToken)
+    private static bool IsJwtWithValidSecurityAlgorithm(SecurityToken validatedToken)
     {
-        return (validatedToken is JwtSecurityToken jwtSecurityToken) &&
+        return validatedToken is JwtSecurityToken jwtSecurityToken &&
                jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256,
                    StringComparison.InvariantCultureIgnoreCase);
     }
