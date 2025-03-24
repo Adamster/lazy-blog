@@ -14,8 +14,6 @@ public class UpdatePostCommandValidator : AbstractValidator<UpdatePostCommand>
 
         RuleFor(x => x.Id).NotEqual(Guid.Empty);
         
-        RuleFor(x => x.Tags).NotEmpty();
-
         RuleFor(x => x.Slug).NotEmpty().MaximumLength(Slug.MaxLength);
     }
 }

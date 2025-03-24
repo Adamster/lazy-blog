@@ -1,5 +1,4 @@
 ﻿using Lazy.Application.Abstractions.Messaging;
-using Lazy.Application.Tags.SearchTag;
 using Lazy.Domain.Entities;
 using Lazy.Domain.Errors;
 using Lazy.Domain.Extensions;
@@ -21,12 +20,7 @@ internal sealed class CreatePostCommandHandler(
         Result<Title> titleResult = Title.Create(request.Title);
         Result<Summary> summaryResult = Summary.Create(request.Summary);
         Result<Body> bodyResult = Body.Create(request.Body);
-        List<Tag> tags = await tagRepository.GetTagByIdsAsync(request.Tags, ct);
-
-        if (!tags.Any())
-        {
-            return Result.Failure<PostCreatedResponse>(DomainErrors.Tag.NotFound(request.Tags.First().ToString()));
-        }
+        List<Tag> tags = [];
 
         if (await userRepository.GetByIdAsync(request.UserId, ct) is null)
         {
@@ -41,9 +35,13 @@ internal sealed class CreatePostCommandHandler(
         {
             slugResult = Slug.Create($"{postId.ToByteArray().GetHashCode()}-{slugResult.Value.Value}");
         }
-        
-        tagRepository.Attach(tags);
-        
+
+        if (request.Tags.Count != 0)
+        {
+            tags = await tagRepository.GetTagByIdsAsync(request.Tags, ct);
+            tagRepository.Attach(tags);
+        }
+
         Post post = Post.Create(
             postId,
             titleResult.Value,

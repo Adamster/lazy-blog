@@ -1,6 +1,5 @@
 ﻿using Lazy.Application.Abstractions.Authorization;
 using Lazy.Application.Abstractions.Messaging;
-using Lazy.Application.Tags.SearchTag;
 using Lazy.Domain.Entities;
 using Lazy.Domain.Errors;
 using Lazy.Domain.Repositories;
@@ -35,15 +34,14 @@ public class UpdatePostCommandHandler(
         Result<Body> bodyResult = Body.Create(request.Body);
         Result<Slug> slugResult = Slug.Create(request.Slug);
 
-        List<Tag> updatedTags = await tagRepository.GetTagByIdsAsync(request.Tags, ct);
-        
-        if (!updatedTags.Any())
+        List<Tag> updatedTags = [];
+
+        if (request.Tags.Count != 0)
         {
-            return Result.Failure(DomainErrors.Tag.NotFound(request.Tags.First().ToString()));
+            updatedTags = await tagRepository.GetTagByIdsAsync(request.Tags, ct);
+            tagRepository.Attach(updatedTags);
         }
-        
-        tagRepository.Attach(updatedTags);
-        
+
         post.Update(
             titleResult.Value,
             summaryResult.Value,

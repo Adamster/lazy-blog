@@ -24,7 +24,7 @@ public sealed class UserToken : IdentityUserToken<Guid>, IAuditableEntity
     {
     }
 
-    public User User { get; set; }
+    public User User { get; set; } = null!;
 
     public DateTime ExpiryDate { get; private set; }
 
@@ -32,19 +32,13 @@ public sealed class UserToken : IdentityUserToken<Guid>, IAuditableEntity
 
     public bool IsInvalidated { get; private set; }
 
-    public string JwtId { get; private set; }
+    public string JwtId { get; private set; } = null!;
 
     public DateTime CreatedOnUtc { get; set; }
 
     public DateTime? UpdatedOnUtc { get; set; }
 
-    public void UseToken()
-    {
-        IsUsed = true;
-    }
+    public void UseToken() => IsUsed = true;
 
-    public void Invalidate()
-    {
-        IsInvalidated = true;
-    }
+    public void Invalidate() => IsInvalidated = true;
 }
