@@ -36,7 +36,7 @@ internal sealed class CreatePostCommandHandler(
             slugResult = Slug.Create($"{postId.ToByteArray().GetHashCode()}-{slugResult.Value.Value}");
         }
 
-        if (request.Tags.Count != 0)
+        if (request.Tags is not null && request.Tags.Count != 0)
         {
             tags = await tagRepository.GetTagByIdsAsync(request.Tags, ct);
             tagRepository.Attach(tags);
