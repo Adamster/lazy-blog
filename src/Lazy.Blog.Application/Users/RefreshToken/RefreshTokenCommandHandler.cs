@@ -1,7 +1,5 @@
 ﻿using Lazy.Application.Abstractions;
 using Lazy.Application.Abstractions.Messaging;
-using Lazy.Application.Users.GetUserById;
-using Lazy.Application.Users.Login;
 using Lazy.Domain.Entities.Identity;
 using Lazy.Domain.Errors;
 using Lazy.Domain.Repositories;
@@ -10,7 +8,7 @@ using Lazy.Domain.Shared;
 
 namespace Lazy.Application.Users.RefreshToken;
 
-public class RefreshTokenCommandHandler : ICommandHandler<RefreshTokenCommand, LoginResponse>
+public class RefreshTokenCommandHandler : ICommandHandler<RefreshTokenCommand, RefreshTokenResponse>
 {
     private readonly IJwtProvider _jwtProvider;
     private readonly IUserTokenRepository _userTokenRepository;
@@ -29,28 +27,28 @@ public class RefreshTokenCommandHandler : ICommandHandler<RefreshTokenCommand, L
         _userRepository = userRepository;
     }
 
-    public async Task<Result<LoginResponse>> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
+    public async Task<Result<RefreshTokenResponse>> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
     {
         UserToken? storedRefreshToken = await _userTokenRepository.GetByRefreshTokenAsync(request.RefreshToken, cancellationToken);
 
         if (storedRefreshToken is null)
         {
-            return Result.Failure<LoginResponse>(DomainErrors.UserToken.NotFound);
+            return Result.Failure<RefreshTokenResponse>(DomainErrors.UserToken.NotFound);
         }
 
         if (DateTime.UtcNow > storedRefreshToken.ExpiryDate)
         {
-            return Result.Failure<LoginResponse>(DomainErrors.UserToken.ExpiredRefreshToken);
+            return Result.Failure<RefreshTokenResponse>(DomainErrors.UserToken.ExpiredRefreshToken);
         }
 
         if (storedRefreshToken.IsInvalidated)
         {
-            return Result.Failure<LoginResponse>(DomainErrors.UserToken.Invalidated);
+            return Result.Failure<RefreshTokenResponse>(DomainErrors.UserToken.Invalidated);
         }
 
         if (storedRefreshToken.IsUsed)
         {
-            return Result.Failure<LoginResponse>(DomainErrors.UserToken.IsUsed);
+            return Result.Failure<RefreshTokenResponse>(DomainErrors.UserToken.IsUsed);
         }
 
         storedRefreshToken.UseToken();
@@ -62,15 +60,15 @@ public class RefreshTokenCommandHandler : ICommandHandler<RefreshTokenCommand, L
         
         if (user is null)
         {
-            return Result.Failure<LoginResponse>(DomainErrors.User.NotFound(userId));
+            return Result.Failure<RefreshTokenResponse>(DomainErrors.User.NotFound(userId));
         }
 
         TokenResponse tokenResponse = await _jwtProvider.GenerateAsync(user, cancellationToken);
 
-        var response = new LoginResponse(
+        var response = new RefreshTokenResponse(
             tokenResponse.AccessToken,
-            tokenResponse.RefreshToken,
-            new UserResponse(user));
+            tokenResponse.RefreshToken);
+        
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
         return response;

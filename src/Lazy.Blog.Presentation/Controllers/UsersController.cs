@@ -99,7 +99,7 @@ public class UsersController : ApiController
     [AllowAnonymous]
     [HttpPost("refresh", Name = nameof(RefreshToken))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(LoginResponse))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RefreshTokenResponse))]
     public async Task<IActionResult> RefreshToken(
         [FromBody] RefreshTokenRequest request,
         CancellationToken cancellationToken)
