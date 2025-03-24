@@ -9,8 +9,8 @@ public class Avatar : ValueObject
     public const int MaxSizeInBytes = 7 * 1024 * 1024; //20 mb
     public const int MaxFilenameLength = 300;
     public const int MaxUrlLength = MaxFilenameLength * 2;
-    public static  string[] SupportedFileTypes =
-    {
+    private static readonly string[] SupportedFileTypes =
+    [
         ".jpg",
         ".png",
         ".jpeg",
@@ -20,7 +20,7 @@ public class Avatar : ValueObject
         ".webp",
         ".avif",
         ".apng"
-    };
+    ];
 
     private Avatar()
     {
