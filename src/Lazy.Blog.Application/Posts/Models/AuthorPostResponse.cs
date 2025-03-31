@@ -23,4 +23,15 @@ public record AuthorPostResponse(
             post.User.CreatedOnUtc);
     }
 
+    public AuthorPostResponse(User user) :
+        this(user.Id,
+            user.FirstName.Value,
+            user.LastName.Value,
+            user.UserName!,
+            user.Biography?.Value,
+            user.Avatar?.Url,
+            user.CreatedOnUtc)
+    {
+    }
+
 }
