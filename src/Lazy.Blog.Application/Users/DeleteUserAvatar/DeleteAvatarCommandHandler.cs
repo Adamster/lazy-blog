@@ -38,7 +38,7 @@ public class DeleteAvatarCommandHandler(
         {
             return Result.Failure(DomainErrors.Avatar.DeleteError);
         }
-        
+
         currentUser.DeleteAvatar();
 
         userRepository.Update(currentUser);

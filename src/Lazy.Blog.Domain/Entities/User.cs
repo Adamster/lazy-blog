@@ -98,6 +98,6 @@ public sealed class User : IdentityUser<Guid>, IAuditableEntity
 
     public void DeleteAvatar()
     {
-        Avatar = null;
+        Avatar?.Clear();
     }
 }

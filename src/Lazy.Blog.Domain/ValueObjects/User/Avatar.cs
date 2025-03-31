@@ -32,8 +32,8 @@ public class Avatar : ValueObject
         Url = url;
     }
 
-    public string Filename { get; private set; } = null!;
-    public string Url { get; private set; } = null!;
+    public string? Filename { get; private set; }
+    public string? Url { get; private set; }
 
     public static Result<Avatar> Create(string fileName, string url, long fileSizeInBytes, bool ignoreUrlCheck = false)
     {
@@ -71,8 +71,14 @@ public class Avatar : ValueObject
 
     }
 
+    public void Clear()
+    {
+        Url = null;
+        Filename = null;
+    }
+
     public override IEnumerable<object> GetAtomicValues()
     {
-        yield return Url;
+        yield return Url ?? string.Empty;
     }
 }
