@@ -42,7 +42,7 @@ public class SendGridEmailSender(IOptions<SendGridOptions> options, ILogger<Send
 
     public async Task SendForgotPasswordEmailAsync(User amnesiaUser, string token)
     {
-        string resetLink = $"https://notlazy.org/reset-password?token={token}&id={amnesiaUser.Id}";
+        string resetLink = $"https://notlazy.org/auth/reset-password?token={token}&id={amnesiaUser.Id}";
         string emailContent = ForgotEmailContent.EmailBody
             .Replace("{{reset_link}}", resetLink)
             .Replace("{{user}}", amnesiaUser.UserName)

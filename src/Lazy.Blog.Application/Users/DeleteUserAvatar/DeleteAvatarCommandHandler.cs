@@ -41,6 +41,8 @@ public class DeleteAvatarCommandHandler(
         
         currentUser.DeleteAvatar();
 
+        userRepository.Update(currentUser);
+
         await unitOfWork.SaveChangesAsync(cancellationToken);
         
         return Result.Success();

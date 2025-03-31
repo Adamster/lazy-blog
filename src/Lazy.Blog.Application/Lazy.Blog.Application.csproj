@@ -26,7 +26,6 @@
     <Folder Include="Posts\GetPostById\" />
     <Folder Include="Posts\CreatePost\" />
     <Folder Include="Posts\GetPublishedPosts\" />
-    <Folder Include="Posts\GetPostBySlug\" />
     <Folder Include="Posts\GetPostByUserId\" />
     <Folder Include="Posts\GetPostByUserName\" />
     <Folder Include="Posts\AddPostView\" />

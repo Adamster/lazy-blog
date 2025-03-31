@@ -1,6 +1,6 @@
 using Lazy.Application.Posts.GetPublishedPosts;
+using Lazy.Application.Posts.Models;
 using Lazy.Application.Tags.SearchTag;
-using Lazy.Application.Users.GetUserById;
 using Lazy.Domain.Entities;
 
 namespace Lazy.Application.Posts.Extensions;
@@ -17,7 +17,7 @@ public static class PostMapper
                     p.Summary!.Value,
                     p.Slug.Value,
                     p.IsPublished,
-                    UserResponse.FromPost(p),
+                    AuthorPostResponse.FromPost(p),
                     p.Views,
                     p.Comments.Count,
                     p.Rating,

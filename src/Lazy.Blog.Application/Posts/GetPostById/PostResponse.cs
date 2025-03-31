@@ -1,5 +1,5 @@
-﻿using Lazy.Application.Tags.SearchTag;
-using Lazy.Application.Users.GetUserById;
+﻿using Lazy.Application.Posts.Models;
+using Lazy.Application.Tags.SearchTag;
 
 namespace Lazy.Application.Posts.GetPostById;
 
@@ -10,6 +10,6 @@ public record PostResponse(
     string Body,
     string Slug,
     bool IsPublished,
-    UserResponse Author,
+    AuthorPostResponse Author,
     IList<TagPostResponse> Tags,
     string? CoverUrl);

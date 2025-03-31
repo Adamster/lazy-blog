@@ -1,5 +1,5 @@
-﻿using Lazy.Application.Tags.SearchTag;
-using Lazy.Application.Users.GetUserById;
+﻿using Lazy.Application.Posts.Models;
+using Lazy.Application.Tags.SearchTag;
 using Lazy.Domain.ValueObjects.Post;
 
 namespace Lazy.Application.Posts.GetPublishedPosts;
@@ -10,7 +10,7 @@ public record DisplayPostResponse(
     string? Summary,
     string Slug,
     bool IsPublished,
-    UserResponse Author,
+    AuthorPostResponse Author,
     long Views,
     int Comments,
     int Rating,
