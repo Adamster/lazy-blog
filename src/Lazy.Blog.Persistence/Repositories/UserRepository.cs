@@ -38,6 +38,7 @@ public class UserRepository : IUserRepository
     public async Task<User?> GetByUsernameAsync(UserName userName, CancellationToken ct) =>
         await _dbContext
             .Set<User>()
+            .AsNoTracking()
             .FirstOrDefaultAsync(user => user.UserName == userName.Value, ct);
 
 }
