@@ -13,11 +13,13 @@ using Lazy.Persistence.Interceptors;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Serilog;
 using AssemblyReference = Lazy.Infrastructure.AssemblyReference;
-
 using Azure.Monitor.OpenTelemetry.AspNetCore;
 using Lazy.Application.Abstractions.Email;
+using Lazy.Blog.Api.ErrorHandler;
 using Lazy.Blog.Api.OptionsSetup;
+using Lazy.Domain.Entities.Identity;
 using Lazy.Infrastructure.Services.Impl;
+using Microsoft.ApplicationInsights.Extensibility;
 using Scalar.AspNetCore;
 
 string lazyCorsPolicyName = "lazy-blog";
@@ -26,12 +28,14 @@ Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
     .WriteTo.Console()
     .WriteTo.File($"Logs\\{today.Year}\\{today.Month}\\{today.Day}\\Logs.log")
+    .WriteTo.ApplicationInsights(TelemetryConfiguration.CreateDefault(),  TelemetryConverter.Events)
     .CreateLogger();
 
 try
 {
     var builder = WebApplication.CreateBuilder(args);
-    
+
+    builder.Services.AddExceptionHandler<CustomExceptionHandler>();
     builder.Host.UseSerilog();
     
     builder.Services.AddOpenTelemetry()
@@ -78,6 +82,7 @@ try
         });
 
     builder.Services.AddDefaultIdentity<User>()
+        .AddRoles<Role>()
         .AddEntityFrameworkStores<LazyBlogDbContext>();
 
     builder

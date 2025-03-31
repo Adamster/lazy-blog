@@ -1,7 +1,6 @@
 ﻿using Lazy.Application.Media.CreateMedia;
 using Lazy.Application.Media.GetMediaByUserId;
 using Lazy.Presentation.Abstractions;
-using Lazy.Presentation.Contracts.Media;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;

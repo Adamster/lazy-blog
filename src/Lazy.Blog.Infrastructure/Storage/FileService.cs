@@ -8,36 +8,32 @@ using Microsoft.Extensions.Options;
 
 namespace Lazy.Infrastructure.Storage;
 
-public class FileService : IFileService
+public class FileService(IOptions<AzureBlobStorageOptions> options, ILogger<FileService> logger)
+    : IFileService
 {
-    private readonly ILogger<FileService> _logger;
-    private readonly AzureBlobStorageOptions _options;
+    private readonly AzureBlobStorageOptions _options = options.Value;
 
-    public FileService(IOptions<AzureBlobStorageOptions> options, ILogger<FileService> logger)
-    {
-        _logger = logger;
-        _options = options.Value;
-    }
-
-    public async Task<string?> UploadAsync(IFormFile file, string userName, CancellationToken ct)
+    public async Task<string?> UploadAsync(IFormFile file, Guid fileId, string userName, CancellationToken ct)
     {
         BlobServiceClient blobServiceClient = GetBlobServiceClient();
         BlobContainerClient? blobContainerClient =
             blobServiceClient.GetBlobContainerClient(_options.ImageContainerName);
         if (blobContainerClient is null)
         {
-            _logger.LogError(
+            logger.LogError(
                 $"{nameof(blobContainerClient)} is null, error creating blob container client for ${_options.ImageContainerName}");
 
             return null;
         }
 
-        BlobClient? blobClient =
-            blobContainerClient.GetBlobClient(
-                $"{userName}/{file.FileName}");
+        var fileExtension = Path.GetExtension(file.FileName);
+        var fileName = $"{fileId}{fileExtension}";
+
+        BlobClient? blobClient = blobContainerClient.GetBlobClient($"{userName}/{fileName}");
+
         if (blobClient is null)
         {
-            _logger.LogError($"{nameof(blobClient)} is null, error creating blobClient for {file.FileName}");
+            logger.LogError($"{nameof(blobClient)} is null, error creating blobClient for {file.FileName}");
             return null;
         }
 
@@ -50,7 +46,7 @@ public class FileService : IFileService
         }
         catch (RequestFailedException exception)
         {
-            _logger.LogError(exception,
+            logger.LogError(exception,
                 $"Upload failed with message: {exception.Message}, error code: {exception.ErrorCode}");
             return null;
         }

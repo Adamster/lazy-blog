@@ -10,29 +10,14 @@ using Microsoft.Extensions.Logging;
 
 namespace Lazy.Application.Users.CreateUser;
 
-internal sealed class CreateUserCommandHandler : ICommandHandler<CreateUserCommand, Guid>
+internal sealed class CreateUserCommandHandler(
+    IUserRepository userRepository,
+    IUnitOfWork unitOfWork,
+    UserManager<User> userManager,
+    ILogger<CreateUserCommandHandler> logger,
+    IEmailService emailService)
+    : ICommandHandler<CreateUserCommand, Guid>
 {
-    private readonly IUserRepository _userRepository;
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly UserManager<User> _userManager;
-    private readonly ILogger<CreateUserCommandHandler> _logger;
-    private readonly IEmailService _emailService;
-
-
-    public CreateUserCommandHandler(
-        IUserRepository userRepository,
-        IUnitOfWork unitOfWork, 
-        UserManager<User> userManager,
-        ILogger<CreateUserCommandHandler> logger,
-        IEmailService emailService)
-    {
-        _userRepository = userRepository;
-        _unitOfWork = unitOfWork;
-        _userManager = userManager;
-        _logger = logger;
-        _emailService = emailService;
-    }
-
     public async Task<Result<Guid>> Handle(CreateUserCommand request, CancellationToken ct)
     {
         Result<Email> emailResult = Email.Create(request.Email);
@@ -53,12 +38,12 @@ internal sealed class CreateUserCommandHandler : ICommandHandler<CreateUserComma
             biographyResult = Biography.Create(request.Biography);
         }
 
-        if (!await _userRepository.IsEmailUniqueAsync(emailResult.Value, ct))
+        if (!await userRepository.IsEmailUniqueAsync(emailResult.Value, ct))
         {
             return Result.Failure<Guid>(DomainErrors.User.EmailAlreadyInUse);
         }
 
-        if (await _userRepository.GetByUsernameAsync(userNameResult.Value, ct) is not null)
+        if (await userRepository.GetByUsernameAsync(userNameResult.Value, ct) is not null)
         {
             return Result.Failure<Guid>(DomainErrors.UserName.UserNameAlreadyInUse);
         }
@@ -72,17 +57,17 @@ internal sealed class CreateUserCommandHandler : ICommandHandler<CreateUserComma
             biographyResult?.Value);
 
 
-        IdentityResult newUser = await _userManager.CreateAsync(user, request.Password);
+        IdentityResult newUser = await userManager.CreateAsync(user, request.Password);
         if (!newUser.Succeeded)
         {
             var error = newUser.Errors.First();
             return Result.Failure<Guid>(new Error(error.Code, error.Description));
         }
 
-        _logger.LogInformation($"New user with email {user.Email} registered");
+        logger.LogInformation($"New user with email {user.Email} registered");
         
-        await _unitOfWork.SaveChangesAsync(ct);
-        await _emailService.SendWelcomeEmail(emailResult.Value.Value, userNameResult.Value.Value);
+        await unitOfWork.SaveChangesAsync(ct);
+        await emailService.SendWelcomeEmail(emailResult.Value.Value, userNameResult.Value.Value);
         return user.Id;
     }
 

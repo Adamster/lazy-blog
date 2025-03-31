@@ -31,5 +31,11 @@ namespace Lazy.Domain.Entities
             var mediaItem = new MediaItem(Guid.NewGuid(), url, user);
             return mediaItem;
         }
+
+        public static MediaItem Create(Guid fileId, User user, string url)
+        {
+            var mediaItem = new MediaItem(fileId, url, user);
+            return mediaItem;
+        }
     }
 }

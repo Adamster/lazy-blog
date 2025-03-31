@@ -1,5 +1,4 @@
 using Lazy.Application.Identity.Roles.CreateRole;
-using Lazy.Domain.Entities.Identity;
 using Lazy.Presentation.Abstractions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -7,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 namespace Lazy.Presentation.Controllers.Identity;
-
 
 
 [Authorize(Roles = "Admin")]

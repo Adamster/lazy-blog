@@ -32,12 +32,5 @@ public class RoleConfiguration : IEntityTypeConfiguration<Role>
             .WithOne(e => e.Role)
             .HasForeignKey(rc => rc.RoleId)
             .IsRequired();
-
-
-        builder.HasData(new List<Role>
-        {
-            new() { Id = Guid.Parse("8c754b8a-0f8e-4110-ada5-9d12a5b13cf1"), Name = "Admin" },
-            new() { Id = Guid.Parse("a37f312c-5513-40af-8907-578c0bd9b143"), Name = "Member" }
-        });
     }
 }

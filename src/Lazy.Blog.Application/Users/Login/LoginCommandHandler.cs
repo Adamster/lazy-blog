@@ -3,6 +3,7 @@ using Lazy.Application.Abstractions.Messaging;
 using Lazy.Application.Users.GetUserById;
 using Lazy.Application.Users.RefreshToken;
 using Lazy.Domain.Entities;
+using Lazy.Domain.Entities.Identity;
 using Lazy.Domain.Errors;
 using Lazy.Domain.Repositories;
 using Lazy.Domain.Shared;
@@ -16,6 +17,8 @@ public class LoginCommandHandler : ICommandHandler<LoginCommand, LoginResponse>
     private readonly IUserRepository _userRepository;
     private readonly IJwtProvider _jwtProvider;
     private readonly SignInManager<User> _signInManager;
+    private readonly UserManager<User> _userManager;
+    private readonly RoleManager<Role> _roleManager;
     private readonly IUnitOfWork _unitOfWork;
 
 
@@ -23,11 +26,15 @@ public class LoginCommandHandler : ICommandHandler<LoginCommand, LoginResponse>
         IUserRepository userRepository,
         IJwtProvider jwtProvider,
         SignInManager<User> signInManager,
+        UserManager<User> userManager,
+        RoleManager<Role> roleManager,
         IUnitOfWork unitOfWork)
     {
         _userRepository = userRepository;
         _jwtProvider = jwtProvider;
         _signInManager = signInManager;
+        _userManager = userManager;
+        _roleManager = roleManager;
         _unitOfWork = unitOfWork;
     }
 
@@ -56,6 +63,8 @@ public class LoginCommandHandler : ICommandHandler<LoginCommand, LoginResponse>
             return Result.Failure<LoginResponse>(DomainErrors.User.InvalidCredentials);
         }
 
+        //_roleManager.
+        //  var roleResult =  await _userManager.AddToRoleAsync(user, Role.AdminRoleName);
         TokenResponse tokenResponse = await _jwtProvider.GenerateAsync(user, ct);
 
         await _unitOfWork.SaveChangesAsync(ct);

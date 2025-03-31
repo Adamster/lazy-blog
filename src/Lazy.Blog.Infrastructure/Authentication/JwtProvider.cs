@@ -25,6 +25,8 @@ public sealed class JwtProvider(
 
     public async Task<TokenResponse> GenerateAsync(User user, CancellationToken cancellationToken)
     {
+        var userRole = user.UserRoles.FirstOrDefault()?.Role;
+        
         var claims = new List<Claim>
         {
             new (JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
@@ -32,6 +34,12 @@ public sealed class JwtProvider(
             new (JwtRegisteredClaimNames.Email, user.Email!),
             new (JwtRegisteredClaimNames.Name, $"{user.FirstName.Value} {user.LastName.Value}")
         };
+
+        if (userRole?.Name != null)
+        {
+            var roleClaim =  new Claim(ClaimTypes.Role, userRole.Name);
+            claims.Add(roleClaim);
+        }
 
         var signingCredentials = new SigningCredentials(
             new SymmetricSecurityKey(
