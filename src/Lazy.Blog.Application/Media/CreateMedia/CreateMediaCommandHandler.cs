@@ -8,29 +8,17 @@ using Lazy.Domain.ValueObjects.User;
 
 namespace Lazy.Application.Media.CreateMedia;
 
-public class CreateMediaCommandHandler : ICommandHandler<CreateMediaCommand, string>
+public class CreateMediaCommandHandler(
+    IFileService fileService,
+    IUserRepository userRepository,
+    IMediaItemRepository mediaItemRepository,
+    IUnitOfWork unitOfWork)
+    : ICommandHandler<CreateMediaCommand, string>
 {
-    private readonly IFileService _fileService;
-    private readonly IUserRepository _userRepository;
-    private readonly IMediaItemRepository _mediaItemRepository;
-    private readonly IUnitOfWork _unitOfWork;
-
-    public CreateMediaCommandHandler(
-        IFileService fileService,
-        IUserRepository userRepository,
-        IMediaItemRepository mediaItemRepository,
-        IUnitOfWork unitOfWork)
-    {
-        _fileService = fileService;
-        _userRepository = userRepository;
-        _mediaItemRepository = mediaItemRepository;
-        _unitOfWork = unitOfWork;
-    }
-
     public async Task<Result<string>> Handle(CreateMediaCommand request, CancellationToken cancellationToken)
     {
-        var user = await _userRepository.GetByIdAsync(request.UserId, cancellationToken);
-        
+        var user = await userRepository.GetByIdAsync(request.UserId, cancellationToken);
+
         if (user is null)
         {
             return Result.Failure<string>(DomainErrors.User.NotFound(request.UserId));
@@ -43,17 +31,19 @@ public class CreateMediaCommandHandler : ICommandHandler<CreateMediaCommand, str
             return Result.Failure<string>(mediaItemCandidate.Error);
         }
 
-        var uploadedUrl = await _fileService.UploadAsync(request.File, user.UserName!, cancellationToken);
+        var mediaId = Guid.NewGuid();
+
+        var uploadedUrl = await fileService.UploadAsync(request.File, mediaId, user.UserName!, cancellationToken);
 
         if (uploadedUrl is null)
         {
             return Result.Failure<string>(DomainErrors.Avatar.UploadFailed);
         }
-        
-        var mediaItem = MediaItem.Create(user, uploadedUrl);
 
-        await _mediaItemRepository.Add(mediaItem);
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        var mediaItem = MediaItem.Create(mediaId, user, uploadedUrl);
+
+        await mediaItemRepository.Add(mediaItem);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return mediaItem.UploadedUrl;
 

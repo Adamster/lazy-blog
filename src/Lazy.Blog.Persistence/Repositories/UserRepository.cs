@@ -15,12 +15,14 @@ public class UserRepository : IUserRepository
     public async Task<User?> GetByIdAsync(Guid id, CancellationToken ct = default) => 
         await _dbContext
             .Set<User>()
+            .Include(u => u.UserRoles)
             .AsNoTracking()
             .FirstOrDefaultAsync(user => user.Id == id, ct);
 
     public async Task<User?> GetByEmailAsync(Email email, CancellationToken ct = default) =>
         await _dbContext
             .Set<User>()
+            .Include(u => u.UserRoles)
             .FirstOrDefaultAsync(user => user.Email == email.Value, ct);
 
     public async Task<bool> IsEmailUniqueAsync(Email email, CancellationToken ct = default) =>

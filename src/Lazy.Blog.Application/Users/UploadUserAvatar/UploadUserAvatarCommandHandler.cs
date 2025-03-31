@@ -8,34 +8,22 @@ using Lazy.Domain.ValueObjects.User;
 
 namespace Lazy.Application.Users.UploadUserAvatar;
 
-public class UploadUserAvatarCommandHandler : ICommandHandler<UploadUserAvatarCommand>
+public class UploadUserAvatarCommandHandler(
+    IFileService fileService,
+    IUserRepository userRepository,
+    IUnitOfWork unitOfWork,
+    ICurrentUserContext currentUserContext)
+    : ICommandHandler<UploadUserAvatarCommand>
 {
-    private readonly IFileService _fileService;
-    private readonly IUserRepository _userRepository;
-    private readonly ICurrentUserContext _currentUserContext;
-    private readonly IUnitOfWork _unitOfWork;
-
-    public UploadUserAvatarCommandHandler(
-        IFileService fileService,
-        IUserRepository userRepository,
-        IUnitOfWork unitOfWork,
-        ICurrentUserContext currentUserContext)
-    {
-        _fileService = fileService;
-        _userRepository = userRepository;
-        _unitOfWork = unitOfWork;
-        _currentUserContext = currentUserContext;
-    }
-
     public async Task<Result> Handle(UploadUserAvatarCommand request, CancellationToken ct)
     {
 
-        if (!_currentUserContext.IsCurrentUser(request.UserId))
+        if (!currentUserContext.IsCurrentUser(request.UserId))
         {
             return Result.Failure(DomainErrors.User.UnauthorizedUserUpdate);
         }
 
-        var user = await _userRepository.GetByIdAsync(request.UserId, ct);
+        var user = await userRepository.GetByIdAsync(request.UserId, ct);
         if (user is null)
         {
             return Result.Failure(DomainErrors.User.NotFound(request.UserId));
@@ -47,20 +35,21 @@ public class UploadUserAvatarCommandHandler : ICommandHandler<UploadUserAvatarCo
             return Result.Failure(avatarCheck.Error);
         }
 
-        //Add scoped user
-        var uploadedUrl = await _fileService.UploadAsync(request.File, user.UserName!, ct);
+        var avatarMediaId = Guid.NewGuid();
+
+        var uploadedUrl = await fileService.UploadAsync(request.File, avatarMediaId, user.UserName!, ct);
 
         if (uploadedUrl is null)
         {
             return Result.Failure(DomainErrors.Avatar.UploadFailed);
         }
-
+        
         var newAvatarResult = Avatar.Create(request.File.FileName, uploadedUrl, request.File.Length);
        
         user.SetAvatar(newAvatarResult.Value);
 
-        _userRepository.Update(user);
-        await _unitOfWork.SaveChangesAsync(ct);
+        userRepository.Update(user);
+        await unitOfWork.SaveChangesAsync(ct);
 
         return Result.Success();
     }

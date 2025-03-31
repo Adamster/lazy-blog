@@ -7,31 +7,23 @@ using Lazy.Domain.Shared;
 
 namespace Lazy.Application.Users.DeleteUserAvatar;
 
-public class DeleteAvatarCommandHandler : ICommandHandler<DeleteAvatarCommand>
+public class DeleteAvatarCommandHandler(
+    ICurrentUserContext currentUserContext,
+    IUserRepository userRepository,
+    IFileService fileService,
+    IUnitOfWork unitOfWork)
+    : ICommandHandler<DeleteAvatarCommand>
 {
-    private readonly ICurrentUserContext  _currentUserContext;
-    private readonly IUserRepository  _userRepository;
-    private readonly IFileService _fileService;
-    private readonly IUnitOfWork _unitOfWork;
-    
-    public DeleteAvatarCommandHandler(ICurrentUserContext currentUserContext, IUserRepository userRepository, IFileService fileService, IUnitOfWork unitOfWork)
-    {
-        _currentUserContext = currentUserContext;
-        _userRepository = userRepository;
-        _fileService = fileService;
-        _unitOfWork = unitOfWork;
-    }
-
     public async Task<Result> Handle(DeleteAvatarCommand request, CancellationToken cancellationToken)
     {
-        var currentUserId = _currentUserContext.GetCurrentUserId();
+        var currentUserId = currentUserContext.GetCurrentUserId();
 
         if (currentUserId != request.UserId)
         {
             return Result.Failure(DomainErrors.User.UnauthorizedUserUpdate);
         }
         
-        var currentUser = await _userRepository.GetByIdAsync(currentUserId, cancellationToken);
+        var currentUser = await userRepository.GetByIdAsync(currentUserId, cancellationToken);
         
         var avatarToDelete = currentUser!.Avatar;
 
@@ -40,7 +32,7 @@ public class DeleteAvatarCommandHandler : ICommandHandler<DeleteAvatarCommand>
             return Result.Failure(DomainErrors.Avatar.AvatarAlreadyEmpty);
         }
 
-        var isDeleted = await _fileService.DeleteByFilenameAsync(avatarToDelete.Filename, currentUser!.UserName!, cancellationToken);
+        var isDeleted = await fileService.DeleteByBlobUrl(avatarToDelete.Url, currentUser!.UserName!, cancellationToken);
 
         if (!isDeleted)
         {
@@ -49,7 +41,7 @@ public class DeleteAvatarCommandHandler : ICommandHandler<DeleteAvatarCommand>
         
         currentUser.DeleteAvatar();
 
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
         
         return Result.Success();
     }

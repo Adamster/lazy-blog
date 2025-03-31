@@ -5,35 +5,25 @@ using Lazy.Domain.Entities;
 using Lazy.Domain.Errors;
 using Lazy.Domain.Repositories;
 using Lazy.Domain.Shared;
-using Lazy.Presentation.Contracts.Media;
 
 namespace Lazy.Application.Media.GetMediaByUserId;
 
-public class GetMediaItemsByUserIdCommandHandler :  IQueryHandler<GetMediaItemsByUserIdQuery, List<MediaItemResponse>>
+public class GetMediaItemsByUserIdCommandHandler(
+    IMediaItemRepository mediaItemRepository,
+    ICurrentUserContext currentUserContext)
+    : IQueryHandler<GetMediaItemsByUserIdQuery, List<MediaItemResponse>>
 {
-    private readonly IMediaItemRepository _mediaItemRepository;
-    private readonly ICurrentUserContext _currentUserContext;
-
-    public GetMediaItemsByUserIdCommandHandler(IMediaItemRepository mediaItemRepository, ICurrentUserContext currentUserContext)
-    {
-        _mediaItemRepository = mediaItemRepository;
-        _currentUserContext = currentUserContext;
-    }
-
     public async Task<Result<List<MediaItemResponse>>> Handle(GetMediaItemsByUserIdQuery request, CancellationToken cancellationToken)
     {
-        if (!_currentUserContext.IsCurrentUser(request.UserId))
+        if (!currentUserContext.IsCurrentUser(request.UserId))
         {
             return Result.Failure<List<MediaItemResponse>>(DomainErrors.MediaItem.Unauthorized);
         }
         
-        List<MediaItem> mediaItems = await _mediaItemRepository.GetByUserId(request.UserId, cancellationToken);
+        List<MediaItem> mediaItems = await mediaItemRepository.GetByUserId(request.UserId, cancellationToken);
 
-        var result =  mediaItems
-            .Select(x => 
-                new MediaItemResponse(x.Id, 
-                    x.UploadedUrl, 
-                    ExtractFileName(x.UploadedUrl)))
+        var result = mediaItems
+            .Select(x => new MediaItemResponse(x.Id, x.UploadedUrl, ExtractFileName(x.UploadedUrl)))
             .ToList();
 
         return result;
