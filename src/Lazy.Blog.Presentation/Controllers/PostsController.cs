@@ -115,7 +115,7 @@ public class PostsController : ApiController
     }
 
     [HttpPost(Name = nameof(CreatePost))]
-    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status201Created,  Type = typeof(PostCreatedResponse))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CreatePost(
         [FromBody]CreatePostRequest request, 
