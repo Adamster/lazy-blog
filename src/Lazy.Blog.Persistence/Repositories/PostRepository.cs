@@ -19,7 +19,6 @@ public class PostRepository(LazyBlogDbContext dbContext) : IPostRepository
         await dbContext
             .Set<Post>()
             .Include(p => p.User)
-            .ThenInclude(u => u.PostVotes)
             .Include(p => p.Tags)
             .AsNoTracking()
             .FirstOrDefaultAsync(post => post.Slug == slug, ct);

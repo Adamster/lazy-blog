@@ -14,11 +14,13 @@ public class GetPostBySlugHandler : IQueryHandler<GetPostBySlugQuery, PostDetail
 {
     private readonly IPostRepository _postRepository;
     private readonly ICurrentUserContext _userContext;
+    private readonly IPostVoteRepository _postVoteRepository;
 
-    public GetPostBySlugHandler(IPostRepository postRepository, ICurrentUserContext userContext)
+    public GetPostBySlugHandler(IPostRepository postRepository, ICurrentUserContext userContext, IPostVoteRepository postVoteRepository)
     {
         _postRepository = postRepository;
         _userContext = userContext;
+        _postVoteRepository = postVoteRepository;
     }
 
     public async Task<Result<PostDetailedResponse>> Handle(GetPostBySlugQuery request, CancellationToken ct)
@@ -40,6 +42,12 @@ public class GetPostBySlugHandler : IQueryHandler<GetPostBySlugQuery, PostDetail
 
         var currentUserId = _userContext.GetCurrentUserId();
 
+        PostVote? postVote = null;
+        if (currentUserId != Guid.Empty)
+        {
+           postVote =  await _postVoteRepository.GetPostVoteForUserIdAsync(currentUserId, post.Id, ct);
+        }
+
         var postResponse = new PostDetailedResponse
         (
             post.Id,
@@ -53,7 +61,7 @@ public class GetPostBySlugHandler : IQueryHandler<GetPostBySlugQuery, PostDetail
             post.Rating,
             post.Views,
             post.IsPublished,
-            post.User.PostVotes.FirstOrDefault(x=>x.UserId == currentUserId)?.VoteDirection,
+            postVote?.VoteDirection,
             post.CreatedOnUtc
         );
 
