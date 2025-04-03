@@ -1,4 +1,5 @@
-﻿using Lazy.Application.Abstractions.Messaging;
+﻿using Lazy.Application.Abstractions.Authorization;
+using Lazy.Application.Abstractions.Messaging;
 using Lazy.Application.Posts.Models;
 using Lazy.Application.Tags.SearchTag;
 using Lazy.Domain.Entities;
@@ -12,10 +13,12 @@ namespace Lazy.Application.Posts.GetPostBySlug;
 public class GetPostBySlugHandler : IQueryHandler<GetPostBySlugQuery, PostDetailedResponse>
 {
     private readonly IPostRepository _postRepository;
+    private readonly ICurrentUserContext _userContext;
 
-    public GetPostBySlugHandler(IPostRepository postRepository)
+    public GetPostBySlugHandler(IPostRepository postRepository, ICurrentUserContext userContext)
     {
         _postRepository = postRepository;
+        _userContext = userContext;
     }
 
     public async Task<Result<PostDetailedResponse>> Handle(GetPostBySlugQuery request, CancellationToken ct)
@@ -35,6 +38,8 @@ public class GetPostBySlugHandler : IQueryHandler<GetPostBySlugQuery, PostDetail
                 DomainErrors.Post.SlugNotFound(slugResult.Value));
         }
 
+        var currentUserId = _userContext.GetCurrentUserId();
+
         var postResponse = new PostDetailedResponse
         (
             post.Id,
@@ -48,7 +53,7 @@ public class GetPostBySlugHandler : IQueryHandler<GetPostBySlugQuery, PostDetail
             post.Rating,
             post.Views,
             post.IsPublished,
-            post.User.PostVotes.FirstOrDefault(x=>x.PostId == post.Id)?.VoteDirection,
+            post.User.PostVotes.FirstOrDefault(x=>x.UserId == currentUserId)?.VoteDirection,
             post.CreatedOnUtc
         );
 
