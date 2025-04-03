@@ -125,11 +125,6 @@ public sealed class Post : AggregateRoot, IAuditableEntity
         IsCoverDisplayed = isCoverDisplayed;
         IsPublished = isPublished;
 
-        if (isPublished)
-        {
-            PublishedOnUtc = DateTime.UtcNow;
-        }
-
         if (tags is not null)
         {
             _tags.Clear();
