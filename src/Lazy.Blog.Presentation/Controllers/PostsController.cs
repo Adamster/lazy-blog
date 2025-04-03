@@ -128,6 +128,7 @@ public class PostsController : ApiController
             request.IsPublished,
             request.Tags,
             request.CoverUrl,
+            request.IsCoverDisplayed,
             request.UserId);
 
         Result<PostCreatedResponse> result = await Sender.Send(command, ct);
@@ -158,6 +159,7 @@ public class PostsController : ApiController
             request.Body,
             request.Slug,
             request.CoverUrl,
+            request.IsCoverDisplayed,
             request.Tags,
             request.IsPublished);
 

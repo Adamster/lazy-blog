@@ -1,5 +1,4 @@
 ﻿using Lazy.Domain.Primitives;
-using Lazy.Domain.Shared;
 using Lazy.Domain.ValueObjects.Post;
 
 namespace Lazy.Domain.Entities;
@@ -18,6 +17,7 @@ public sealed class Post : AggregateRoot, IAuditableEntity
         Guid userId,
         List<Tag> tags,
         bool isPublished = true,
+        bool isCoverDisplayed = true,
         string? coverUrl = null) : base(id)
     {
         Title = title;
@@ -26,7 +26,14 @@ public sealed class Post : AggregateRoot, IAuditableEntity
         UserId = userId;
         Slug = slug;
         IsPublished = isPublished;
+
+        if (isPublished)
+        {
+            PublishedOnUtc = DateTime.UtcNow;
+        }
+
         CoverUrl = coverUrl ?? string.Empty;
+        IsCoverDisplayed = isCoverDisplayed;
         _tags.AddRange(tags);
     }
 
@@ -46,6 +53,8 @@ public sealed class Post : AggregateRoot, IAuditableEntity
 
     public string? CoverUrl { get; private set; }
 
+    public bool IsCoverDisplayed { get; private set; }
+
     public long Views { get; private set; }
 
     public int Rating { get; private set; }
@@ -53,12 +62,14 @@ public sealed class Post : AggregateRoot, IAuditableEntity
     public Guid UserId { get; private set; }
 
     public User User { get; private set; } = null!;
+    public DateTime? PublishedOnUtc { get; set; }
 
-    public DateTime CreatedOnUtc { get; set; }
-    public DateTime? UpdatedOnUtc { get; set; }
     public IReadOnlyCollection<Comment> Comments => _comments;
 
     public IReadOnlyCollection<Tag> Tags => _tags;
+
+    public DateTime CreatedOnUtc { get; set; }
+    public DateTime? UpdatedOnUtc { get; set; }
 
     public static Post Create(
         Guid id,
@@ -69,7 +80,8 @@ public sealed class Post : AggregateRoot, IAuditableEntity
         Guid userId,
         bool isPublished,
         List<Tag> tags,
-        string? coverUrl = null )
+        bool isCoverDisplayed = true,
+        string? coverUrl = null)
     {
         var post = new Post(
             id,
@@ -80,6 +92,7 @@ public sealed class Post : AggregateRoot, IAuditableEntity
             userId,
             tags,
             isPublished,
+            isCoverDisplayed,
             coverUrl);
 
         return post;
@@ -96,10 +109,11 @@ public sealed class Post : AggregateRoot, IAuditableEntity
     }
 
     public void Update(Title title,
-        Summary? summary, 
+        Summary? summary,
         Body body,
-        Slug slug, 
+        Slug slug,
         string? coverUrl,
+        bool isCoverDisplayed,
         List<Tag>? tags,
         bool isPublished)
     {
@@ -108,8 +122,14 @@ public sealed class Post : AggregateRoot, IAuditableEntity
         Body = body;
         Slug = slug;
         CoverUrl = coverUrl ?? string.Empty;
+        IsCoverDisplayed = isCoverDisplayed;
         IsPublished = isPublished;
-        
+
+        if (isPublished)
+        {
+            PublishedOnUtc = DateTime.UtcNow;
+        }
+
         if (tags is not null)
         {
             _tags.Clear();
@@ -117,9 +137,15 @@ public sealed class Post : AggregateRoot, IAuditableEntity
         }
     }
 
-    private void UpVote() => Rating++;
+    private void UpVote()
+    {
+        Rating++;
+    }
 
-    private void DownVote() => Rating--;
+    private void DownVote()
+    {
+        Rating--;
+    }
 
     public void Vote(VoteDirection postVoteVoteDirection)
     {
@@ -136,7 +162,14 @@ public sealed class Post : AggregateRoot, IAuditableEntity
         }
     }
 
-    public void Hide() => IsPublished = false;
+    public void Hide()
+    {
+        IsPublished = false;
+    }
 
-    public void Publish() => IsPublished = true;
+    public void Publish()
+    {
+        IsPublished = true;
+        PublishedOnUtc = DateTime.UtcNow;
+    }
 }

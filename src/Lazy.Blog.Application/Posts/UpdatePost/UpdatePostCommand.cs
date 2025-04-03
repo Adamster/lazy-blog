@@ -9,5 +9,6 @@ public record UpdatePostCommand(
     string Body,
     string Slug,
     string? CoverUrl,
+    bool IsCoverDisplayed,
     List<Guid> Tags,
     bool IsPublished) : ICommand;

@@ -48,6 +48,7 @@ public class UpdatePostCommandHandler(
             bodyResult.Value,
             slugResult.Value,
             request.CoverUrl,
+            request.IsCoverDisplayed,
             updatedTags,
             request.IsPublished);
 

@@ -10,4 +10,5 @@ public record CreatePostRequest(
     [Required]Guid UserId,
     List<Guid>? Tags,
     string? CoverUrl,
+    bool IsCoverDisplayed = true,
     bool IsPublished = true);

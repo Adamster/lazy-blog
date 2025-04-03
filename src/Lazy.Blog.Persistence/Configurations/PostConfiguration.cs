@@ -40,6 +40,13 @@ internal sealed class PostConfiguration : IEntityTypeConfiguration<Post>
             .HasMany(p => p.Tags)
             .WithMany(t => t.Posts);
 
+        builder.Property(x => x.CoverUrl);
+        builder.Property(x => x.Views);
+        builder.Property(x => x.IsPublished);
+        builder.Property(x => x.Rating);
+        builder.Property(x => x.IsCoverDisplayed);
+
+        builder.Property(x => x.PublishedOnUtc);
         builder.HasIndex(x => x.Slug).IsUnique();
     }
 }

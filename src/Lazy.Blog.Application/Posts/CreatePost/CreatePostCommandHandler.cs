@@ -51,6 +51,7 @@ internal sealed class CreatePostCommandHandler(
             request.UserId,
             request.IsPublished,
             tags,
+            request.IsCoverDisplayed,
             request.CoverUrl);
 
         postRepository.Add(post);

@@ -10,4 +10,5 @@ public record CreatePostCommand(
     bool IsPublished,
     List<Guid>? Tags,
     string? CoverUrl,
+    bool IsCoverDisplayed,
     Guid UserId) : ICommand<PostCreatedResponse>;

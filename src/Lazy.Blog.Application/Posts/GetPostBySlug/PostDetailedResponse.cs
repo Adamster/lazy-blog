@@ -1,5 +1,6 @@
 ﻿using Lazy.Application.Posts.Models;
 using Lazy.Application.Tags.SearchTag;
+using Lazy.Domain.ValueObjects.Post;
 
 namespace Lazy.Application.Posts.GetPostBySlug;
 
@@ -15,4 +16,5 @@ public record PostDetailedResponse(
     int Rating,
     long Views,
     bool IsPublished,
+    VoteDirection? VoteDirection,
     DateTime CreatedAtUtc);

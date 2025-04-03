@@ -48,6 +48,7 @@ public class GetPostBySlugHandler : IQueryHandler<GetPostBySlugQuery, PostDetail
             post.Rating,
             post.Views,
             post.IsPublished,
+            post.User.PostVotes.FirstOrDefault(x=>x.PostId == post.Id)?.VoteDirection,
             post.CreatedOnUtc
         );
 
