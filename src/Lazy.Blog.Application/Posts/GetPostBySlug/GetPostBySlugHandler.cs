@@ -57,6 +57,7 @@ public class GetPostBySlugHandler : IQueryHandler<GetPostBySlugQuery, PostDetail
             post.Slug.Value,
             post.Body.Value,
             post.CoverUrl,
+            post.IsCoverDisplayed,
             post.Tags.Select(t => new TagPostResponse(t.Id, t.Value)).ToList(),
             post.Rating,
             post.Views,

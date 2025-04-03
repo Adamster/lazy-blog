@@ -12,6 +12,7 @@ public record PostDetailedResponse(
     string Slug,
     string Body,
     string? CoverUrl,
+    bool IsCoverDisplayed,
     IList<TagPostResponse> Tags,
     int Rating,
     long Views,
