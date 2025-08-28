@@ -1,6 +1,7 @@
 ﻿using Lazy.Domain.DomainEvents;
 using Lazy.Domain.Entities.Identity;
 using Lazy.Domain.Primitives;
+using Lazy.Domain.Shared;
 using Lazy.Domain.ValueObjects.User;
 using Microsoft.AspNetCore.Identity;
 // ReSharper disable CollectionNeverUpdated.Local
@@ -99,5 +100,10 @@ public sealed class User : IdentityUser<Guid>, IAuditableEntity
     public void DeleteAvatar()
     {
         Avatar?.Clear();
+    }
+
+    public static User Create(Result<Email> emailResult, string provider, string providerUserId)
+    {
+        return new User();
     }
 }

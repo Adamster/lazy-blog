@@ -6,7 +6,7 @@ namespace Lazy.Application.Abstractions;
 
 public interface IJwtProvider
 {
-    Task<TokenResponse> GenerateAsync(User user, CancellationToken cancellationToken);
+    Task<TokenResponse> GenerateAsync(Domain.Entities.User user, CancellationToken cancellationToken);
 
     ClaimsPrincipal? GetPrincipalFromToken(string token);
 

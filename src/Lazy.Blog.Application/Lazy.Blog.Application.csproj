@@ -8,10 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FluentValidation" Version="11.11.0" />
+    <PackageReference Include="FluentValidation" Version="12.0.0" />
     <PackageReference Include="MediatR" Version="12.4.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="9.0.3" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="9.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="9.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="9.0.8" />
   </ItemGroup>
 
   <ItemGroup>
@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <Folder Include="Abstractions\File\" />
+    <Folder Include="Abstractions\User\" />
     <Folder Include="Comments\GetCommentById\" />
     <Folder Include="Comments\UpdateComment\" />
     <Folder Include="Media\CreateMedia\" />
