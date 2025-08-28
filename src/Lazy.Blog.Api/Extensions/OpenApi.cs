@@ -1,4 +1,4 @@
-﻿namespace Lazy.App.Extensions;
+﻿namespace Lazy.Blog.Api.Extensions;
 
 public static class OpenApi
 {

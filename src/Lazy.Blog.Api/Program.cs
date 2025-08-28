@@ -4,7 +4,6 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Scrutor;
 using FluentValidation;
-using Lazy.App.Extensions;
 using Lazy.App.OptionsSetup;
 using Lazy.Application.Abstractions.Authorization;
 using Lazy.Domain.Entities;
@@ -16,6 +15,7 @@ using AssemblyReference = Lazy.Infrastructure.AssemblyReference;
 using Azure.Monitor.OpenTelemetry.AspNetCore;
 using Lazy.Application.Abstractions.Email;
 using Lazy.Blog.Api.ErrorHandler;
+using Lazy.Blog.Api.Extensions;
 using Lazy.Blog.Api.OptionsSetup;
 using Lazy.Domain.Entities.Identity;
 using Lazy.Infrastructure.Services.Impl;
@@ -95,14 +95,15 @@ try
     builder.Services.AddCors(o => o.AddPolicy(lazyCorsPolicyName, policyBuilder =>
     {
         policyBuilder
-            .WithOrigins("http://localhost:3000")
             .AllowAnyOrigin()
             .AllowAnyMethod()
             .AllowAnyHeader();
     }));
 
     builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-        .AddJwtBearer();
+        .AddJwtBearer()
+        .AddExternalAuthentication(builder.Configuration);
+        
 
     builder.Services.ConfigureOptions<JwtOptionsSetup>();
     builder.Services.ConfigureOptions<JwtBearerOptionsSetup>();
