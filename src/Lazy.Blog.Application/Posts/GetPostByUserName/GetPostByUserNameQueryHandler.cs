@@ -33,7 +33,7 @@ public class GetPostByUserNameQueryHandler(
         var includeDraftPosts = currentUserId == user.Id;
 
 
-        var posts = postRepository.GetPostsByUserName(userNameResult.Value, request.Offset, ct, includeDraftPosts)
+        var posts = postRepository.GetPostsByUserName(userNameResult.Value, request.Offset, ct, includeDraftPosts);
 
         if (includeDraftPosts)
         {
