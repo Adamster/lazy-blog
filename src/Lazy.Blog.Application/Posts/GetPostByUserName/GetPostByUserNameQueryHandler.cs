@@ -33,8 +33,13 @@ public class GetPostByUserNameQueryHandler(
         var includeDraftPosts = currentUserId == user.Id;
 
 
-        var posts = postRepository.GetPostsByUserName(userNameResult.Value, request.Offset, ct, includeDraftPosts);
-        
+        var posts = postRepository.GetPostsByUserName(userNameResult.Value, request.Offset, ct, includeDraftPosts)
+
+        if (includeDraftPosts)
+        {
+            posts = posts.OrderByDescending(p => p.CreatedOnUtc);
+        }
+
         int postCount = await postRepository.GetPostCountByUserIdAsync(user.Id, ct);
 
         List<UserPostItem> postsDetails = posts.ToUserPostItemResponse();
