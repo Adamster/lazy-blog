@@ -35,10 +35,6 @@ public class GetPostByUserNameQueryHandler(
 
         var posts = postRepository.GetPostsByUserName(userNameResult.Value, request.Offset, ct, includeDraftPosts);
 
-        if (includeDraftPosts)
-        {
-            posts = posts.OrderByDescending(p => p.CreatedOnUtc);
-        }
 
         int postCount = await postRepository.GetPostCountByUserIdAsync(user.Id, ct);
 

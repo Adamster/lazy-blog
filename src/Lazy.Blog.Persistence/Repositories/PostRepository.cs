@@ -80,7 +80,7 @@ public class PostRepository(LazyBlogDbContext dbContext) : IPostRepository
     {
         IQueryable<Post> posts = dbContext.Set<Post>()
             .Where(p => p.User.UserName == userName.Value)
-            .OrderByDescending(p => p.PublishedOnUtc)
+            .OrderByDescending(p => includeDrafts ? p.CreatedOnUtc : p.PublishedOnUtc)
             .AsNoTracking()
             .Include(x => x.User)
             .Include(x => x.Comments)
