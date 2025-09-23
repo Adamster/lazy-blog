@@ -95,6 +95,7 @@ try
     builder.Services.AddCors(o => o.AddPolicy(lazyCorsPolicyName, policyBuilder =>
     {
         policyBuilder
+            .WithOrigins("http://localhost:3000")
             .AllowAnyOrigin()
             .AllowAnyMethod()
             .AllowAnyHeader();
