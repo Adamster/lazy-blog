@@ -21,10 +21,10 @@ namespace Lazy.Presentation.Controllers.Identity;
 public class AuthController(ISender sender, SignInManager<User> signInManager, IUserService userService, ILogger<ApiController> logger) : ApiController(sender, logger)
 {
     [HttpGet("{provider}/login")]
-    public IActionResult ExternalLogin([FromRoute] string provider)
+    public IActionResult ExternalLogin([FromRoute] string provider, string? returnUrl)
     {
         var redirectUri = Url.ActionLink(nameof(ExternalCallback), "Auth");
-        var props = signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUri);
+        var props = signInManager.ConfigureExternalAuthenticationProperties(provider, returnUrl);
 
         return Challenge(props, provider);
     }
