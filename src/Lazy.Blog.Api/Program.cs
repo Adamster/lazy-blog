@@ -94,11 +94,11 @@ try
 
     builder.Services.AddCors(o => o.AddPolicy(lazyCorsPolicyName, policyBuilder =>
     {
-        policyBuilder
-            .WithOrigins("http://localhost:3000")
-            .AllowAnyOrigin()
-            .AllowAnyMethod()
-            .AllowAnyHeader();
+        policyBuilder.WithOrigins(
+                "http://localhost:2393",
+                "https://*.notlazy.org", 
+                "https://*.vercel.app")
+            .SetIsOriginAllowedToAllowWildcardSubdomains();
     }));
 
     builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -115,16 +115,18 @@ try
 
     CreateDbIfNotExists(app);
     
-    app.MapOpenApi();
+   
     
     app.UseHttpsRedirection();
+
+    app.UseCors(lazyCorsPolicyName);
 
     app.UseAuthentication();
 
     app.UseAuthorization();
 
-    app.UseCors(lazyCorsPolicyName);
-    
+    app.MapOpenApi();
+
     app.MapControllers();
 
     app.MapScalarApiReference(o => o.WithTheme(ScalarTheme.DeepSpace));
