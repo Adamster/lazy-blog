@@ -120,8 +120,8 @@ try
             o.DefaultSignInScheme = IdentityConstants.ApplicationScheme;
             o.DefaultChallengeScheme = IdentityConstants.ApplicationScheme;
         })
-        .AddCookie(IdentityConstants.ApplicationScheme)
-        .AddCookie(IdentityConstants.ExternalScheme)
+       
+        
         .AddJwtBearer()
         .AddExternalAuthentication(builder.Configuration);
 
