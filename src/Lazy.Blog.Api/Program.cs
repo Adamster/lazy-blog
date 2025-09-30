@@ -92,12 +92,13 @@ try
 
     OpenApi.AddOpenApi(builder.Services);
 
-    builder.Services.AddCors(o => o.AddPolicy(lazyCorsPolicyName, policyBuilder =>
+    builder.Services.AddCors(o => 
+        o.AddPolicy(lazyCorsPolicyName, policyBuilder =>
     {
-        policyBuilder.WithOrigins(
-                "http://localhost:2393",
-                "https://notlazy.org")
-            .AllowAnyMethod().AllowCredentials();
+        policyBuilder.WithOrigins("https://notlazy.org")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
     }));
 
     builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
