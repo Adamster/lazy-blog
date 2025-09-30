@@ -20,6 +20,7 @@ using Lazy.Blog.Api.OptionsSetup;
 using Lazy.Domain.Entities.Identity;
 using Lazy.Infrastructure.Services.Impl;
 using Microsoft.ApplicationInsights.Extensibility;
+using Microsoft.AspNetCore.Identity;
 using Scalar.AspNetCore;
 
 string lazyCorsPolicyName = "lazy-blog";
@@ -101,10 +102,30 @@ try
             .AllowCredentials();
     }));
 
-    builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+
+    builder.Services.ConfigureApplicationCookie(o =>
+    {
+        o.Cookie.Name = "nl.auth";
+        o.Cookie.HttpOnly = true;
+        o.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+        o.Cookie.SameSite = SameSiteMode.None;
+        o.Cookie.Domain = ".notlazy.org";
+        o.SlidingExpiration = true;
+    });
+
+    builder.Services
+        .AddAuthentication(o =>
+        {
+            o.DefaultScheme = IdentityConstants.ApplicationScheme;
+            o.DefaultSignInScheme = IdentityConstants.ApplicationScheme;
+            o.DefaultChallengeScheme = IdentityConstants.ApplicationScheme;
+        })
+        .AddCookie(IdentityConstants.ApplicationScheme)
+        .AddCookie(IdentityConstants.ExternalScheme)
         .AddJwtBearer()
         .AddExternalAuthentication(builder.Configuration);
-        
+
+
 
     builder.Services.ConfigureOptions<JwtOptionsSetup>();
     builder.Services.ConfigureOptions<JwtBearerOptionsSetup>();

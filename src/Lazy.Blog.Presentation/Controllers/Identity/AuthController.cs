@@ -23,7 +23,6 @@ public class AuthController(ISender sender, SignInManager<User> signInManager, I
     [HttpGet("{provider}/login")]
     public IActionResult ExternalLogin([FromRoute] string provider, string? returnUrl)
     {
-        var redirectUri = Url.ActionLink(nameof(ExternalCallback), "Auth");
         var props = signInManager.ConfigureExternalAuthenticationProperties(provider, returnUrl);
 
         return Challenge(props, provider);
