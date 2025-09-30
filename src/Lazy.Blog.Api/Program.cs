@@ -96,8 +96,7 @@ try
     {
         policyBuilder.WithOrigins(
                 "http://localhost:2393",
-                "https://*.notlazy.org", 
-                "https://*.vercel.app")
+                "https://notlazy.org")
             .SetIsOriginAllowedToAllowWildcardSubdomains();
     }));
 
