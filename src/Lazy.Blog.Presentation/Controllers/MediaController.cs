@@ -11,7 +11,7 @@ namespace Lazy.Presentation.Controllers;
 
 [Authorize]
 [Route("api/media")]
-public class MediaController : ApiController
+public class MediaController : BaseJwtController
 {
     public MediaController(ISender sender, 
         ILogger<MediaController> logger) : base(sender, logger)

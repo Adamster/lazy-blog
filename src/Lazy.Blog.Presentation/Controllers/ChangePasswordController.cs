@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 namespace Lazy.Presentation.Controllers;
 
 [Authorize]
-public class ChangePasswordController(ISender sender, ILogger<ApiController> logger) : ApiController(sender, logger)
+public class ChangePasswordController(ISender sender, ILogger<ApiController> logger) : BaseJwtController(sender, logger)
 {
     
     [HttpPost("/change-password", Name = nameof(ChangePassword))]

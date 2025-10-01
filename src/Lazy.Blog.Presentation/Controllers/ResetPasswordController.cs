@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Lazy.Presentation.Controllers;
 
-public class ResetPasswordController: ApiController
+public class ResetPasswordController: BaseJwtController
 {
     public ResetPasswordController(ISender sender, ILogger<ApiController> logger) : base(sender, logger)
     {

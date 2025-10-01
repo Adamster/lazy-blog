@@ -9,7 +9,7 @@ namespace Lazy.Presentation.Controllers.Identity;
 
 
 [Authorize(Roles = "Admin")]
-public class RoleController(ISender sender, ILogger<ApiController> logger) : ApiController(sender, logger)
+public class RoleController(ISender sender, ILogger<ApiController> logger) : BaseJwtController(sender, logger)
 {
    
     [HttpPost("CreateRole", Name = "CreateRole")]

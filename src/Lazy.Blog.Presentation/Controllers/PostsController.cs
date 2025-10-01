@@ -28,7 +28,7 @@ namespace Lazy.Presentation.Controllers;
 
 [Authorize]
 [Route("api/posts")]
-public class PostsController : ApiController
+public class PostsController : BaseJwtController
 {
     public PostsController(ISender sender,
         ILogger<PostsController> logger) 

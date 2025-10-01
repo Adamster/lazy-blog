@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Lazy.Presentation.Controllers;
 
-public class ForgotPasswordController(ISender sender, ILogger<ApiController> logger) : ApiController(sender, logger)
+public class ForgotPasswordController(ISender sender, ILogger<ApiController> logger) : BaseJwtController(sender, logger)
 {
     [HttpPost("/forgot-password", Name = nameof(ForgotPassword))]
     [ProducesResponseType(StatusCodes.Status202Accepted)]

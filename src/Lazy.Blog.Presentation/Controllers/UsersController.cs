@@ -20,7 +20,7 @@ namespace Lazy.Presentation.Controllers;
 
 [Authorize]
 [Route("api/users")]
-public class UsersController : ApiController
+public class UsersController : BaseJwtController
 {
     public UsersController(
         ISender sender,

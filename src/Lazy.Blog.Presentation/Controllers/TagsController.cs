@@ -14,7 +14,7 @@ namespace Lazy.Presentation.Controllers;
 
 
 [Route("api/tags")]
-public class TagsController : ApiController
+public class TagsController : BaseJwtController
 {
     public TagsController(ISender sender, ILogger<TagsController> logger) : base(sender, logger)
     {

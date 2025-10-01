@@ -18,7 +18,7 @@ namespace Lazy.Presentation.Controllers;
 
 [Authorize]
 [Route("api/comments")]
-public class CommentsController : ApiController
+public class CommentsController : BaseJwtController
 {
     public CommentsController(
         ISender sender,
