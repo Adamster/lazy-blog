@@ -96,7 +96,7 @@ try
     builder.Services.AddCors(o => 
         o.AddPolicy(lazyCorsPolicyName, policyBuilder =>
     {
-        policyBuilder.WithOrigins("https://notlazy.org")
+        policyBuilder.WithOrigins("https://notlazy.org", "http://localhost:3000")
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();
