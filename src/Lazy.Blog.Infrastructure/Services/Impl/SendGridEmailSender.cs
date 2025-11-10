@@ -21,7 +21,7 @@ public class SendGridEmailSender(IOptions<SendGridOptions> options, ILogger<Send
         IResend client = ResendClient.Create(apikey);
         var msg = new EmailMessage
         {
-            From = "noreply@notlazy.org",
+            From = "lazy-admin@notlazy.org",
             To = email ,
             Subject = subject,
             TextBody = message,
