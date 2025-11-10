@@ -6,7 +6,7 @@ namespace Lazy.Domain.ValueObjects.User;
 
 public class Avatar : ValueObject
 {
-    public const int MaxSizeInBytes = 7 * 1024 * 1024; //20 mb
+    public const int MaxSizeInBytes = 50 * 1024 * 1024; //30 mb
     public const int MaxFilenameLength = 300;
     public const int MaxUrlLength = MaxFilenameLength * 2;
     private static readonly string[] SupportedFileTypes =
