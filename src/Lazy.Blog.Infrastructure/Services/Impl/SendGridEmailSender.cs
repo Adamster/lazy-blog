@@ -2,8 +2,8 @@ using Lazy.Application.Abstractions.Email;
 using Lazy.Domain.Entities;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using SendGrid;
-using SendGrid.Helpers.Mail;
+using Resend;
+
 
 namespace Lazy.Infrastructure.Services.Impl;
 
@@ -18,19 +18,19 @@ public class SendGridEmailSender(IOptions<SendGridOptions> options, ILogger<Send
             throw new ArgumentNullException(nameof(apikey));
         }
 
-        var client = new SendGridClient(apikey);
-        var msg = new SendGridMessage
+        IResend client = ResendClient.Create(apikey);
+        var msg = new EmailMessage
         {
-            From = new EmailAddress("noreply@notlazy.org", "Lazy"),
+            From = "noreply@notlazy.org",
+            To = email ,
             Subject = subject,
-            PlainTextContent = message,
-            HtmlContent = message,
+            TextBody = message,
+            HtmlBody = message,
         };
         
-        msg.AddTo(new EmailAddress(email));
         
-        var response = await client.SendEmailAsync(msg);
-        if (response.IsSuccessStatusCode)
+        var response = await client.EmailSendAsync(msg);
+        if (response.Success)
         {
             logger.LogInformation("Email sent successfully");
         }
