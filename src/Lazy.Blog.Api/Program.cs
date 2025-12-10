@@ -1,27 +1,28 @@
-using Lazy.Application.Behaviors;
-using Lazy.Persistence;
-using MediatR;
-using Microsoft.EntityFrameworkCore;
-using Scrutor;
+﻿using Azure.Monitor.OpenTelemetry.AspNetCore;
 using FluentValidation;
 using Lazy.App.OptionsSetup;
 using Lazy.Application.Abstractions.Authorization;
-using Lazy.Domain.Entities;
-using Lazy.Infrastructure.Authorization;
-using Lazy.Persistence.Interceptors;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Serilog;
-using AssemblyReference = Lazy.Infrastructure.AssemblyReference;
-using Azure.Monitor.OpenTelemetry.AspNetCore;
 using Lazy.Application.Abstractions.Email;
+using Lazy.Application.Behaviors;
 using Lazy.Blog.Api.ErrorHandler;
 using Lazy.Blog.Api.Extensions;
 using Lazy.Blog.Api.OptionsSetup;
+using Lazy.Domain.Entities;
 using Lazy.Domain.Entities.Identity;
+using Lazy.Infrastructure.Authorization;
 using Lazy.Infrastructure.Services.Impl;
+using Lazy.Persistence;
+using Lazy.Persistence.Interceptors;
+using MediatR;
 using Microsoft.ApplicationInsights.Extensibility;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
+using Scrutor;
+using Serilog;
+using AssemblyReference = Lazy.Infrastructure.AssemblyReference;
 
 string lazyCorsPolicyName = "lazy-blog";
 var today = DateTime.Today;
@@ -29,19 +30,34 @@ Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
     .WriteTo.Console()
     .WriteTo.File($"Logs\\{today.Year}\\{today.Month}\\{today.Day}\\Logs.log")
-    .WriteTo.ApplicationInsights(TelemetryConfiguration.CreateDefault(),  TelemetryConverter.Events)
+    .WriteTo.ApplicationInsights(TelemetryConfiguration.CreateDefault(), TelemetryConverter.Events)
     .CreateLogger();
 
 try
 {
     var builder = WebApplication.CreateBuilder(args);
 
+
+    builder.Services.Configure<ForwardedHeadersOptions>(options =>
+    {
+        options.ForwardedHeaders =
+       ForwardedHeaders.XForwardedFor |
+       ForwardedHeaders.XForwardedProto |
+       ForwardedHeaders.XForwardedHost;
+
+        options.KnownIPNetworks.Clear();
+        options.KnownProxies.Clear();
+
+
+        options.ForwardLimit = 2;
+    });
+
     builder.Services.AddExceptionHandler<CustomExceptionHandler>();
     builder.Host.UseSerilog();
-    
+
     builder.Services.AddOpenTelemetry()
         .UseAzureMonitor();
-    
+
     builder
         .Services
         .Scan(
@@ -75,7 +91,7 @@ try
     builder.Services.AddSingleton<IEmailService, SendGridEmailSender>();
 
     builder.Services.AddProblemDetails();
-    
+
     builder.Services.AddDbContext<LazyBlogDbContext>(
         (sp, optionsBuilder) =>
         {
@@ -93,7 +109,7 @@ try
 
     OpenApi.AddOpenApi(builder.Services);
 
-    builder.Services.AddCors(o => 
+    builder.Services.AddCors(o =>
         o.AddPolicy(lazyCorsPolicyName, policyBuilder =>
     {
         policyBuilder.WithOrigins("https://notlazy.org", "http://localhost:3000")
@@ -120,8 +136,8 @@ try
             o.DefaultSignInScheme = IdentityConstants.ApplicationScheme;
             o.DefaultChallengeScheme = IdentityConstants.ApplicationScheme;
         })
-       
-        
+
+
         .AddJwtBearer()
         .AddExternalAuthentication(builder.Configuration);
 
@@ -135,9 +151,9 @@ try
     var app = builder.Build();
 
     CreateDbIfNotExists(app);
-    
-   
-    
+
+    app.UseForwardedHeaders();
+
     app.UseHttpsRedirection();
 
     app.UseCors(lazyCorsPolicyName);
@@ -154,13 +170,13 @@ try
 
     app.UseExceptionHandler();
     app.UseStatusCodePages();
-    
-    
+
+
     if (app.Environment.IsDevelopment())
     {
         app.UseDeveloperExceptionPage();
     }
-    
+
     app.Run();
 }
 catch (Exception ex)
