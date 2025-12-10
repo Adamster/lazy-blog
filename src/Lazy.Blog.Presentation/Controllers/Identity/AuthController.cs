@@ -17,10 +17,10 @@ namespace Lazy.Presentation.Controllers.Identity;
 
 
 [ApiController]
-[Route("auth")]
+[Route("api/")]
 public class AuthController(ISender sender, SignInManager<User> signInManager, IUserService userService, ILogger<ApiController> logger) : ApiController(sender, logger)
 {
-    [HttpGet("{provider}/login")]
+    [HttpGet("auth/{provider}/login")]
     public IActionResult ExternalLogin([FromRoute] string provider, string? returnUrl)
     {
         var props = signInManager.ConfigureExternalAuthenticationProperties(provider, returnUrl);
@@ -29,7 +29,7 @@ public class AuthController(ISender sender, SignInManager<User> signInManager, I
     }
 
     [AllowAnonymous]
-    [HttpGet("external-callback")]
+    [HttpGet("auth/external-callback")]
     public async Task<IActionResult> ExternalCallback()
     {
         logger.LogInformation("This is a callback ");
