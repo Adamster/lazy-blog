@@ -38,17 +38,8 @@ public class PostVote : Entity, IAuditableEntity
         return postVote;
     }
 
-    public bool Update(VoteDirection direction)
+    public void ChangeDirection(VoteDirection direction)
     {
-        if (VoteDirection == direction)
-        {
-            return false;
-        }
-        
-        Post.Vote(direction);
-
         VoteDirection = direction;
-
-        return true;
     }
 }

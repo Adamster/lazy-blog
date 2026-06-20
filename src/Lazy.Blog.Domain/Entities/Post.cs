@@ -162,6 +162,21 @@ public sealed class Post : AggregateRoot, IAuditableEntity
         }
     }
 
+    public void Unvote(VoteDirection postVoteVoteDirection)
+    {
+        switch (postVoteVoteDirection)
+        {
+            case VoteDirection.Up:
+                DownVote();
+                break;
+            case VoteDirection.Down:
+                UpVote();
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(postVoteVoteDirection), postVoteVoteDirection, null);
+        }
+    }
+
     public void Hide()
     {
         IsPublished = false;
