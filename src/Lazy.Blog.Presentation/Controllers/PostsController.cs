@@ -9,6 +9,7 @@ using Lazy.Application.Posts.GetPostBySlug;
 using Lazy.Application.Posts.GetPostByTag;
 using Lazy.Application.Posts.GetPostByUserId;
 using Lazy.Application.Posts.GetPostByUserName;
+using Lazy.Application.Posts.GetPostRatingHistory;
 using Lazy.Application.Posts.GetPublishedPosts;
 using Lazy.Application.Posts.HidePost;
 using Lazy.Application.Posts.PublishPost;
@@ -112,6 +113,19 @@ public class PostsController : BaseJwtController
 
         return response.IsSuccess ? Ok(response.Value) : NotFound(response.Error);
 
+    }
+
+    [AllowAnonymous]
+    [HttpGet("{slug}/rating-history", Name = nameof(GetPostRatingHistory))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PostRatingHistoryResponse))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetPostRatingHistory(string slug, CancellationToken ct)
+    {
+        var query = new GetPostRatingHistoryQuery(slug);
+
+        Result<PostRatingHistoryResponse> response = await Sender.Send(query, ct);
+
+        return response.IsSuccess ? Ok(response.Value) : NotFound(response.Error);
     }
 
     [HttpPost(Name = nameof(CreatePost))]
