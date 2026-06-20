@@ -170,6 +170,14 @@ public sealed class Post : AggregateRoot, IAuditableEntity
     public void Publish()
     {
         IsPublished = true;
-        PublishedOnUtc = DateTime.UtcNow;
+
+        // Only stamp the publish date on the FIRST publish — re-publishing an
+        // already-dated post (after a Hide) must keep its original date so it
+        // returns to its place in the feed instead of jumping to "latest drop".
+        // Mirrors the Update() guard above.
+        if (PublishedOnUtc is null)
+        {
+            PublishedOnUtc = DateTime.UtcNow;
+        }
     }
 }
