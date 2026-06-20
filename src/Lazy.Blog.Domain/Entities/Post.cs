@@ -170,6 +170,10 @@ public sealed class Post : AggregateRoot, IAuditableEntity
     public void Publish()
     {
         IsPublished = true;
-        PublishedOnUtc = DateTime.UtcNow;
+
+        if (PublishedOnUtc is null)
+        {
+            PublishedOnUtc = DateTime.UtcNow;
+        }
     }
 }
