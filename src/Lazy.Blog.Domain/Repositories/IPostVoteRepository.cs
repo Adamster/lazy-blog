@@ -9,5 +9,7 @@ public interface IPostVoteRepository
 
     Task<PostVote?> GetPostVoteForUserIdAsync(Guid userId, Guid postId, CancellationToken ct);
 
+    IQueryable<PostVote> GetPostVotesByPostId(Guid postId, CancellationToken ct);
+
     void Update(PostVote vote);
 }

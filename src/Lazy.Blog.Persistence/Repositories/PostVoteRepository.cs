@@ -31,6 +31,12 @@ public class PostVoteRepository : IPostVoteRepository
             .SingleOrDefaultAsync(p => p.UserId == userId, ct);
     }
 
+    public IQueryable<PostVote> GetPostVotesByPostId(Guid postId, CancellationToken ct) =>
+        _dbContext.Set<PostVote>()
+            .AsNoTracking()
+            .Where(pv => pv.PostId == postId)
+            .OrderBy(pv => pv.CreatedOnUtc);
+
     public void Update(PostVote vote) =>
         _dbContext.Set<PostVote>().Update(vote);
 }
