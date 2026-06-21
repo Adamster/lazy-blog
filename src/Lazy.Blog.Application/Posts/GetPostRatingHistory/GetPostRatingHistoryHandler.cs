@@ -40,6 +40,9 @@ public class GetPostRatingHistoryHandler(
                 pv.VoteDirection == VoteDirection.Up ? 1 : -1))
             .ToList();
 
+        int upVotes = votes.Count(v => v.Delta > 0);
+        int downVotes = votes.Count(v => v.Delta < 0);
+
         IReadOnlyList<PostRatingHistoryPoint> series =
             BuildSeries(votes, post.Rating, post.CreatedOnUtc);
 
@@ -47,6 +50,8 @@ public class GetPostRatingHistoryHandler(
             post.Id,
             post.Slug.Value,
             post.Rating,
+            upVotes,
+            downVotes,
             series);
     }
 
