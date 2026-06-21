@@ -15,6 +15,9 @@ public class LazyBlogDbContext : IdentityDbContext<
     {
     }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder) =>
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfigurationsFromAssembly(AssemblyReference.Assembly);
+    }
 }
