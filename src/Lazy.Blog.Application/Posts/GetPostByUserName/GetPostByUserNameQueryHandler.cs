@@ -41,6 +41,8 @@ public class GetPostByUserNameQueryHandler(
 
         VoteCounts voteCounts = await postVoteRepository.GetVoteCountsByAuthorIdAsync(user.Id, ct);
 
+        int totalViews = await postRepository.GetTotalViewsByUserIdAsync(user.Id, ct);
+
         List<UserPostItem> postsDetails = posts.ToUserPostItemResponse();
 
         var response = new UserPostResponse(
@@ -48,7 +50,8 @@ public class GetPostByUserNameQueryHandler(
             postsDetails,
             postCount,
             voteCounts.UpVotes,
-            voteCounts.DownVotes);
+            voteCounts.DownVotes,
+            totalViews);
         return response;
     }
 }

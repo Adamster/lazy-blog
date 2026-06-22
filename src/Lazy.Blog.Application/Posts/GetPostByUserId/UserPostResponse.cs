@@ -8,4 +8,5 @@ public record UserPostResponse(
     List<UserPostItem> PostItems,
     int TotalPostCount,
     int TotalUpVotes,
-    int TotalDownVotes);
+    int TotalDownVotes,
+    int TotalViews);

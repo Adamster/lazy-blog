@@ -119,6 +119,14 @@ public class PostRepository(LazyBlogDbContext dbContext) : IPostRepository
             .CountAsync(cancellationToken: ct);
         return postCount;
     }
-    
+
+    public async Task<int> GetTotalViewsByUserIdAsync(Guid userId, CancellationToken ct)
+    {
+        long totalViews = await dbContext.Set<Post>()
+            .Where(p => p.UserId == userId)
+            .SumAsync(p => (long?)p.Views, ct) ?? 0;
+        return (int)totalViews;
+    }
+
     public void Delete(Post post) => dbContext.Set<Post>().Remove(post);
 }

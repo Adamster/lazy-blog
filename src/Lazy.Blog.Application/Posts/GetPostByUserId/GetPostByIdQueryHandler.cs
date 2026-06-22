@@ -44,12 +44,15 @@ public class GetPostByIdQueryHandler : IQueryHandler<GetPostByUserIdQuery, UserP
 
         VoteCounts voteCounts = await _postVoteRepository.GetVoteCountsByAuthorIdAsync(user.Id, ct);
 
+        int totalViews = await _postRepository.GetTotalViewsByUserIdAsync(user.Id, ct);
+
         var response = new UserPostResponse(
             new UserResponse(user),
             postDetails,
             postCount,
             voteCounts.UpVotes,
-            voteCounts.DownVotes);
+            voteCounts.DownVotes,
+            totalViews);
         return response;
     }
 }

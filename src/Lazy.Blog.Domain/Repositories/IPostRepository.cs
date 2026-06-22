@@ -25,4 +25,5 @@ public interface IPostRepository
     IQueryable<Post> GetPostsByUserName(UserName userName, int offset, CancellationToken ct, bool includeDrafts = false);
     IQueryable<Post> GetPagedPosts(int requestOffset, CancellationToken ct);
     Task<int> GetPostCountByUserIdAsync(Guid userId, CancellationToken ct);
+    Task<int> GetTotalViewsByUserIdAsync(Guid userId, CancellationToken ct);
 }
