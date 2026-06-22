@@ -27,6 +27,7 @@ public interface IPostRepository
     Task<int> GetPostCountByUserIdAsync(Guid userId, CancellationToken ct);
     Task<int> GetTotalViewsByUserIdAsync(Guid userId, CancellationToken ct);
     Task<IReadOnlyList<MonthlyPostCount>> GetMonthlyPostCountsByUserIdAsync(Guid userId, CancellationToken ct);
+    Task<IReadOnlyList<MonthlyPostCount>> GetMonthlyPostCountsAsync(CancellationToken ct);
     Task<MonthlyTopAuthor?> GetMostActiveAuthorAsync(DateTime fromUtc, DateTime toUtc, CancellationToken ct);
     Task<MonthlyTopPost?> GetMostViewedPostAsync(DateTime fromUtc, DateTime toUtc, CancellationToken ct);
 }

@@ -15,10 +15,12 @@ public class GetHomeStatsQueryHandler(IPostRepository postRepository)
 
         MonthlyTopAuthor? topAuthor = await postRepository.GetMostActiveAuthorAsync(monthStart, now, ct);
         MonthlyTopPost? topPost = await postRepository.GetMostViewedPostAsync(monthStart, now, ct);
+        IReadOnlyList<MonthlyPostCount> postsByMonth = await postRepository.GetMonthlyPostCountsAsync(ct);
 
         var response = new HomeStatsResponse(
             topAuthor?.ToMostActiveUserResponse(),
-            topPost?.ToTopPostResponse());
+            topPost?.ToTopPostResponse(),
+            postsByMonth.ToPostsPerMonth());
 
         return response;
     }

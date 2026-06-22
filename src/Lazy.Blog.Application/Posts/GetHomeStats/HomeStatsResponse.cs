@@ -1,10 +1,12 @@
+using Lazy.Application.Posts.GetPostByUserId;
 using Lazy.Application.Users.GetUserById;
 
 namespace Lazy.Application.Posts.GetHomeStats;
 
 public record HomeStatsResponse(
     MostActiveUserResponse? MostActiveUser,
-    TopPostResponse? TopPost);
+    TopPostResponse? TopPost,
+    IReadOnlyList<PostsPerMonth> PostsByMonth);
 
 public record MostActiveUserResponse(
     UserResponse User,

@@ -140,6 +140,18 @@ public class PostRepository(LazyBlogDbContext dbContext) : IPostRepository
         return monthlyPostCounts;
     }
 
+    public async Task<IReadOnlyList<MonthlyPostCount>> GetMonthlyPostCountsAsync(CancellationToken ct)
+    {
+        var monthlyPostCounts = await dbContext.Set<Post>()
+            .Where(p => p.IsPublished)
+            .GroupBy(p => new { p.CreatedOnUtc.Year, p.CreatedOnUtc.Month })
+            .OrderBy(g => g.Key.Year)
+            .ThenBy(g => g.Key.Month)
+            .Select(g => new MonthlyPostCount(g.Key.Year, g.Key.Month, g.Count()))
+            .ToListAsync(ct);
+        return monthlyPostCounts;
+    }
+
     public async Task<MonthlyTopAuthor?> GetMostActiveAuthorAsync(DateTime fromUtc, DateTime toUtc, CancellationToken ct)
     {
         var topAuthor = await dbContext.Set<Post>()
