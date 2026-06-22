@@ -13,6 +13,7 @@ namespace Lazy.Application.Posts.GetPostByUserName;
 public class GetPostByUserNameQueryHandler(
     IPostRepository postRepository,
     IUserRepository userRepository,
+    IPostVoteRepository postVoteRepository,
     ICurrentUserContext currentUserContext)
     : IQueryHandler<GetPostByUserNameQuery, UserPostResponse>
 {
@@ -38,9 +39,16 @@ public class GetPostByUserNameQueryHandler(
 
         int postCount = await postRepository.GetPostCountByUserIdAsync(user.Id, ct);
 
+        VoteCounts voteCounts = await postVoteRepository.GetVoteCountsByAuthorIdAsync(user.Id, ct);
+
         List<UserPostItem> postsDetails = posts.ToUserPostItemResponse();
 
-        var response = new UserPostResponse(new UserResponse(user), postsDetails, postCount);
+        var response = new UserPostResponse(
+            new UserResponse(user),
+            postsDetails,
+            postCount,
+            voteCounts.UpVotes,
+            voteCounts.DownVotes);
         return response;
     }
 }

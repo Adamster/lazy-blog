@@ -11,5 +11,7 @@ public interface IPostVoteRepository
 
     IQueryable<PostVote> GetPostVotesByPostId(Guid postId, CancellationToken ct);
 
+    Task<VoteCounts> GetVoteCountsByAuthorIdAsync(Guid authorId, CancellationToken ct);
+
     void Update(PostVote vote);
 }

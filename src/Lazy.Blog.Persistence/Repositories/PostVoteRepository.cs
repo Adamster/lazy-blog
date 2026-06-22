@@ -1,5 +1,6 @@
 ﻿using Lazy.Domain.Entities;
 using Lazy.Domain.Repositories;
+using Lazy.Domain.ValueObjects.Post;
 using Microsoft.EntityFrameworkCore;
 
 namespace Lazy.Persistence.Repositories;
@@ -36,6 +37,21 @@ public class PostVoteRepository : IPostVoteRepository
             .AsNoTracking()
             .Where(pv => pv.PostId == postId)
             .OrderBy(pv => pv.CreatedOnUtc);
+
+    public async Task<VoteCounts> GetVoteCountsByAuthorIdAsync(Guid authorId, CancellationToken ct)
+    {
+        var counts = await _dbContext.Set<PostVote>()
+            .AsNoTracking()
+            .Where(pv => pv.Post.UserId == authorId)
+            .GroupBy(pv => pv.VoteDirection)
+            .Select(g => new { Direction = g.Key, Count = g.Count() })
+            .ToListAsync(ct);
+
+        int upVotes = counts.SingleOrDefault(c => c.Direction == VoteDirection.Up)?.Count ?? 0;
+        int downVotes = counts.SingleOrDefault(c => c.Direction == VoteDirection.Down)?.Count ?? 0;
+
+        return new VoteCounts(upVotes, downVotes);
+    }
 
     public void Update(PostVote vote) =>
         _dbContext.Set<PostVote>().Update(vote);

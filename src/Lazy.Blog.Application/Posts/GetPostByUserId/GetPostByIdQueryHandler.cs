@@ -12,13 +12,16 @@ public class GetPostByIdQueryHandler : IQueryHandler<GetPostByUserIdQuery, UserP
 {
     private readonly IPostRepository _postRepository;
     private readonly IUserRepository _userRepository;
+    private readonly IPostVoteRepository _postVoteRepository;
 
     public GetPostByIdQueryHandler(
         IPostRepository postRepository,
-        IUserRepository userRepository)
+        IUserRepository userRepository,
+        IPostVoteRepository postVoteRepository)
     {
         _postRepository = postRepository;
         _userRepository = userRepository;
+        _postVoteRepository = postVoteRepository;
     }
 
     public async Task<Result<UserPostResponse>> Handle(GetPostByUserIdQuery request, CancellationToken ct)
@@ -39,7 +42,14 @@ public class GetPostByIdQueryHandler : IQueryHandler<GetPostByUserIdQuery, UserP
 
         int postCount = await _postRepository.GetPostCountByUserIdAsync(user.Id, ct);
 
-        var response = new UserPostResponse(new UserResponse(user), postDetails, postCount);
+        VoteCounts voteCounts = await _postVoteRepository.GetVoteCountsByAuthorIdAsync(user.Id, ct);
+
+        var response = new UserPostResponse(
+            new UserResponse(user),
+            postDetails,
+            postCount,
+            voteCounts.UpVotes,
+            voteCounts.DownVotes);
         return response;
     }
 }
