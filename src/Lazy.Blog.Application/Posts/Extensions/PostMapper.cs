@@ -1,7 +1,9 @@
+using Lazy.Application.Posts.GetHomeStats;
 using Lazy.Application.Posts.GetPostByUserId;
 using Lazy.Application.Posts.GetPublishedPosts;
 using Lazy.Application.Posts.Models;
 using Lazy.Application.Tags.SearchTag;
+using Lazy.Application.Users.GetUserById;
 using Lazy.Domain.Entities;
 using Lazy.Domain.Repositories;
 
@@ -62,4 +64,10 @@ public static class PostMapper
         monthlyPostCounts
             .Select(m => new PostsPerMonth(m.Year, m.Month, m.Count))
             .ToList();
+
+    public static MostActiveUserResponse ToMostActiveUserResponse(this MonthlyTopAuthor topAuthor) =>
+        new(new UserResponse(topAuthor.User), topAuthor.PostCount, topAuthor.NetRating);
+
+    public static TopPostResponse ToTopPostResponse(this MonthlyTopPost topPost) =>
+        new(topPost.Title, topPost.Slug, topPost.UserName, topPost.Views, topPost.NetRating);
 }

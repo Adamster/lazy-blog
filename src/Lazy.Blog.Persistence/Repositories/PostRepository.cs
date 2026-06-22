@@ -140,5 +140,53 @@ public class PostRepository(LazyBlogDbContext dbContext) : IPostRepository
         return monthlyPostCounts;
     }
 
+    public async Task<MonthlyTopAuthor?> GetMostActiveAuthorAsync(DateTime fromUtc, DateTime toUtc, CancellationToken ct)
+    {
+        var topAuthor = await dbContext.Set<Post>()
+            .Where(p => p.IsPublished && p.CreatedOnUtc >= fromUtc && p.CreatedOnUtc <= toUtc)
+            .GroupBy(p => p.UserId)
+            .Select(g => new
+            {
+                UserId = g.Key,
+                PostCount = g.Count(),
+                NetRating = g.Sum(p => p.Rating)
+            })
+            .OrderByDescending(g => g.PostCount)
+            .ThenByDescending(g => g.NetRating)
+            .FirstOrDefaultAsync(ct);
+
+        if (topAuthor is null)
+        {
+            return null;
+        }
+
+        var user = await dbContext.Set<User>()
+            .AsNoTracking()
+            .FirstOrDefaultAsync(u => u.Id == topAuthor.UserId, ct);
+
+        if (user is null)
+        {
+            return null;
+        }
+
+        return new MonthlyTopAuthor(user, topAuthor.PostCount, topAuthor.NetRating);
+    }
+
+    public async Task<MonthlyTopPost?> GetMostViewedPostAsync(DateTime fromUtc, DateTime toUtc, CancellationToken ct)
+    {
+        var topPost = await dbContext.Set<Post>()
+            .Where(p => p.IsPublished && p.CreatedOnUtc >= fromUtc && p.CreatedOnUtc <= toUtc)
+            .OrderByDescending(p => p.Views)
+            .Select(p => new MonthlyTopPost(
+                p.Title.Value,
+                p.Slug.Value,
+                p.User.UserName!,
+                p.Views,
+                p.Rating))
+            .FirstOrDefaultAsync(ct);
+
+        return topPost;
+    }
+
     public void Delete(Post post) => dbContext.Set<Post>().Remove(post);
 }

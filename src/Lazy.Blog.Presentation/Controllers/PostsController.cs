@@ -8,6 +8,7 @@ using Lazy.Application.Posts.GetPostById;
 using Lazy.Application.Posts.GetPostBySlug;
 using Lazy.Application.Posts.GetPostByTag;
 using Lazy.Application.Posts.GetPostByUserId;
+using Lazy.Application.Posts.GetHomeStats;
 using Lazy.Application.Posts.GetPostByUserName;
 using Lazy.Application.Posts.GetPostRatingHistory;
 using Lazy.Application.Posts.GetPublishedPosts;
@@ -66,6 +67,19 @@ public class PostsController : BaseJwtController
         }
 
         return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
+    }
+
+    [AllowAnonymous]
+    [HttpGet("stats", Name = nameof(GetHomeStats))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(HomeStatsResponse))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetHomeStats(CancellationToken ct)
+    {
+        var query = new GetHomeStatsQuery();
+
+        Result<HomeStatsResponse> response = await Sender.Send(query, ct);
+
+        return response.IsSuccess ? Ok(response.Value) : HandleFailure(response);
     }
 
     [AllowAnonymous]
