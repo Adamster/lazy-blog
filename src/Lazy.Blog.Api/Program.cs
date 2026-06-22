@@ -92,11 +92,18 @@ try
 
     builder.Services.AddProblemDetails();
 
-    builder.Services.AddDbContext<LazyBlogDbContext>(
+    builder.Services.AddDbContextFactory<LazyBlogDbContext>(
         (sp, optionsBuilder) =>
         {
             optionsBuilder.UseSqlServer(connectionString);
         });
+
+    builder.Services.AddDbContext<LazyBlogDbContext>(
+        (sp, optionsBuilder) =>
+        {
+            optionsBuilder.UseSqlServer(connectionString);
+        },
+        optionsLifetime: ServiceLifetime.Singleton);
 
     builder.Services.AddDefaultIdentity<User>()
         .AddRoles<Role>()

@@ -1,32 +1,20 @@
-﻿using Lazy.Application.Abstractions.Messaging;
-using Lazy.Application.Posts.Extensions;
-using Lazy.Application.Posts.GetPublishedPosts;
-using Lazy.Application.Users.GetUserById;
+using Lazy.Application.Abstractions.Messaging;
+using Lazy.Application.Posts.Shared;
 using Lazy.Domain.Entities;
 using Lazy.Domain.Repositories;
 using Lazy.Domain.Shared;
 
 namespace Lazy.Application.Posts.GetPostByUserId;
 
-public class GetPostByIdQueryHandler : IQueryHandler<GetPostByUserIdQuery, UserPostResponse>
+public class GetPostByIdQueryHandler(
+    IPostRepository postRepository,
+    IUserRepository userRepository,
+    IUserPostResponseBuilder userPostResponseBuilder)
+    : IQueryHandler<GetPostByUserIdQuery, UserPostResponse>
 {
-    private readonly IPostRepository _postRepository;
-    private readonly IUserRepository _userRepository;
-    private readonly IPostVoteRepository _postVoteRepository;
-
-    public GetPostByIdQueryHandler(
-        IPostRepository postRepository,
-        IUserRepository userRepository,
-        IPostVoteRepository postVoteRepository)
-    {
-        _postRepository = postRepository;
-        _userRepository = userRepository;
-        _postVoteRepository = postVoteRepository;
-    }
-
     public async Task<Result<UserPostResponse>> Handle(GetPostByUserIdQuery request, CancellationToken ct)
     {
-        User? user = await _userRepository.GetByIdAsync(request.UserId, ct);
+        User? user = await userRepository.GetByIdAsync(request.UserId, ct);
 
         if (user is null)
         {
@@ -35,28 +23,8 @@ public class GetPostByIdQueryHandler : IQueryHandler<GetPostByUserIdQuery, UserP
                 $"The user with Id {request.UserId} was not found."));
         }
 
-        var posts = _postRepository
-            .GetPostsByUserId(request.UserId, request.Offset, ct);
+        var posts = postRepository.GetPostsByUserId(request.UserId, request.Offset, ct);
 
-        var postDetails = posts.ToUserPostItemResponse();
-
-        int postCount = await _postRepository.GetPostCountByUserIdAsync(user.Id, ct);
-
-        VoteCounts voteCounts = await _postVoteRepository.GetVoteCountsByAuthorIdAsync(user.Id, ct);
-
-        int totalViews = await _postRepository.GetTotalViewsByUserIdAsync(user.Id, ct);
-
-        IReadOnlyList<MonthlyPostCount> monthlyPostCounts =
-            await _postRepository.GetMonthlyPostCountsByUserIdAsync(user.Id, ct);
-
-        var response = new UserPostResponse(
-            new UserResponse(user),
-            postDetails,
-            postCount,
-            voteCounts.UpVotes,
-            voteCounts.DownVotes,
-            totalViews,
-            monthlyPostCounts.ToPostsPerMonth());
-        return response;
+        return await userPostResponseBuilder.BuildAsync(user, posts, ct);
     }
 }

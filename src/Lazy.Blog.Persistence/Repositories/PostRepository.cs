@@ -7,7 +7,9 @@ using static Lazy.Persistence.Constants.QueryConstants;
 
 namespace Lazy.Persistence.Repositories;
 
-public class PostRepository(LazyBlogDbContext dbContext) : IPostRepository
+public class PostRepository(
+    LazyBlogDbContext dbContext,
+    IDbContextFactory<LazyBlogDbContext> dbContextFactory) : IPostRepository
 {
     public async Task<Post?> GetByIdAsync(Guid postId, CancellationToken ct) =>
         await dbContext
@@ -114,7 +116,9 @@ public class PostRepository(LazyBlogDbContext dbContext) : IPostRepository
 
     public async Task<int> GetPostCountByUserIdAsync(Guid userId, CancellationToken ct)
     {
-        var postCount = await dbContext.Set<Post>()
+        await using var ctx = await dbContextFactory.CreateDbContextAsync(ct);
+
+        var postCount = await ctx.Set<Post>()
             .Where(p => p.UserId == userId && p.IsPublished)
             .CountAsync(cancellationToken: ct);
         return postCount;
@@ -122,7 +126,9 @@ public class PostRepository(LazyBlogDbContext dbContext) : IPostRepository
 
     public async Task<int> GetTotalViewsByUserIdAsync(Guid userId, CancellationToken ct)
     {
-        long totalViews = await dbContext.Set<Post>()
+        await using var ctx = await dbContextFactory.CreateDbContextAsync(ct);
+
+        long totalViews = await ctx.Set<Post>()
             .Where(p => p.UserId == userId)
             .SumAsync(p => (long?)p.Views, ct) ?? 0;
         return (int)totalViews;
@@ -130,7 +136,9 @@ public class PostRepository(LazyBlogDbContext dbContext) : IPostRepository
 
     public async Task<IReadOnlyList<MonthlyPostCount>> GetMonthlyPostCountsByUserIdAsync(Guid userId, CancellationToken ct)
     {
-        var monthlyPostCounts = await dbContext.Set<Post>()
+        await using var ctx = await dbContextFactory.CreateDbContextAsync(ct);
+
+        var monthlyPostCounts = await ctx.Set<Post>()
             .Where(p => p.UserId == userId && p.IsPublished)
             .GroupBy(p => new { p.CreatedOnUtc.Year, p.CreatedOnUtc.Month })
             .OrderBy(g => g.Key.Year)
@@ -142,7 +150,9 @@ public class PostRepository(LazyBlogDbContext dbContext) : IPostRepository
 
     public async Task<IReadOnlyList<MonthlyPostCount>> GetMonthlyPostCountsAsync(CancellationToken ct)
     {
-        var monthlyPostCounts = await dbContext.Set<Post>()
+        await using var ctx = await dbContextFactory.CreateDbContextAsync(ct);
+
+        var monthlyPostCounts = await ctx.Set<Post>()
             .Where(p => p.IsPublished)
             .GroupBy(p => new { p.CreatedOnUtc.Year, p.CreatedOnUtc.Month })
             .OrderBy(g => g.Key.Year)
@@ -154,7 +164,9 @@ public class PostRepository(LazyBlogDbContext dbContext) : IPostRepository
 
     public async Task<MonthlyTopAuthor?> GetMostActiveAuthorAsync(DateTime fromUtc, DateTime toUtc, CancellationToken ct)
     {
-        var topAuthor = await dbContext.Set<Post>()
+        await using var ctx = await dbContextFactory.CreateDbContextAsync(ct);
+
+        var topAuthor = await ctx.Set<Post>()
             .Where(p => p.IsPublished && p.CreatedOnUtc >= fromUtc && p.CreatedOnUtc <= toUtc)
             .GroupBy(p => p.UserId)
             .Select(g => new
@@ -172,7 +184,7 @@ public class PostRepository(LazyBlogDbContext dbContext) : IPostRepository
             return null;
         }
 
-        var user = await dbContext.Set<User>()
+        var user = await ctx.Set<User>()
             .AsNoTracking()
             .FirstOrDefaultAsync(u => u.Id == topAuthor.UserId, ct);
 
@@ -186,7 +198,9 @@ public class PostRepository(LazyBlogDbContext dbContext) : IPostRepository
 
     public async Task<MonthlyTopPost?> GetMostViewedPostAsync(DateTime fromUtc, DateTime toUtc, CancellationToken ct)
     {
-        var topPost = await dbContext.Set<Post>()
+        await using var ctx = await dbContextFactory.CreateDbContextAsync(ct);
+
+        var topPost = await ctx.Set<Post>()
             .Where(p => p.IsPublished && p.CreatedOnUtc >= fromUtc && p.CreatedOnUtc <= toUtc)
             .OrderByDescending(p => p.Views)
             .Select(p => new MonthlyTopPost(
