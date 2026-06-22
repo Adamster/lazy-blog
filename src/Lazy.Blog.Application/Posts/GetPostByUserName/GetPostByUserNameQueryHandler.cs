@@ -43,6 +43,9 @@ public class GetPostByUserNameQueryHandler(
 
         int totalViews = await postRepository.GetTotalViewsByUserIdAsync(user.Id, ct);
 
+        IReadOnlyList<MonthlyPostCount> monthlyPostCounts =
+            await postRepository.GetMonthlyPostCountsByUserIdAsync(user.Id, ct);
+
         List<UserPostItem> postsDetails = posts.ToUserPostItemResponse();
 
         var response = new UserPostResponse(
@@ -51,7 +54,8 @@ public class GetPostByUserNameQueryHandler(
             postCount,
             voteCounts.UpVotes,
             voteCounts.DownVotes,
-            totalViews);
+            totalViews,
+            monthlyPostCounts.ToPostsPerMonth());
         return response;
     }
 }

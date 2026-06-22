@@ -26,4 +26,5 @@ public interface IPostRepository
     IQueryable<Post> GetPagedPosts(int requestOffset, CancellationToken ct);
     Task<int> GetPostCountByUserIdAsync(Guid userId, CancellationToken ct);
     Task<int> GetTotalViewsByUserIdAsync(Guid userId, CancellationToken ct);
+    Task<IReadOnlyList<MonthlyPostCount>> GetMonthlyPostCountsByUserIdAsync(Guid userId, CancellationToken ct);
 }

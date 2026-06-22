@@ -46,13 +46,17 @@ public class GetPostByIdQueryHandler : IQueryHandler<GetPostByUserIdQuery, UserP
 
         int totalViews = await _postRepository.GetTotalViewsByUserIdAsync(user.Id, ct);
 
+        IReadOnlyList<MonthlyPostCount> monthlyPostCounts =
+            await _postRepository.GetMonthlyPostCountsByUserIdAsync(user.Id, ct);
+
         var response = new UserPostResponse(
             new UserResponse(user),
             postDetails,
             postCount,
             voteCounts.UpVotes,
             voteCounts.DownVotes,
-            totalViews);
+            totalViews,
+            monthlyPostCounts.ToPostsPerMonth());
         return response;
     }
 }

@@ -9,4 +9,5 @@ public record UserPostResponse(
     int TotalPostCount,
     int TotalUpVotes,
     int TotalDownVotes,
-    int TotalViews);
+    int TotalViews,
+    IReadOnlyList<PostsPerMonth> Activity);
