@@ -23,15 +23,15 @@ public class UserPostResponseBuilder(
 
         await Task.WhenAll(postCountTask, voteCountsTask, totalViewsTask, monthlyPostCountsTask);
 
-        VoteCounts voteCounts = await voteCountsTask;
+        VoteCounts voteCounts = voteCountsTask.Result;
 
         return new UserPostResponse(
             new UserResponse(user),
             postsDetails,
-            await postCountTask,
+            postCountTask.Result,
             voteCounts.UpVotes,
             voteCounts.DownVotes,
-            await totalViewsTask,
-            (await monthlyPostCountsTask).ToPostsPerMonth());
+            totalViewsTask.Result,
+            monthlyPostCountsTask.Result.ToPostsPerMonth());
     }
 }

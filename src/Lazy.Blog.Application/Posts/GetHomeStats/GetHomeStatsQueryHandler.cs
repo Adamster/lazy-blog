@@ -19,13 +19,13 @@ public class GetHomeStatsQueryHandler(IPostRepository postRepository)
 
         await Task.WhenAll(topAuthorTask, topPostTask, postsByMonthTask);
 
-        MonthlyTopAuthor? topAuthor = await topAuthorTask;
-        MonthlyTopPost? topPost = await topPostTask;
+        MonthlyTopAuthor? topAuthor = topAuthorTask.Result;
+        MonthlyTopPost? topPost = topPostTask.Result;
 
         var response = new HomeStatsResponse(
             topAuthor?.ToMostActiveUserResponse(),
             topPost?.ToTopPostResponse(),
-            (await postsByMonthTask).ToPostsPerMonth());
+            postsByMonthTask.Result.ToPostsPerMonth());
 
         return response;
     }
