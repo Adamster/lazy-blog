@@ -1,9 +1,7 @@
 ﻿using Lazy.Application.Abstractions.Authorization;
 using Lazy.Application.Abstractions.Messaging;
-using Lazy.Application.Posts.Extensions;
 using Lazy.Application.Posts.GetPostByUserId;
-using Lazy.Application.Posts.GetPublishedPosts;
-using Lazy.Application.Users.GetUserById;
+using Lazy.Application.Posts.Shared;
 using Lazy.Domain.Repositories;
 using Lazy.Domain.Shared;
 using Lazy.Domain.ValueObjects.User;
@@ -13,6 +11,7 @@ namespace Lazy.Application.Posts.GetPostByUserName;
 public class GetPostByUserNameQueryHandler(
     IPostRepository postRepository,
     IUserRepository userRepository,
+    IUserPostResponseBuilder userPostResponseBuilder,
     ICurrentUserContext currentUserContext)
     : IQueryHandler<GetPostByUserNameQuery, UserPostResponse>
 {
@@ -28,19 +27,10 @@ public class GetPostByUserNameQueryHandler(
                 $"The user with Username {request.UserName} was not found."));
         }
 
-        var currentUserId = currentUserContext.GetCurrentUserId();
-
-        var includeDraftPosts = currentUserId == user.Id;
-
+        var includeDraftPosts = currentUserContext.GetCurrentUserId() == user.Id;
 
         var posts = postRepository.GetPostsByUserName(userNameResult.Value, request.Offset, ct, includeDraftPosts);
 
-
-        int postCount = await postRepository.GetPostCountByUserIdAsync(user.Id, ct);
-
-        List<UserPostItem> postsDetails = posts.ToUserPostItemResponse();
-
-        var response = new UserPostResponse(new UserResponse(user), postsDetails, postCount);
-        return response;
+        return await userPostResponseBuilder.BuildAsync(user, posts, ct);
     }
 }
