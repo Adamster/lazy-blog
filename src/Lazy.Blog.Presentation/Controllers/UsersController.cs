@@ -4,6 +4,7 @@ using Lazy.Application.Users.CreateUser;
 using Lazy.Application.Users.DeleteUserAvatar;
 using Lazy.Application.Users.GetUserById;
 using Lazy.Application.Users.Login;
+using Lazy.Application.Users.Logout;
 using Lazy.Application.Users.RefreshToken;
 using Lazy.Application.Users.UpdateUser;
 using Lazy.Application.Users.UploadUserAvatar;
@@ -109,6 +110,19 @@ public class UsersController : BaseJwtController
         var result = await Sender.Send(command, cancellationToken);
 
         return result.IsFailure ? HandleFailure(result) : Ok(result.Value);
+    }
+
+    [HttpPost("logout", Name = nameof(Logout))]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> Logout(
+        [FromBody] LogoutRequest request,
+        CancellationToken ct)
+    {
+        var command = new LogoutCommand(request.RefreshToken);
+
+        await Sender.Send(command, ct);
+
+        return NoContent();
     }
 
     [AllowAnonymous]

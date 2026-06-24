@@ -57,7 +57,7 @@ public static class DomainErrors
 
 
         public static readonly Error NotMatched = new(
-            "UserToken.IsUsed",
+            "UserToken.NotMatched",
             "The provided token doesn't match with access token");
     }
 
