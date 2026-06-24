@@ -37,6 +37,12 @@ try
 {
     var builder = WebApplication.CreateBuilder(args);
 
+    builder.Host.UseDefaultServiceProvider((context, options) =>
+    {
+        options.ValidateScopes = true;
+        options.ValidateOnBuild = true;
+    });
+
 
     builder.Services.Configure<ForwardedHeadersOptions>(options =>
     {
@@ -64,6 +70,7 @@ try
             selector => selector
                 .FromAssemblies(
                     AssemblyReference.Assembly,
+                    Lazy.Application.AssemblyReference.Assembly,
                     Lazy.Persistence.AssemblyReference.Assembly)
                 .AddClasses(false)
                 .UsingRegistrationStrategy(RegistrationStrategy.Skip)
