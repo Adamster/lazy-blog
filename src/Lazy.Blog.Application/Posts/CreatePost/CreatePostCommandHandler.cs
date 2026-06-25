@@ -1,4 +1,5 @@
-﻿using Lazy.Application.Abstractions.Messaging;
+﻿using Lazy.Application.Abstractions.Authorization;
+using Lazy.Application.Abstractions.Messaging;
 using Lazy.Domain.Entities;
 using Lazy.Domain.Errors;
 using Lazy.Domain.Extensions;
@@ -12,19 +13,22 @@ internal sealed class CreatePostCommandHandler(
     IPostRepository postRepository,
     IUnitOfWork unitOfWork,
     IUserRepository userRepository,
-    ITagRepository tagRepository)
+    ITagRepository tagRepository,
+    ICurrentUserContext currentUserContext)
     : ICommandHandler<CreatePostCommand, PostCreatedResponse>
 {
     public async Task<Result<PostCreatedResponse>> Handle(CreatePostCommand request, CancellationToken ct)
     {
+        var userId = currentUserContext.GetCurrentUserId();
+
         Result<Title> titleResult = Title.Create(request.Title);
         Result<Summary> summaryResult = Summary.Create(request.Summary);
         Result<Body> bodyResult = Body.Create(request.Body);
         List<Tag> tags = [];
 
-        if (await userRepository.GetByIdAsync(request.UserId, ct) is null)
+        if (await userRepository.GetByIdAsync(userId, ct) is null)
         {
-            return Result.Failure<PostCreatedResponse>(DomainErrors.User.NotFound(request.UserId));
+            return Result.Failure<PostCreatedResponse>(DomainErrors.User.NotFound(userId));
         }
 
         Result<Slug> slugResult = Slug.Create(request.Title.Slugify());
@@ -48,7 +52,7 @@ internal sealed class CreatePostCommandHandler(
             summaryResult.Value,
             slugResult.Value,
             bodyResult.Value,
-            request.UserId,
+            userId,
             request.IsPublished,
             tags,
             request.IsCoverDisplayed,

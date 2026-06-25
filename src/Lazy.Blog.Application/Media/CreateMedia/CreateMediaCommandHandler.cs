@@ -1,4 +1,5 @@
-﻿using Lazy.Application.Abstractions.File;
+﻿using Lazy.Application.Abstractions.Authorization;
+using Lazy.Application.Abstractions.File;
 using Lazy.Application.Abstractions.Messaging;
 using Lazy.Domain.Entities;
 using Lazy.Domain.Errors;
@@ -12,11 +13,17 @@ public class CreateMediaCommandHandler(
     IFileService fileService,
     IUserRepository userRepository,
     IMediaItemRepository mediaItemRepository,
-    IUnitOfWork unitOfWork)
+    IUnitOfWork unitOfWork,
+    ICurrentUserContext currentUserContext)
     : ICommandHandler<CreateMediaCommand, string>
 {
     public async Task<Result<string>> Handle(CreateMediaCommand request, CancellationToken cancellationToken)
     {
+        if (!currentUserContext.IsCurrentUser(request.UserId))
+        {
+            return Result.Failure<string>(DomainErrors.MediaItem.Unauthorized);
+        }
+
         var user = await userRepository.GetByIdAsync(request.UserId, cancellationToken);
 
         if (user is null)

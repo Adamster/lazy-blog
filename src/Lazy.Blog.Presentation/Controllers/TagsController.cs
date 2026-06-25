@@ -32,7 +32,7 @@ public class TagsController : BaseJwtController
         return response.IsFailure ? HandleFailure(response) : Ok(response.Value);
     }
 
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     [HttpPut("{id:guid}", Name = "UpdateTag")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

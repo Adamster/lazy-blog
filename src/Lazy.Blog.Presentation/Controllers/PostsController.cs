@@ -142,8 +142,7 @@ public class PostsController : BaseJwtController
             request.IsPublished,
             request.Tags,
             request.CoverUrl,
-            request.IsCoverDisplayed,
-            request.UserId);
+            request.IsCoverDisplayed);
 
         Result<PostCreatedResponse> result = await Sender.Send(command, ct);
 

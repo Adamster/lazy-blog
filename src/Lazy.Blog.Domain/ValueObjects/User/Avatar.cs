@@ -15,8 +15,6 @@ public class Avatar : ValueObject
         ".png",
         ".jpeg",
         ".gif",
-        ".png",
-        ".svg",
         ".webp",
         ".avif",
         ".apng"

@@ -1,4 +1,5 @@
-﻿using Lazy.Application.Abstractions.Messaging;
+﻿using Lazy.Application.Abstractions.Authorization;
+using Lazy.Application.Abstractions.Messaging;
 using Lazy.Domain.Errors;
 using Lazy.Domain.Repositories;
 using Lazy.Domain.Shared;
@@ -10,11 +11,17 @@ namespace Lazy.Application.Users.UpdateUser;
 public class UpdateUserCommandHandler(
     IUserRepository userRepository,
     IUnitOfWork unitOfWork,
+    ICurrentUserContext currentUserContext,
     ILogger<UpdateUserCommandHandler> logger)
     : ICommandHandler<UpdateUserCommand>
 {
     public async Task<Result> Handle(UpdateUserCommand request, CancellationToken ct)
     {
+        if (!currentUserContext.IsCurrentUser(request.Id))
+        {
+            return Result.Failure(DomainErrors.User.UnauthorizedUserUpdate);
+        }
+
         var userNameResult = UserName.Create(request.Username);
         var firstNameResult = FirstName.Create(request.FirstName);
         var lastNameResult = LastName.Create(request.LastName);
