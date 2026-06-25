@@ -14,4 +14,5 @@ public class TableNames
     internal const string Tags = nameof(Tags);
     internal const string PostVotes = nameof(PostVotes);
     internal const string MediaItems = nameof(MediaItems);
+    internal const string ArcadeScores = nameof(ArcadeScores);
 }

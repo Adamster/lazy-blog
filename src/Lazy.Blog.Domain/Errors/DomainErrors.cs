@@ -262,4 +262,15 @@ public static class DomainErrors
             "MediaItem.UnauthorizedAccess",
             "Media item access unauthorized");
     }
+
+    public static class ArcadeScore
+    {
+        public static readonly Error GameKeyEmpty = new(
+            "ArcadeScore.GameKeyEmpty",
+            "The game key is required");
+
+        public static readonly Error GameKeyTooLong = new(
+            "ArcadeScore.GameKeyTooLong",
+            "The game key is too long");
+    }
 }
