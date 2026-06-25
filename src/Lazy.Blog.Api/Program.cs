@@ -99,18 +99,16 @@ try
 
     builder.Services.AddProblemDetails();
 
+    // Registers both IDbContextFactory<LazyBlogDbContext> and a scoped LazyBlogDbContext,
+    // so repositories/UnitOfWork can inject the context directly while the factory stays available.
     builder.Services.AddDbContextFactory<LazyBlogDbContext>(
         (sp, optionsBuilder) =>
         {
-            optionsBuilder.UseSqlServer(connectionString);
-        });
-
-    builder.Services.AddDbContext<LazyBlogDbContext>(
-        (sp, optionsBuilder) =>
-        {
-            optionsBuilder.UseSqlServer(connectionString);
+            optionsBuilder
+                .UseSqlServer(connectionString)
+                .AddInterceptors(sp.GetRequiredService<UpdateAuditableEntitiesInterceptor>());
         },
-        optionsLifetime: ServiceLifetime.Singleton);
+        lifetime: ServiceLifetime.Scoped);
 
     builder.Services.AddDefaultIdentity<User>()
         .AddRoles<Role>()
@@ -164,7 +162,7 @@ try
 
     var app = builder.Build();
 
-    CreateDbIfNotExists(app);
+    await ApplyMigrationsAsync(app);
 
     app.UseForwardedHeaders();
 
@@ -203,19 +201,29 @@ finally
 }
 
 
-//TODO: Remove this in future
-static void CreateDbIfNotExists(WebApplication app)
+// Applies any pending EF Core migrations at startup. A migration failure is fatal:
+// the exception propagates so the process crashes rather than serving requests against
+// an inconsistent schema. For multi-instance production deploys, prefer applying
+// migrations out-of-band (dotnet ef database update / efbundle) before the process starts.
+static async Task ApplyMigrationsAsync(WebApplication app)
 {
-    using var scope = app.Services.CreateScope();
-    var services = scope.ServiceProvider;
-    try
+    await using var scope = app.Services.CreateAsyncScope();
+    var context = scope.ServiceProvider.GetRequiredService<LazyBlogDbContext>();
+    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+
+    var pendingMigrations = (await context.Database.GetPendingMigrationsAsync()).ToList();
+    if (pendingMigrations.Count == 0)
     {
-        var context = services.GetRequiredService<LazyBlogDbContext>();
-        DbInitializer.Initialize(context);
+        logger.LogInformation("No pending migrations.");
+        return;
     }
-    catch (Exception ex)
-    {
-        var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "An error occurred creating the DB.");
-    }
+
+    logger.LogInformation(
+        "Applying {Count} pending migration(s): {Migrations}",
+        pendingMigrations.Count,
+        string.Join(", ", pendingMigrations));
+
+    await context.Database.MigrateAsync();
+
+    logger.LogInformation("Migrations applied successfully.");
 }
