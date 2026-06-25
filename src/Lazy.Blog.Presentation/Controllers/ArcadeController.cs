@@ -36,10 +36,10 @@ public class ArcadeController : BaseJwtController
         return response.IsSuccess ? Ok(response.Value) : HandleFailure(response);
     }
 
-    [AllowAnonymous]
     [HttpGet("leaderboard", Name = nameof(GetLeaderboard))]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(LeaderboardResponse))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> GetLeaderboard(
         CancellationToken ct,
         string? game = null,
