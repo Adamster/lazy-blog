@@ -20,6 +20,11 @@ namespace Lazy.Persistence.Migrations
                 oldType: "nvarchar(450)",
                 oldNullable: true);
 
+            // SQL Server won't ALTER COLUMN while the column is part of a PK — drop and re-add it.
+            migrationBuilder.DropPrimaryKey(
+                name: "PK_Tokens",
+                table: "Tokens");
+
             migrationBuilder.AlterColumn<string>(
                 name: "Name",
                 table: "Tokens",
@@ -37,6 +42,11 @@ namespace Lazy.Persistence.Migrations
                 nullable: false,
                 oldClrType: typeof(string),
                 oldType: "nvarchar(450)");
+
+            migrationBuilder.AddPrimaryKey(
+                name: "PK_Tokens",
+                table: "Tokens",
+                columns: new[] { "Value", "LoginProvider", "Name" });
         }
 
         /// <inheritdoc />
@@ -52,6 +62,10 @@ namespace Lazy.Persistence.Migrations
                 oldMaxLength: 256,
                 oldNullable: true);
 
+            migrationBuilder.DropPrimaryKey(
+                name: "PK_Tokens",
+                table: "Tokens");
+
             migrationBuilder.AlterColumn<string>(
                 name: "Name",
                 table: "Tokens",
@@ -69,6 +83,11 @@ namespace Lazy.Persistence.Migrations
                 oldClrType: typeof(string),
                 oldType: "nvarchar(128)",
                 oldMaxLength: 128);
+
+            migrationBuilder.AddPrimaryKey(
+                name: "PK_Tokens",
+                table: "Tokens",
+                columns: new[] { "Value", "LoginProvider", "Name" });
         }
     }
 }
