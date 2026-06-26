@@ -32,3 +32,11 @@ steps:
   inputs:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
+
+- task: AzureRmWebAppDeployment@5
+  inputs:
+    ConnectionType: 'AzureRM'
+    azureSubscription: 'Visual Studio Enterprise (f680fe72-4919-46cd-806b-377f4b0c607e)'
+    appType: 'webApp'
+    WebAppName: 'lazy-blog-app'
+    packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
