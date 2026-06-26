@@ -154,15 +154,15 @@ public static class DomainErrors
             "The specified slug is already in use");
     }
 
-    public static class FirstName
+    public static class DisplayName
     {
         public static readonly Error Empty = new(
-            "FirstName.Empty",
-            "First name is empty");
+            "DisplayName.Empty",
+            "Display name is empty");
 
         public static readonly Error TooLong = new(
-            "FirstName.TooLong",
-            "FirstName name is too long");
+            "DisplayName.TooLong",
+            "Display name is too long");
     }
 
     public static class UserName
@@ -182,17 +182,6 @@ public static class DomainErrors
         public static readonly Func<string, Error> NotFound = username => new Error(
             "User.NotFound",
             $"The member with the username {username} was not found.");
-    }
-
-    public static class LastName
-    {
-        public static readonly Error Empty = new(
-            "LastName.Empty",
-            "Last name is empty");
-
-        public static readonly Error TooLong = new(
-            "LastName.TooLong",
-            "Last name is too long");
     }
 
     public static class Avatar

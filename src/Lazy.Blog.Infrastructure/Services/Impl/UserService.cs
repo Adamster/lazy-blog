@@ -1,4 +1,4 @@
-﻿using System.Security.Claims;
+using System.Security.Claims;
 using Lazy.Application.Abstractions;
 using Lazy.Application.Abstractions.User;
 using Lazy.Application.Users.GetUserById;
@@ -7,19 +7,21 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using ApplicationException = System.ApplicationException;
+using DisplayName = Lazy.Domain.ValueObjects.User.DisplayName;
 using Email = Lazy.Domain.ValueObjects.User.Email;
-using FirstName = Lazy.Domain.ValueObjects.User.FirstName;
-using LastName = Lazy.Domain.ValueObjects.User.LastName;
 using User = Lazy.Domain.Entities.User;
 using UserName = Lazy.Domain.ValueObjects.User.UserName;
 
 namespace Lazy.Infrastructure.Services.Impl;
 
-public class UserService(UserManager<User> userManager, 
+public class UserService(UserManager<User> userManager,
     SignInManager<User> signInManager,
     IJwtProvider jwtProvider,
     ILogger<UserService> logger) : IUserService
 {
+    private const string FallbackDisplayName = "user";
+    private const string FallbackUserName = "user";
+
     public async Task<User?> FindByExternalLoginAsync(string provider, string providerUserId)
     {
         return await userManager.FindByLoginAsync(provider, providerUserId);
@@ -28,13 +30,22 @@ public class UserService(UserManager<User> userManager,
     public async Task<User> CreateExternalUserAsync(string email, string provider, string providerUserId)
     {
         var emailResult = Email.Create(email);
+        if (emailResult.IsFailure)
+        {
+            throw new ApplicationException(emailResult.Error.Message);
+        }
 
-        var user = User.Create(emailResult, provider, providerUserId);
+        var displayName = BuildDisplayName(EmailLocalPart(email));
+        var userName = await GenerateUniqueUserNameAsync(email);
+
+        var user = User.Create(Guid.NewGuid(), emailResult.Value, displayName, userName, null);
 
         var result = await userManager.CreateAsync(user);
         if (!result.Succeeded)
-            throw new Exception("Failed to create user: " +
-                                string.Join(", ", result.Errors.Select(e => e.Description)));
+        {
+            throw new ApplicationException("Failed to create user: " +
+                                          string.Join(", ", result.Errors.Select(e => e.Description)));
+        }
 
         var loginInfo = new UserLoginInfo(provider, providerUserId, provider);
         await userManager.AddLoginAsync(user, loginInfo);
@@ -53,7 +64,7 @@ public class UserService(UserManager<User> userManager,
             info.ProviderKey,
             false);
 
-        User? existingUser = null;
+        User? existingUser;
 
         if (extSignIn.Succeeded)
         {
@@ -67,33 +78,20 @@ public class UserService(UserManager<User> userManager,
             if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(provider))
                 throw new ArgumentException("Invalid claims for creating external user.");
 
-
             existingUser = await userManager.FindByEmailAsync(email);
 
             if (existingUser != null)
             {
-                var addLoginRes = await userManager.AddLoginAsync(existingUser, info);
-
+                await userManager.AddLoginAsync(existingUser, info);
             }
         }
 
-
         return existingUser!;
-
-
-        //var firstNameValue = claimsPrincipal.FindFirstValue(ClaimTypes.GivenName) ?? $"External {provider}";
-        //var lastNameValue = claimsPrincipal.FindFirstValue(ClaimTypes.Surname) ?? "User";
-        //var userNameValue = claimsPrincipal.FindFirstValue(ClaimTypes.Email)!.Split('@')[0];
-
-        //var emailResult = Email.Create(email);
-        //var lastNameResult = LastName.Create(lastNameValue);
-        //var firstNameResult = FirstName.Create(firstNameValue);
-        //var userNameResult = UserName.Create(userNameValue);
     }
 
     public async Task<LoginResponse> CreateOrLoginUser(ExternalLoginInfo info)
     {
-        User? user = null;
+        User? user;
         var signIn = await signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, false);
         if (signIn.Succeeded)
         {
@@ -108,7 +106,7 @@ public class UserService(UserManager<User> userManager,
             var email = info.Principal.FindFirstValue(ClaimTypes.Email)
                         ?? info.Principal.FindFirstValue("email");
 
-            if (string.IsNullOrEmpty(email)) throw new ArgumentNullException(nameof(email));
+            if (string.IsNullOrEmpty(email)) throw new ArgumentNullException(nameof(info));
 
             user = await userManager.FindByEmailAsync(email);
 
@@ -116,15 +114,15 @@ public class UserService(UserManager<User> userManager,
             {
                 var userId = Guid.NewGuid();
                 var emailResult = Email.Create(email);
-                var firstName = FirstName.Create(info.Principal.FindFirstValue(ClaimTypes.GivenName)!);
-                var lastName = LastName.Create(info.Principal.FindFirstValue(ClaimTypes.Surname)!);
-                var userName = UserName.Create(email.Split('@')[0]);
+                if (emailResult.IsFailure)
+                {
+                    throw new ApplicationException(emailResult.Error.Message);
+                }
 
-                user = User.Create(userId, emailResult.Value, firstName.Value,
-                    lastName.Value,
-                    userName.Value,
-                    null);
+                var displayName = ResolveDisplayName(info.Principal, email);
+                var userName = await GenerateUniqueUserNameAsync(email);
 
+                user = User.Create(userId, emailResult.Value, displayName, userName, null);
 
                 var created = await userManager.CreateAsync(user);
                 if (!created.Succeeded)
@@ -149,8 +147,78 @@ public class UserService(UserManager<User> userManager,
                 }
             }
         }
+
         var tokenResponse = await jwtProvider.GenerateAsync(user!, CancellationToken.None);
 
-        return new LoginResponse(tokenResponse.AccessToken,  tokenResponse.RefreshToken, new UserResponse(user!));
+        return new LoginResponse(tokenResponse.AccessToken, tokenResponse.RefreshToken, new UserResponse(user!));
+    }
+
+    private static DisplayName ResolveDisplayName(ClaimsPrincipal principal, string email)
+    {
+        var name = principal.FindFirstValue(ClaimTypes.Name);
+        if (!string.IsNullOrWhiteSpace(name))
+        {
+            return BuildDisplayName(name);
+        }
+
+        var given = principal.FindFirstValue(ClaimTypes.GivenName);
+        var family = principal.FindFirstValue(ClaimTypes.Surname);
+        var joined = string.Join(
+            ' ',
+            new[] { given, family }.Where(part => !string.IsNullOrWhiteSpace(part)));
+
+        if (!string.IsNullOrWhiteSpace(joined))
+        {
+            return BuildDisplayName(joined);
+        }
+
+        return BuildDisplayName(EmailLocalPart(email));
+    }
+
+    private static DisplayName BuildDisplayName(string candidate)
+    {
+        var clamped = Clamp(candidate, DisplayName.MaxLength);
+        var result = DisplayName.Create(clamped);
+
+        return result.IsSuccess ? result.Value : DisplayName.Create(FallbackDisplayName).Value;
+    }
+
+    private async Task<UserName> GenerateUniqueUserNameAsync(string email)
+    {
+        var basePart = EmailLocalPart(email);
+        if (string.IsNullOrWhiteSpace(basePart))
+        {
+            basePart = FallbackUserName;
+        }
+
+        basePart = Clamp(basePart, UserName.MaxLength);
+
+        var candidate = basePart;
+        var suffix = 1;
+        while (await userManager.FindByNameAsync(candidate) is not null)
+        {
+            candidate = $"{basePart}{suffix++}";
+        }
+
+        var result = UserName.Create(candidate);
+
+        return result.IsSuccess
+            ? result.Value
+            : UserName.Create($"{FallbackUserName}{Guid.NewGuid():N}").Value;
+    }
+
+    private static string EmailLocalPart(string email)
+    {
+        var trimmed = email?.Trim() ?? string.Empty;
+        var atIndex = trimmed.IndexOf('@');
+
+        return atIndex > 0 ? trimmed[..atIndex] : trimmed;
+    }
+
+    private static string Clamp(string value, int maxLength)
+    {
+        var trimmed = (value ?? string.Empty).Trim();
+
+        return trimmed.Length <= maxLength ? trimmed : trimmed[..maxLength];
     }
 }

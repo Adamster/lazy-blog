@@ -23,8 +23,7 @@ public class UpdateUserCommandHandler(
         }
 
         var userNameResult = UserName.Create(request.Username);
-        var firstNameResult = FirstName.Create(request.FirstName);
-        var lastNameResult = LastName.Create(request.LastName);
+        var displayNameResult = DisplayName.Create(request.DisplayName);
         Result<Biography>? biographyResult = null;
 
         if (request.Biography is not null)
@@ -48,9 +47,13 @@ public class UpdateUserCommandHandler(
 
         logger.LogInformation($"Updating user {user.UserName} information");
 
+        if (displayNameResult.IsFailure)
+        {
+            return Result.Failure(displayNameResult.Error);
+        }
+
         user.UpdateUser(
-            firstNameResult.Value,
-            lastNameResult.Value,
+            displayNameResult.Value,
             userNameResult.Value,
             biographyResult?.Value);
 

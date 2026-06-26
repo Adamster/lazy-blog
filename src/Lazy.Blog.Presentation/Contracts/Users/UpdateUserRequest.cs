@@ -1,9 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace Lazy.Presentation.Contracts.Users;
 
 public record UpdateUserRequest(
-   [Required] string FirstName, 
-   [Required] string LastName,
+   [Required] string DisplayName,
    [Required] string UserName,
     string? Biography);

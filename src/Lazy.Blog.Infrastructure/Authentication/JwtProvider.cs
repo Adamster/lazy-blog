@@ -32,7 +32,7 @@ public sealed class JwtProvider(
             new (JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new (JwtRegisteredClaimNames.Sub, user.Id.ToString()),
             new (JwtRegisteredClaimNames.Email, user.Email!),
-            new (JwtRegisteredClaimNames.Name, $"{user.FirstName.Value} {user.LastName.Value}")
+            new (JwtRegisteredClaimNames.Name, user.DisplayName.Value)
         };
 
         if (userRole?.Name != null)

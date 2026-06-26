@@ -27,8 +27,7 @@ internal sealed class CreateUserCommandHandler(
             return Result.Failure<Guid>(emailResult.Error);
         }
 
-        Result<FirstName> firstNameResult = FirstName.Create(request.FirstName);
-        Result<LastName> lastNameResult = LastName.Create(request.LastName);
+        Result<DisplayName> displayNameResult = DisplayName.Create(request.DisplayName);
         Result<UserName> userNameResult = UserName.Create(request.UserName);
         Result<Biography>? biographyResult = null;
 
@@ -48,11 +47,15 @@ internal sealed class CreateUserCommandHandler(
             return Result.Failure<Guid>(DomainErrors.UserName.UserNameAlreadyInUse);
         }
 
+        if (displayNameResult.IsFailure)
+        {
+            return Result.Failure<Guid>(displayNameResult.Error);
+        }
+
         var user = User.Create(
             Guid.NewGuid(),
             emailResult.Value,
-            firstNameResult.Value,
-            lastNameResult.Value,
+            displayNameResult.Value,
             userNameResult.Value,
             biographyResult?.Value);
 
