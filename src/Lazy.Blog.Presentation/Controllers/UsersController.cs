@@ -135,8 +135,7 @@ public class UsersController : BaseJwtController
     {
         var command = new CreateUserCommand(
             request.Email,
-            request.FirstName,
-            request.LastName,
+            request.DisplayName,
             request.UserName,
             request.Biography,
             request.Password);
@@ -164,8 +163,7 @@ public class UsersController : BaseJwtController
     {
         var command = new UpdateUserCommand(
             id,
-            request.FirstName,
-            request.LastName,
+            request.DisplayName,
             request.UserName,
             request.Biography);
 

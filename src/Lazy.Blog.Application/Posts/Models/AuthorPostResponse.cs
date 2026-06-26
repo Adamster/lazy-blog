@@ -1,11 +1,10 @@
-﻿using Lazy.Domain.Entities;
+using Lazy.Domain.Entities;
 
 namespace Lazy.Application.Posts.Models;
 
 public record AuthorPostResponse(
     Guid Id,
-    string FirstName,
-    string LastName,
+    string DisplayName,
     string UserName,
     string? Biography,
     string? AvatarUrl,
@@ -15,8 +14,7 @@ public record AuthorPostResponse(
     {
         return new AuthorPostResponse(
             post.UserId,
-            post.User.FirstName.Value,
-            post.User.LastName.Value,
+            post.User.DisplayName.Value,
             post.User.UserName!,
             post.User.Biography?.Value,
             post.User.Avatar?.Url,
@@ -25,8 +23,7 @@ public record AuthorPostResponse(
 
     public AuthorPostResponse(User user) :
         this(user.Id,
-            user.FirstName.Value,
-            user.LastName.Value,
+            user.DisplayName.Value,
             user.UserName!,
             user.Biography?.Value,
             user.Avatar?.Url,

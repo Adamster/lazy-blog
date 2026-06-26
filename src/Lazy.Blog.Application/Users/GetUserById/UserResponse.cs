@@ -1,12 +1,11 @@
-﻿using Lazy.Domain.Entities;
+using Lazy.Domain.Entities;
 
 namespace Lazy.Application.Users.GetUserById;
 
 public record UserResponse(
     Guid Id,
     string Email,
-    string FirstName,
-    string LastName,
+    string DisplayName,
     string UserName,
     string? Biography,
     string? AvatarUrl,
@@ -17,8 +16,7 @@ public record UserResponse(
         return new UserResponse(
             post.UserId,
             post.User.Email!,
-            post.User.FirstName.Value,
-            post.User.LastName.Value,
+            post.User.DisplayName.Value,
             post.User.UserName!,
             post.User.Biography?.Value,
             post.User.Avatar?.Url,
@@ -29,12 +27,11 @@ public record UserResponse(
     public UserResponse(User user) :
         this(user.Id,
             user.Email!,
-            user.FirstName.Value,
-            user.LastName.Value,
+            user.DisplayName.Value,
             user.UserName!,
             user.Biography?.Value,
             user.Avatar?.Url,
             user.CreatedOnUtc)
     {
     }
-}    
+}

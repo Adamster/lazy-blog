@@ -24,14 +24,9 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(u => u.NormalizedEmail).HasMaxLength(Email.MaxLength);
 
         builder
-            .Property(x => x.FirstName)
-            .HasConversion(x => x.Value, v => FirstName.Create(v).Value)
-            .HasMaxLength(FirstName.MaxLength);
-
-        builder
-            .Property(x => x.LastName)
-            .HasConversion(x => x.Value, v => LastName.Create(v).Value)
-            .HasMaxLength(LastName.MaxLength);
+            .Property(x => x.DisplayName)
+            .HasConversion(x => x.Value, v => DisplayName.Create(v).Value)
+            .HasMaxLength(DisplayName.MaxLength);
 
         builder
             .Property(x => x.Biography)

@@ -18,13 +18,12 @@ public sealed class User : IdentityUser<Guid>, IAuditableEntity
     private readonly List<UserRole> _userRoles = [];
     private readonly List<PostVote> _postVotes = [];
 
-    private User(Guid id, Email email, FirstName firstName, LastName lastName, UserName userName, Biography? biography)
+    private User(Guid id, Email email, DisplayName displayName, UserName userName, Biography? biography)
         : base(email.Value)
     {
         Id = id;
         Email = email.Value;
-        FirstName = firstName;
-        LastName = lastName;
+        DisplayName = displayName;
         UserName = userName.Value;
         Biography = biography;
         CreatedOnUtc = DateTime.UtcNow;
@@ -33,10 +32,8 @@ public sealed class User : IdentityUser<Guid>, IAuditableEntity
     private User()
     {
     }
-    
-    public FirstName FirstName { get; init; } = null!;
 
-    public LastName LastName { get; init; } = null!;
+    public DisplayName DisplayName { get; init; } = null!;
 
     public Avatar? Avatar { get; private set; }
 
@@ -62,26 +59,23 @@ public sealed class User : IdentityUser<Guid>, IAuditableEntity
     public static User Create(
         Guid id,
         Email email,
-        FirstName firstName,
-        LastName lastName,
+        DisplayName displayName,
         UserName userName,
         Biography? biography)
     {
         var user = new User(
             id,
             email,
-            firstName,
-            lastName,
-            userName, 
+            displayName,
+            userName,
             biography);
 
         return user;
     }
 
-    public void UpdateUser(FirstName firstName, LastName lastName, UserName userName, Biography? biography)
+    public void UpdateUser(DisplayName displayName, UserName userName, Biography? biography)
     {
-        FirstName.Update(firstName);
-        LastName.Update(lastName);
+        DisplayName.Update(displayName);
 
         if (Biography is null && biography is not null)
         {
@@ -100,10 +94,5 @@ public sealed class User : IdentityUser<Guid>, IAuditableEntity
     public void DeleteAvatar()
     {
         Avatar?.Clear();
-    }
-
-    public static User Create(Result<Email> emailResult, string provider, string providerUserId)
-    {
-        return new User();
     }
 }
