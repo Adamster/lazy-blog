@@ -5,7 +5,7 @@ namespace Lazy.Application.Arcade.SubmitScore;
 
 public class SubmitScoreCommandValidator : AbstractValidator<SubmitScoreCommand>
 {
-    private const int MaxScore = 1_000_000;
+    private const int MaxScore = 50_000_000;
 
     public SubmitScoreCommandValidator()
     {
