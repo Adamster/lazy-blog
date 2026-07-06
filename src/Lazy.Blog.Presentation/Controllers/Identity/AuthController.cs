@@ -30,7 +30,7 @@ public class AuthController(ISender sender, SignInManager<User> signInManager, I
 
     [AllowAnonymous]
     [HttpGet("auth/external-callback")]
-    public async Task<IActionResult> ExternalCallback()
+    public async Task<IActionResult> ExternalCallback(CancellationToken cancellationToken)
     {
         logger.LogInformation("This is a callback ");
 
@@ -46,7 +46,7 @@ public class AuthController(ISender sender, SignInManager<User> signInManager, I
         LoginResponse? loginResponse;
         if (info != null)
         {
-            loginResponse = await userService.CreateOrLoginUser(info);
+            loginResponse = await userService.CreateOrLoginUser(info, cancellationToken);
         }
         else
         {

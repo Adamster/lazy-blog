@@ -9,5 +9,5 @@ public interface IUserService
     Task<Domain.Entities.User?> FindByExternalLoginAsync(string provider, string providerUserId);
     Task<Domain.Entities.User> CreateExternalUserAsync(string email, string provider, string providerUserId);
     Task<Domain.Entities.User> CreateExternalUserAsync(ClaimsPrincipal claimsPrincipal);
-    Task<LoginResponse> CreateOrLoginUser(ExternalLoginInfo infoPrincipal);
+    Task<LoginResponse> CreateOrLoginUser(ExternalLoginInfo infoPrincipal, CancellationToken cancellationToken = default);
 }
