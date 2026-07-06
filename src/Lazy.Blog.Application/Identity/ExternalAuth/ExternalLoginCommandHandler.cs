@@ -3,11 +3,12 @@ using Lazy.Application.Abstractions.Messaging;
 using Lazy.Application.Abstractions.User;
 using Lazy.Application.Users.GetUserById;
 using Lazy.Application.Users.Login;
+using Lazy.Domain.Repositories;
 using Lazy.Domain.Shared;
 
 namespace Lazy.Application.Identity.ExternalAuth;
 
-public class ExternalLoginCommandHandler(IJwtProvider jwtProvider, IUserService userService)
+public class ExternalLoginCommandHandler(IJwtProvider jwtProvider, IUserService userService, IUnitOfWork unitOfWork)
     : ICommandHandler<ExternalLoginCommand, LoginResponse>
 {
     public async Task<Result<LoginResponse>> Handle(ExternalLoginCommand request, CancellationToken cancellationToken)
@@ -20,6 +21,8 @@ public class ExternalLoginCommandHandler(IJwtProvider jwtProvider, IUserService 
         }
 
         var tokenResponse = await jwtProvider.GenerateAsync(user, cancellationToken);
+
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return new LoginResponse(
             tokenResponse.AccessToken,

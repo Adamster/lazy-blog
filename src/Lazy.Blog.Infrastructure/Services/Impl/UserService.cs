@@ -3,6 +3,7 @@ using Lazy.Application.Abstractions;
 using Lazy.Application.Abstractions.User;
 using Lazy.Application.Users.GetUserById;
 using Lazy.Application.Users.Login;
+using Lazy.Domain.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
@@ -17,6 +18,7 @@ namespace Lazy.Infrastructure.Services.Impl;
 public class UserService(UserManager<User> userManager,
     SignInManager<User> signInManager,
     IJwtProvider jwtProvider,
+    IUnitOfWork unitOfWork,
     ILogger<UserService> logger) : IUserService
 {
     private const string FallbackDisplayName = "user";
@@ -89,7 +91,7 @@ public class UserService(UserManager<User> userManager,
         return existingUser!;
     }
 
-    public async Task<LoginResponse> CreateOrLoginUser(ExternalLoginInfo info)
+    public async Task<LoginResponse> CreateOrLoginUser(ExternalLoginInfo info, CancellationToken cancellationToken = default)
     {
         User? user;
         var signIn = await signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, false);
@@ -148,7 +150,9 @@ public class UserService(UserManager<User> userManager,
             }
         }
 
-        var tokenResponse = await jwtProvider.GenerateAsync(user!, CancellationToken.None);
+        var tokenResponse = await jwtProvider.GenerateAsync(user!, cancellationToken);
+
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return new LoginResponse(tokenResponse.AccessToken, tokenResponse.RefreshToken, new UserResponse(user!));
     }
