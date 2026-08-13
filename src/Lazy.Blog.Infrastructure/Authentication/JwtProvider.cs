@@ -7,6 +7,7 @@ using Lazy.Domain.Entities;
 using Lazy.Domain.Entities.Identity;
 using Lazy.Domain.Repositories.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
@@ -15,6 +16,7 @@ namespace Lazy.Infrastructure.Authentication;
 public sealed class JwtProvider(
     IOptions<JwtOptions> options,
     IUserTokenRepository userTokenRepository,
+    UserManager<User> userManager,
     IOptions<JwtBearerOptions> jwtBearerOptions)
     : IJwtProvider
 {
@@ -25,8 +27,6 @@ public sealed class JwtProvider(
 
     public async Task<TokenResponse> GenerateAsync(User user, CancellationToken cancellationToken)
     {
-        var userRole = user.UserRoles.FirstOrDefault()?.Role;
-        
         var claims = new List<Claim>
         {
             new (JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
@@ -35,10 +35,9 @@ public sealed class JwtProvider(
             new (JwtRegisteredClaimNames.Name, user.DisplayName.Value)
         };
 
-        if (userRole?.Name != null)
+        foreach (var role in await userManager.GetRolesAsync(user))
         {
-            var roleClaim =  new Claim(ClaimTypes.Role, userRole.Name);
-            claims.Add(roleClaim);
+            claims.Add(new Claim(ClaimTypes.Role, role));
         }
 
         var signingCredentials = new SigningCredentials(

@@ -5,6 +5,24 @@ namespace Lazy.Domain.Errors;
 
 public static class DomainErrors
 {
+    public static class Shelf
+    {
+        public static readonly Func<Guid, Error> BookNotFound = id => new("Book.NotFound", $"The book with the identifier {id} was not found.");
+        public static readonly Func<string, Error> BookSlugNotFound = slug => new("Book.NotFound", $"The book with the slug {slug} was not found.");
+        public static readonly Func<Guid, Error> CommentNotFound = id => new("BookComment.NotFound", $"The book comment with the identifier {id} was not found.");
+        public static readonly Error UnauthorizedCommentUpdate = new("BookComment.NotAuthorized", "Book comment can be updated only by its author");
+        public static readonly Error InvalidStatus = new("BookStatus.Invalid", "Status must be 'reading' or 'read'");
+        public static readonly Func<Guid, Error> GenreNotFound = id => new("Genre.NotFound", $"Genre {id} was not found");
+        public static readonly Error GenreInUse = new("Genre.InUse", "Genre cannot be deleted while it contains books");
+        public static readonly Func<Guid, Error> AuthorNotFound = id => new("Author.NotFound", $"Author {id} was not found");
+        public static readonly Error AuthorInUse = new("Author.InUse", "Author cannot be deleted while referenced by books");
+        public static readonly Error CoverUploadFailed = new("BookCover.UploadFailed", "One or more covers could not be processed or uploaded");
+        public static readonly Error BookAlreadyExists = new("Book.Conflict", "A book with the same slug or source identifier already exists");
+        public static readonly Error GenreAlreadyExists = new("Genre.Conflict", "A genre with the same slug or name already exists");
+        public static readonly Error AuthorAlreadyExists = new("Author.Conflict", "An author with the same normalized name already exists");
+        public static readonly Error DuplicateRatingSourceWorkId = new("RatingSync.DuplicateSourceWorkId", "Each source work identifier may occur only once");
+        public static readonly Func<string, Error> InvalidData = message => new("Shelf.InvalidData", message);
+    }
     public static class User
     {
         public static readonly Error EmailAlreadyInUse = new(
