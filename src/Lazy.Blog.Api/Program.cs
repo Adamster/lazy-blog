@@ -163,6 +163,7 @@ try
     var app = builder.Build();
 
     await ApplyMigrationsAsync(app);
+    await app.BootstrapAdminRoleAsync();
 
     app.UseForwardedHeaders();
 
