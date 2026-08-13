@@ -4,6 +4,7 @@ using Lazy.Domain.Errors;
 using Lazy.Domain.Repositories;
 using Lazy.Domain.Shared;
 using Lazy.Domain.ValueObjects.User;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 
 namespace Lazy.Application.Users.UpdateUser;
@@ -12,6 +13,7 @@ public class UpdateUserCommandHandler(
     IUserRepository userRepository,
     IUnitOfWork unitOfWork,
     ICurrentUserContext currentUserContext,
+    ILookupNormalizer lookupNormalizer,
     ILogger<UpdateUserCommandHandler> logger)
     : ICommandHandler<UpdateUserCommand>
 {
@@ -56,6 +58,11 @@ public class UpdateUserCommandHandler(
             displayNameResult.Value,
             userNameResult.Value,
             biographyResult?.Value);
+
+        if (userNameChanged)
+        {
+            user.NormalizedUserName = lookupNormalizer.NormalizeName(user.UserName);
+        }
 
         userRepository.Update(user);
 
