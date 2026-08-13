@@ -8,7 +8,9 @@ using Microsoft.Extensions.Logging;
 namespace Lazy.Presentation.Controllers;
 
 [Route("api/users/{username}/books")]
-public sealed class UserBooksController(ISender sender, ILogger<UserBooksController> logger) : BaseJwtController(sender, logger)
+public sealed class UserBooksController(
+    ISender sender,
+    ILogger<UserBooksController> logger) : BaseJwtController(sender, logger)
 {
     [AllowAnonymous, HttpGet]
     public async Task<IActionResult> Get(

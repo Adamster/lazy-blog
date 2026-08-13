@@ -41,7 +41,9 @@ internal sealed class BookConfiguration : IEntityTypeConfiguration<Book>
         builder.Property(x => x.SourceWorkId).HasMaxLength(100);
         builder.Property(x => x.SourceUrl).HasMaxLength(1000);
 
-        builder.HasIndex(x => new { x.RatingSource, x.SourceWorkId }).IsUnique().HasFilter("[SourceWorkId] IS NOT NULL");
+        builder.HasIndex(x => new { x.RatingSource, x.SourceWorkId })
+            .IsUnique()
+            .HasFilter("[SourceWorkId] IS NOT NULL");
         builder.HasIndex(x => new { x.SeriesId, x.VolumeNumber }).IsUnique().HasFilter("[SeriesId] IS NOT NULL");
         builder.HasIndex(x => new { x.GenreId, x.AuthorId, x.Title });
     }

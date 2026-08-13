@@ -42,14 +42,21 @@ internal static class ShelfInput
         if (result.IsFailure) return result;
         result = book.UpdateCatalog(data.GenreId, data.AuthorId, Normalize(data.Title), data.CoverUrl,
             data.SeriesId, data.VolumeNumber, data.SourceWorkId, data.SourceUrl);
-        return result.IsFailure ? result : book.UpdateRating(data.Rating, data.RatingCount, data.RatingSource, DateTime.UtcNow);
+        return result.IsFailure
+            ? result
+            : book.UpdateRating(data.Rating, data.RatingCount, data.RatingSource, DateTime.UtcNow);
     }
 
-    internal static async Task<Error?> Relations(IShelfRepository repository, ManageBookData data, CancellationToken ct)
+    internal static async Task<Error?> Relations(
+        IGenreRepository genres,
+        IAuthorRepository authors,
+        ISeriesRepository series,
+        ManageBookData data,
+        CancellationToken ct)
     {
-        if (await repository.GetGenreAsync(data.GenreId, ct) is null) return DomainErrors.Shelf.GenreNotFound(data.GenreId);
-        if (await repository.GetAuthorAsync(data.AuthorId, ct) is null) return DomainErrors.Shelf.AuthorNotFound(data.AuthorId);
-        if (data.SeriesId is { } seriesId && await repository.GetSeriesAsync(seriesId, ct) is null)
+        if (await genres.GetAsync(data.GenreId, ct) is null) return DomainErrors.Shelf.GenreNotFound(data.GenreId);
+        if (await authors.GetAsync(data.AuthorId, ct) is null) return DomainErrors.Shelf.AuthorNotFound(data.AuthorId);
+        if (data.SeriesId is { } seriesId && await series.GetAsync(seriesId, ct) is null)
             return DomainErrors.Shelf.SeriesNotFound(seriesId);
         return null;
     }

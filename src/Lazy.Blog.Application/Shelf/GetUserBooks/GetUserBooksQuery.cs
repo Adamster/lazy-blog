@@ -18,15 +18,24 @@ public sealed class GetUserBooksQueryValidator : AbstractValidator<GetUserBooksQ
     }
 }
 
-public sealed class GetUserBooksQueryHandler(IShelfRepository shelf) : IQueryHandler<GetUserBooksQuery, BooksPageResponse>
+public sealed class GetUserBooksQueryHandler(
+    IUserBookStatusRepository userBookStatuses,
+    IRatingSyncRunRepository ratingSyncRuns) : IQueryHandler<GetUserBooksQuery, BooksPageResponse>
 {
     public async Task<Result<BooksPageResponse>> Handle(GetUserBooksQuery request, CancellationToken ct)
     {
-        if (!ShelfMapping.TryStatus(request.Status, out var status)) return Result.Failure<BooksPageResponse>(DomainErrors.Shelf.InvalidStatus);
+        if (!ShelfMapping.TryStatus(request.Status, out var status))
+        {
+            return Result.Failure<BooksPageResponse>(DomainErrors.Shelf.InvalidStatus);
+        }
         int offset = Math.Max(0, request.Offset);
         int limit = Math.Clamp(request.Limit, 1, 100);
-        var page = await shelf.GetUserBooksAsync(request.UserName, status, offset, limit, ct);
-        return new BooksPageResponse(page.Items.Select(x => ShelfMapping.ToResponse(x.Book, x.Status)).ToList(), page.Total, offset, limit,
-            await shelf.GetLastRatingSyncAsync(ct));
+        var page = await userBookStatuses.GetPagedAsync(request.UserName, status, offset, limit, ct);
+        return new BooksPageResponse(
+            page.Items.Select(x => ShelfMapping.ToResponse(x.Book, x.Status)).ToList(),
+            page.Total,
+            offset,
+            limit,
+            await ratingSyncRuns.GetLastSyncAsync(ct));
     }
 }

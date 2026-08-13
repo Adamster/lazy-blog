@@ -16,7 +16,8 @@ internal static class AdminRoleBootstrapExtensions
         string[] emails = app.Configuration.GetSection(ConfigurationKey).Get<string[]>() ?? [];
         if (emails.Length == 0)
         {
-            throw new InvalidOperationException($"Configuration value '{ConfigurationKey}' must list at least one admin email.");
+            throw new InvalidOperationException(
+                $"Configuration value '{ConfigurationKey}' must list at least one admin email.");
         }
 
         await using var scope = app.Services.CreateAsyncScope();
@@ -47,7 +48,9 @@ internal static class AdminRoleBootstrapExtensions
 
             anyAssigned = true;
             if (!await userManager.IsInRoleAsync(user, Role.AdminRoleName))
-                EnsureSucceeded(await userManager.AddToRoleAsync(user, Role.AdminRoleName), $"assign Admin role to {email}");
+                EnsureSucceeded(
+                    await userManager.AddToRoleAsync(user, Role.AdminRoleName),
+                    $"assign Admin role to {email}");
         }
 
         // Keep retrying on every startup until at least one configured admin account exists.
@@ -62,6 +65,7 @@ internal static class AdminRoleBootstrapExtensions
     private static void EnsureSucceeded(IdentityResult result, string operation)
     {
         if (result.Succeeded) return;
-        throw new InvalidOperationException($"Could not {operation}: {string.Join(", ", result.Errors.Select(error => error.Description))}");
+        string errors = string.Join(", ", result.Errors.Select(error => error.Description));
+        throw new InvalidOperationException($"Could not {operation}: {errors}");
     }
 }

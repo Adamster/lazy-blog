@@ -1,6 +1,4 @@
 using FluentValidation;
-using Lazy.Application.Abstractions.Authorization;
-using Lazy.Application.Abstractions.File;
 using Lazy.Application.Abstractions.Messaging;
 using Lazy.Domain.Entities;
 using Lazy.Domain.Errors;
@@ -11,17 +9,19 @@ namespace Lazy.Application.Shelf;
 
 public record CreateGenreCommand(string Slug, string Name, int SortOrder) : ICommand<Guid>;
 
-public sealed class CreateGenreCommandHandler(IShelfRepository repository, IShelfUnitOfWork unitOfWork) : ICommandHandler<CreateGenreCommand, Guid>
+public sealed class CreateGenreCommandHandler(
+    IGenreRepository genres,
+    IShelfUnitOfWork unitOfWork) : ICommandHandler<CreateGenreCommand, Guid>
 {
     public async Task<Result<Guid>> Handle(CreateGenreCommand request, CancellationToken ct)
     {
         string slug = ShelfInput.Normalize(request.Slug);
         string name = ShelfInput.Normalize(request.Name);
-        if (await repository.GenreConflictsAsync(null, slug, name, ct))
+        if (await genres.ConflictsAsync(null, slug, name, ct))
             return Result.Failure<Guid>(DomainErrors.Shelf.GenreAlreadyExists);
         var result = Genre.Create(Guid.NewGuid(), slug, name, request.SortOrder);
         if (result.IsFailure) return Result.Failure<Guid>(result.Error);
-        repository.Add(result.Value);
+        genres.Add(result.Value);
         var saveResult = await unitOfWork.SaveChangesAsync(ShelfConflict.Genre, ct);
         return saveResult.IsFailure ? Result.Failure<Guid>(saveResult.Error) : result.Value.Id;
     }

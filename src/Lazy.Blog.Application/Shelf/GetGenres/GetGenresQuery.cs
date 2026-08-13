@@ -6,12 +6,21 @@ namespace Lazy.Application.Shelf;
 
 public record GetGenresQuery : IQuery<IReadOnlyList<GenreResponse>>;
 
-public sealed class GetGenresQueryHandler(IShelfRepository shelf) : IQueryHandler<GetGenresQuery, IReadOnlyList<GenreResponse>>
+public sealed class GetGenresQueryHandler(
+    IGenreRepository genres,
+    IBookRepository books) : IQueryHandler<GetGenresQuery, IReadOnlyList<GenreResponse>>
 {
     public async Task<Result<IReadOnlyList<GenreResponse>>> Handle(GetGenresQuery request, CancellationToken ct)
     {
-        var genres = await shelf.GetGenresAsync(ct);
-        var counts = await shelf.GetBookCountsByGenreAsync(ct);
-        return genres.Select(x => new GenreResponse(x.Id, x.Slug, x.Name, x.SortOrder, counts.GetValueOrDefault(x.Id))).ToList();
+        var all = await genres.GetAllAsync(ct);
+        var counts = await books.GetCountsByGenreAsync(ct);
+        return all
+            .Select(genre => new GenreResponse(
+                genre.Id,
+                genre.Slug,
+                genre.Name,
+                genre.SortOrder,
+                counts.GetValueOrDefault(genre.Id)))
+            .ToList();
     }
 }

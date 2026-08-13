@@ -8,7 +8,9 @@ using Microsoft.Extensions.Logging;
 namespace Lazy.Presentation.Controllers;
 
 [Route("api/series")]
-public sealed class SeriesController(ISender sender, ILogger<SeriesController> logger) : BaseJwtController(sender, logger)
+public sealed class SeriesController(
+    ISender sender,
+    ILogger<SeriesController> logger) : BaseJwtController(sender, logger)
 {
     [AllowAnonymous, HttpGet]
     public async Task<IActionResult> Get(CancellationToken ct)

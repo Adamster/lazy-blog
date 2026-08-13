@@ -6,12 +6,20 @@ namespace Lazy.Application.Shelf;
 
 public record GetSeriesQuery : IQuery<IReadOnlyList<SeriesResponse>>;
 
-public sealed class GetSeriesQueryHandler(IShelfRepository shelf) : IQueryHandler<GetSeriesQuery, IReadOnlyList<SeriesResponse>>
+public sealed class GetSeriesQueryHandler(
+    ISeriesRepository series,
+    IBookRepository books) : IQueryHandler<GetSeriesQuery, IReadOnlyList<SeriesResponse>>
 {
     public async Task<Result<IReadOnlyList<SeriesResponse>>> Handle(GetSeriesQuery request, CancellationToken ct)
     {
-        var series = await shelf.GetSeriesAsync(ct);
-        var counts = await shelf.GetBookCountsBySeriesAsync(ct);
-        return series.Select(value => new SeriesResponse(value.Id, value.Slug, value.Title, counts.GetValueOrDefault(value.Id))).ToList();
+        var all = await series.GetAllAsync(ct);
+        var counts = await books.GetCountsBySeriesAsync(ct);
+        return all
+            .Select(value => new SeriesResponse(
+                value.Id,
+                value.Slug,
+                value.Title,
+                counts.GetValueOrDefault(value.Id)))
+            .ToList();
     }
 }

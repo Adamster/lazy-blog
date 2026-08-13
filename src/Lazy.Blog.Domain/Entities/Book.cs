@@ -64,11 +64,28 @@ public sealed class Book : Entity, IAuditableEntity
         return Result.Success();
     }
 
-    private static Result ValidateCatalog(string slug, string title, string coverUrl,
-        Guid? seriesId, int? volumeNumber, string? sourceWorkId, string? sourceUrl)
-        => string.IsNullOrWhiteSpace(slug) || slug.Length > 160 || string.IsNullOrWhiteSpace(title) || title.Length > 300 ||
-           string.IsNullOrWhiteSpace(coverUrl) || coverUrl.Length > 1000 || sourceWorkId?.Length > 100 || sourceUrl?.Length > 1000 ||
-           seriesId.HasValue != volumeNumber.HasValue
-            ? Result.Failure(DomainErrors.Shelf.InvalidData("Book catalog data is empty, too long, or has a series without a volume number"))
+    private static Result ValidateCatalog(
+        string slug,
+        string title,
+        string coverUrl,
+        Guid? seriesId,
+        int? volumeNumber,
+        string? sourceWorkId,
+        string? sourceUrl)
+    {
+        bool invalidText =
+            string.IsNullOrWhiteSpace(slug) ||
+            slug.Length > 160 ||
+            string.IsNullOrWhiteSpace(title) ||
+            title.Length > 300 ||
+            string.IsNullOrWhiteSpace(coverUrl) ||
+            coverUrl.Length > 1000 ||
+            sourceWorkId?.Length > 100 ||
+            sourceUrl?.Length > 1000;
+        bool incompleteSeries = seriesId.HasValue != volumeNumber.HasValue;
+        return invalidText || incompleteSeries
+            ? Result.Failure(DomainErrors.Shelf.InvalidData(
+                "Book catalog data is empty, too long, or has a series without a volume number"))
             : Result.Success();
+    }
 }

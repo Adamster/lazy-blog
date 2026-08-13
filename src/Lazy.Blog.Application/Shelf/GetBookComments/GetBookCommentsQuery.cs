@@ -7,13 +7,27 @@ namespace Lazy.Application.Shelf;
 
 public record GetBookCommentsQuery(Guid BookId) : IQuery<IReadOnlyList<BookCommentResponse>>;
 
-public sealed class GetBookCommentsQueryHandler(IShelfRepository shelf) : IQueryHandler<GetBookCommentsQuery, IReadOnlyList<BookCommentResponse>>
+public sealed class GetBookCommentsQueryHandler(
+    IBookRepository books,
+    IBookCommentRepository comments) : IQueryHandler<GetBookCommentsQuery, IReadOnlyList<BookCommentResponse>>
 {
-    public async Task<Result<IReadOnlyList<BookCommentResponse>>> Handle(GetBookCommentsQuery request, CancellationToken ct)
+    public async Task<Result<IReadOnlyList<BookCommentResponse>>> Handle(
+        GetBookCommentsQuery request,
+        CancellationToken ct)
     {
-        if (!await shelf.BookExistsAsync(request.BookId, ct))
+        if (!await books.ExistsAsync(request.BookId, ct))
             return Result.Failure<IReadOnlyList<BookCommentResponse>>(DomainErrors.Shelf.BookNotFound(request.BookId));
-        return (await shelf.GetBookCommentsAsync(request.BookId, ct)).Select(x => new BookCommentResponse(x.Id,
-            new(x.UserId, x.User.DisplayName.Value, x.User.UserName!, x.User.Avatar?.Url), x.Body, x.CreatedOnUtc, x.UpdatedOnUtc)).ToList();
+        return (await comments.GetByBookIdAsync(request.BookId, ct))
+            .Select(comment => new BookCommentResponse(
+                comment.Id,
+                new(
+                    comment.UserId,
+                    comment.User.DisplayName.Value,
+                    comment.User.UserName!,
+                    comment.User.Avatar?.Url),
+                comment.Body,
+                comment.CreatedOnUtc,
+                comment.UpdatedOnUtc))
+            .ToList();
     }
 }

@@ -38,5 +38,6 @@ public sealed class Author : Entity, IAuditableEntity
     }
 
     private static bool IsValid(string value) => value.Length is > 0 and <= 300;
-    private static string Normalize(string value) => string.Join(' ', value.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries));
+    private static string Normalize(string value) =>
+        string.Join(' ', value.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries));
 }

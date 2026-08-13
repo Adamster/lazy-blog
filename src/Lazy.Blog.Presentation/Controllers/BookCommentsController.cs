@@ -8,7 +8,9 @@ using Microsoft.Extensions.Logging;
 namespace Lazy.Presentation.Controllers;
 
 [Route("api/book-comments")]
-public sealed class BookCommentsController(ISender sender, ILogger<BookCommentsController> logger) : BaseJwtController(sender, logger)
+public sealed class BookCommentsController(
+    ISender sender,
+    ILogger<BookCommentsController> logger) : BaseJwtController(sender, logger)
 {
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> Update(Guid id, BookCommentRequest request, CancellationToken ct)

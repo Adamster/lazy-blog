@@ -1,6 +1,4 @@
 using FluentValidation;
-using Lazy.Application.Abstractions.Authorization;
-using Lazy.Application.Abstractions.File;
 using Lazy.Application.Abstractions.Messaging;
 using Lazy.Domain.Entities;
 using Lazy.Domain.Errors;
@@ -9,9 +7,14 @@ using Lazy.Domain.Shared;
 
 namespace Lazy.Application.Shelf;
 
-public record ImportBookRatingsCommand(string Source, IReadOnlyList<RatingImportItem> Items) : ICommand<RatingSyncResponse>;
+public record ImportBookRatingsCommand(
+    string Source,
+    IReadOnlyList<RatingImportItem> Items) : ICommand<RatingSyncResponse>;
 
-public sealed class ImportBookRatingsCommandHandler(IShelfRepository repository, IShelfUnitOfWork unitOfWork) : ICommandHandler<ImportBookRatingsCommand, RatingSyncResponse>
+public sealed class ImportBookRatingsCommandHandler(
+    IBookRepository books,
+    IRatingSyncRunRepository ratingSyncRuns,
+    IShelfUnitOfWork unitOfWork) : ICommandHandler<ImportBookRatingsCommand, RatingSyncResponse>
 {
     public async Task<Result<RatingSyncResponse>> Handle(ImportBookRatingsCommand request, CancellationToken ct)
     {
@@ -19,9 +22,12 @@ public sealed class ImportBookRatingsCommandHandler(IShelfRepository repository,
             return Result.Failure<RatingSyncResponse>(DomainErrors.Shelf.DuplicateRatingSourceWorkId);
         DateTime now = DateTime.UtcNow;
         var run = RatingSyncRun.Create(Guid.NewGuid(), request.Source, now);
-        repository.Add(run);
-        var books = await repository.GetBooksBySourceIdsAsync(request.Source, request.Items.Select(x => x.SourceWorkId).ToList(), ct);
-        var lookup = books.ToDictionary(x => x.SourceWorkId!);
+        ratingSyncRuns.Add(run);
+        var matchingBooks = await books.GetBySourceIdsAsync(
+            request.Source,
+            request.Items.Select(x => x.SourceWorkId).ToList(),
+            ct);
+        var lookup = matchingBooks.ToDictionary(x => x.SourceWorkId!);
         int updated = 0;
         int failed = 0;
         foreach (var item in request.Items)
@@ -48,7 +54,10 @@ public sealed class ImportBookRatingsCommandValidator : AbstractValidator<Import
         RuleFor(x => x.Source).NotEmpty().MaximumLength(50);
         RuleFor(x => x.Items)
             .NotEmpty()
-            .Must(items => items.Select(item => item.SourceWorkId).Distinct(StringComparer.Ordinal).Count() == items.Count)
+            .Must(items => items
+                .Select(item => item.SourceWorkId)
+                .Distinct(StringComparer.Ordinal)
+                .Count() == items.Count)
             .WithMessage("SourceWorkId values must be unique");
         RuleForEach(x => x.Items).ChildRules(item =>
         {

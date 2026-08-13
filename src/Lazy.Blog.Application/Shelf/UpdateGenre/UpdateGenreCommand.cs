@@ -1,8 +1,5 @@
 using FluentValidation;
-using Lazy.Application.Abstractions.Authorization;
-using Lazy.Application.Abstractions.File;
 using Lazy.Application.Abstractions.Messaging;
-using Lazy.Domain.Entities;
 using Lazy.Domain.Errors;
 using Lazy.Domain.Repositories;
 using Lazy.Domain.Shared;
@@ -11,15 +8,17 @@ namespace Lazy.Application.Shelf;
 
 public record UpdateGenreCommand(Guid Id, string Slug, string Name, int SortOrder) : ICommand;
 
-public sealed class UpdateGenreCommandHandler(IShelfRepository repository, IShelfUnitOfWork unitOfWork) : ICommandHandler<UpdateGenreCommand>
+public sealed class UpdateGenreCommandHandler(
+    IGenreRepository genres,
+    IShelfUnitOfWork unitOfWork) : ICommandHandler<UpdateGenreCommand>
 {
     public async Task<Result> Handle(UpdateGenreCommand request, CancellationToken ct)
     {
-        var value = await repository.GetGenreAsync(request.Id, ct);
+        var value = await genres.GetAsync(request.Id, ct);
         if (value is null) return Result.Failure(DomainErrors.Shelf.GenreNotFound(request.Id));
         string slug = ShelfInput.Normalize(request.Slug);
         string name = ShelfInput.Normalize(request.Name);
-        if (await repository.GenreConflictsAsync(request.Id, slug, name, ct))
+        if (await genres.ConflictsAsync(request.Id, slug, name, ct))
             return Result.Failure(DomainErrors.Shelf.GenreAlreadyExists);
         var result = value.Update(slug, name, request.SortOrder);
         if (result.IsFailure) return result;

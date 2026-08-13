@@ -1,6 +1,5 @@
 using FluentValidation;
 using Lazy.Application.Abstractions.Authorization;
-using Lazy.Application.Abstractions.File;
 using Lazy.Application.Abstractions.Messaging;
 using Lazy.Domain.Entities;
 using Lazy.Domain.Errors;
@@ -11,13 +10,19 @@ namespace Lazy.Application.Shelf;
 
 public record UpdateBookCommentCommand(Guid CommentId, string Body) : ICommand;
 
-public sealed class UpdateBookCommentCommandHandler(IShelfRepository repository, ICurrentUserContext currentUser, IShelfUnitOfWork unitOfWork) : ICommandHandler<UpdateBookCommentCommand>
+public sealed class UpdateBookCommentCommandHandler(
+    IBookCommentRepository comments,
+    ICurrentUserContext currentUser,
+    IShelfUnitOfWork unitOfWork) : ICommandHandler<UpdateBookCommentCommand>
 {
     public async Task<Result> Handle(UpdateBookCommentCommand request, CancellationToken ct)
     {
-        var value = await repository.GetBookCommentAsync(request.CommentId, ct);
+        var value = await comments.GetAsync(request.CommentId, ct);
         if (value is null) return Result.Failure(DomainErrors.Shelf.CommentNotFound(request.CommentId));
-        if (value.UserId != currentUser.GetCurrentUserId()) return Result.Failure(DomainErrors.Shelf.UnauthorizedCommentUpdate);
+        if (value.UserId != currentUser.GetCurrentUserId())
+        {
+            return Result.Failure(DomainErrors.Shelf.UnauthorizedCommentUpdate);
+        }
         if (!value.CanEdit(DateTime.UtcNow)) return Result.Failure(DomainErrors.Shelf.CommentEditWindowExpired);
         var result = value.Update(request.Body.Trim());
         if (result.IsFailure)

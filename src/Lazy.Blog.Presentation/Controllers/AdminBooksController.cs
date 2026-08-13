@@ -58,7 +58,9 @@ public sealed class AdminBooksController(ISender sender, ILogger<AdminBooksContr
     [HttpPost("ratings/sync")]
     public async Task<IActionResult> SyncRatings(ImportBookRatingsRequest request, CancellationToken ct)
     {
-        var items = request.Items.Select(item => new RatingImportItem(item.SourceWorkId, item.Rating, item.RatingCount)).ToList();
+        var items = request.Items
+            .Select(item => new RatingImportItem(item.SourceWorkId, item.Rating, item.RatingCount))
+            .ToList();
         var result = await Sender.Send(new ImportBookRatingsCommand(request.Source, items), ct);
         return result.IsFailure ? HandleFailure(result) : Ok(result.Value);
     }
