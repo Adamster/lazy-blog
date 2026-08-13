@@ -19,7 +19,7 @@ public sealed class GetShelfCatalogQueryValidator : AbstractValidator<GetShelfCa
     public GetShelfCatalogQueryValidator()
     {
         RuleFor(x => x.Offset).GreaterThanOrEqualTo(0);
-        RuleFor(x => x.Limit).InclusiveBetween(1, 200);
+        RuleFor(x => x.Limit).InclusiveBetween(1, 500);
     }
 }
 
@@ -32,7 +32,7 @@ public sealed class GetShelfCatalogQueryHandler(
     public async Task<Result<ShelfCatalogResponse>> Handle(GetShelfCatalogQuery request, CancellationToken ct)
     {
         int offset = Math.Max(0, request.Offset);
-        int limit = Math.Clamp(request.Limit, 1, 200);
+        int limit = Math.Clamp(request.Limit, 1, 500);
 
         var filtered = await books.GetFilteredAsync(request.Genre, request.AuthorSlug, request.Search, ct);
         var standalone = filtered.Where(book => book.SeriesId is null).ToList();

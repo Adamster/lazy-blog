@@ -22,7 +22,7 @@ public sealed class GetUserShelfQueryValidator : AbstractValidator<GetUserShelfQ
         RuleFor(x => x.UserName).NotEmpty();
         RuleFor(x => x.Status).Must(IsValidStatus);
         RuleFor(x => x.Offset).GreaterThanOrEqualTo(0);
-        RuleFor(x => x.Limit).InclusiveBetween(1, 200);
+        RuleFor(x => x.Limit).InclusiveBetween(1, 500);
     }
 
     private static bool IsValidStatus(string? status) =>
@@ -38,7 +38,7 @@ public sealed class GetUserShelfQueryHandler(
     public async Task<Result<ShelfCatalogResponse>> Handle(GetUserShelfQuery request, CancellationToken ct)
     {
         int offset = Math.Max(0, request.Offset);
-        int limit = Math.Clamp(request.Limit, 1, 200);
+        int limit = Math.Clamp(request.Limit, 1, 500);
         ReadingStatus? statusFilter = ParseStatusFilter(request.Status);
 
         var entries = await userBookStatuses.GetFilteredAsync(request.UserName, statusFilter, request.Genre, request.Search, ct);

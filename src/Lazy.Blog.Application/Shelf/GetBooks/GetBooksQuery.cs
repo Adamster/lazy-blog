@@ -18,7 +18,7 @@ public sealed class GetBooksQueryValidator : AbstractValidator<GetBooksQuery>
     public GetBooksQueryValidator()
     {
         RuleFor(x => x.Offset).GreaterThanOrEqualTo(0);
-        RuleFor(x => x.Limit).InclusiveBetween(1, 100);
+        RuleFor(x => x.Limit).InclusiveBetween(1, 500);
     }
 }
 
@@ -31,7 +31,7 @@ public sealed class GetBooksQueryHandler(
     public async Task<Result<BooksPageResponse>> Handle(GetBooksQuery request, CancellationToken ct)
     {
         int offset = Math.Max(0, request.Offset);
-        int limit = Math.Clamp(request.Limit, 1, 100);
+        int limit = Math.Clamp(request.Limit, 1, 500);
         var page = await books.GetPagedAsync(request.Genre, request.Search, request.Sort, offset, limit, ct);
         var statuses = await userBookStatuses.GetStatusesAsync(
             currentUser.GetCurrentUserId(),
