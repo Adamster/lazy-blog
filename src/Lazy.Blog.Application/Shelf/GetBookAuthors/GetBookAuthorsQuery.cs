@@ -14,7 +14,7 @@ public sealed class GetBookAuthorsQueryHandler(
         CancellationToken ct)
     {
         return (await authors.GetAllAsync(request.Query, 10, ct))
-            .Select(author => new BookAuthorResponse(author.Id, author.Name))
+            .Select(author => new BookAuthorResponse(author.Id, author.Slug, author.Name))
             .ToList();
     }
 }

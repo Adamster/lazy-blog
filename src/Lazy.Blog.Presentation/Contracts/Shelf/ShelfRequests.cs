@@ -12,7 +12,7 @@ public record ImportBookRatingsRequest(string Source, IReadOnlyList<RatingImport
 
 public record ManageGenreRequest(string Slug, string Name, int SortOrder);
 
-public record ManageAuthorRequest(string Name);
+public record ManageAuthorRequest(string Slug, string Name);
 
 public record ManageSeriesRequest(string Slug, string Title);
 

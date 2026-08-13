@@ -27,7 +27,7 @@ public sealed class GetBookBySlugQueryHandler(
             book.Id,
             book.Slug,
             book.Title,
-            new(book.Author.Id, book.Author.Name),
+            new(book.Author.Id, book.Author.Slug, book.Author.Name),
             ShelfMapping.ToSeriesInfo(book),
             book.CoverUrl,
             book.Rating,

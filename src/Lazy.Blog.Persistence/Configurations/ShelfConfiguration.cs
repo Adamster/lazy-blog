@@ -71,6 +71,9 @@ internal sealed class AuthorConfiguration : IEntityTypeConfiguration<Author>
         builder.ToTable(TableNames.Authors);
         builder.HasKey(x => x.Id);
 
+        builder.Property(x => x.Slug).HasMaxLength(50).IsRequired();
+        builder.HasIndex(x => x.Slug).IsUnique();
+
         builder.Property(x => x.Name).HasMaxLength(300).IsRequired();
 
         builder.Property(x => x.NormalizedName).HasMaxLength(300).IsRequired();

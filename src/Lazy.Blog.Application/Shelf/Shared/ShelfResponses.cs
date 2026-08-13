@@ -4,7 +4,7 @@ public record GenreResponse(Guid Id, string Slug, string Name, int SortOrder, in
 
 public record BookGenreResponse(Guid Id, string Slug, string Name);
 
-public record BookAuthorResponse(Guid Id, string Name);
+public record BookAuthorResponse(Guid Id, string Slug, string Name);
 
 public record BookSeriesInfo(Guid Id, string Slug, string Title, int VolumeNumber);
 
@@ -73,8 +73,20 @@ internal static class ShelfMapping
             ? null
             : new BookSeriesInfo(book.Series.Id, book.Series.Slug, book.Series.Title, book.VolumeNumber.Value);
 
-    internal static BookResponse ToResponse(Domain.Entities.Book book, Domain.Entities.ReadingStatus? status) =>
-        new(book.Id, book.Slug, book.Title, new(book.Author.Id, book.Author.Name), ToSeriesInfo(book), book.CoverUrl,
-            book.Rating, book.RatingCount, book.RatingSource, book.SourceWorkId,
-            new(book.Genre.Id, book.Genre.Slug, book.Genre.Name), status is null ? null : StatusName(status.Value));
+    internal static BookResponse ToResponse(
+        Domain.Entities.Book book,
+        Domain.Entities.ReadingStatus? status) =>
+        new(
+            book.Id,
+            book.Slug,
+            book.Title,
+            new(book.Author.Id, book.Author.Slug, book.Author.Name),
+            ToSeriesInfo(book),
+            book.CoverUrl,
+            book.Rating,
+            book.RatingCount,
+            book.RatingSource,
+            book.SourceWorkId,
+            new(book.Genre.Id, book.Genre.Slug, book.Genre.Name),
+            status is null ? null : StatusName(status.Value));
 }

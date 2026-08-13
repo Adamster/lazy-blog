@@ -4,7 +4,13 @@ namespace Lazy.Domain.Repositories;
 
 public interface IBookRepository
 {
-    Task<Page<Book>> GetPagedAsync(string? genre, string? search, string? sort, int offset, int limit, CancellationToken ct);
+    Task<Page<Book>> GetPagedAsync(
+        string? genre,
+        string? search,
+        string? sort,
+        int offset,
+        int limit,
+        CancellationToken ct);
 
     Task<Book?> GetAsync(Guid id, CancellationToken ct);
 
@@ -12,9 +18,17 @@ public interface IBookRepository
 
     Task<bool> ExistsAsync(Guid id, CancellationToken ct);
 
-    Task<bool> ConflictsAsync(Guid? excludedId, string slug, string ratingSource, string? sourceWorkId, CancellationToken ct);
+    Task<bool> ConflictsAsync(
+        Guid? excludedId,
+        string slug,
+        string ratingSource,
+        string? sourceWorkId,
+        CancellationToken ct);
 
-    Task<IReadOnlyList<Book>> GetBySourceIdsAsync(string source, IReadOnlyCollection<string> sourceWorkIds, CancellationToken ct);
+    Task<IReadOnlyList<Book>> GetBySourceIdsAsync(
+        string source,
+        IReadOnlyCollection<string> sourceWorkIds,
+        CancellationToken ct);
 
     Task<IReadOnlyList<Book>> GetBySeriesIdAsync(Guid seriesId, CancellationToken ct);
 

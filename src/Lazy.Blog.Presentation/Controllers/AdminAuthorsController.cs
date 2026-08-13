@@ -24,7 +24,7 @@ public sealed class AdminAuthorsController(ISender sender, ILogger<AdminAuthorsC
     [HttpPost]
     public async Task<IActionResult> Create(ManageAuthorRequest request, CancellationToken ct)
     {
-        var result = await Sender.Send(new CreateAuthorCommand(request.Name), ct);
+        var result = await Sender.Send(new CreateAuthorCommand(request.Slug, request.Name), ct);
         if (result.IsFailure) return HandleFailure(result);
         return result.Value.Created
             ? Created($"/api/admin/authors/{result.Value.Id}", new { id = result.Value.Id })
@@ -34,7 +34,7 @@ public sealed class AdminAuthorsController(ISender sender, ILogger<AdminAuthorsC
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> Update(Guid id, ManageAuthorRequest request, CancellationToken ct)
     {
-        var result = await Sender.Send(new UpdateAuthorCommand(id, request.Name), ct);
+        var result = await Sender.Send(new UpdateAuthorCommand(id, request.Slug, request.Name), ct);
         return result.IsFailure ? HandleFailure(result) : NoContent();
     }
 
