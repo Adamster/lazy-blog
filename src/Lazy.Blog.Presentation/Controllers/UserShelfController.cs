@@ -2,6 +2,7 @@ using Lazy.Application.Shelf;
 using Lazy.Presentation.Abstractions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -13,6 +14,8 @@ public sealed class UserShelfController(
     ILogger<UserShelfController> logger) : BaseJwtController(sender, logger)
 {
     [AllowAnonymous, HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ShelfCatalogResponse))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Get(
         string username,
         [FromQuery] string? status,

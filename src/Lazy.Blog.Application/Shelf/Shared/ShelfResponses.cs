@@ -53,6 +53,8 @@ public record SeriesResponse(Guid Id, string Slug, string Title, int BookCount);
 
 public record SeriesDetailResponse(Guid Id, string Slug, string Title, IReadOnlyList<BookResponse> Volumes);
 
+public record IdResponse(Guid Id);
+
 [JsonPolymorphic(TypeDiscriminatorPropertyName = "type")]
 [JsonDerivedType(typeof(ShelfBookCard), "book")]
 [JsonDerivedType(typeof(ShelfSeriesCard), "series")]

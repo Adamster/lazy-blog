@@ -13,6 +13,8 @@ namespace Lazy.Presentation.Controllers;
 public sealed class BooksController(ISender sender, ILogger<BooksController> logger) : BaseJwtController(sender, logger)
 {
     [AllowAnonymous, HttpGet("authors")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IReadOnlyList<BookAuthorResponse>))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetAuthors([FromQuery] string? query, CancellationToken ct)
     {
         var result = await Sender.Send(new GetBookAuthorsQuery(query), ct);
@@ -20,6 +22,8 @@ public sealed class BooksController(ISender sender, ILogger<BooksController> log
     }
 
     [AllowAnonymous, HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ShelfCatalogResponse))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetBooks(
         [FromQuery] string? genre,
         [FromQuery] string? author,
@@ -34,6 +38,8 @@ public sealed class BooksController(ISender sender, ILogger<BooksController> log
     }
 
     [AllowAnonymous, HttpGet("{slug}")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BookDetailResponse))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetBook(string slug, CancellationToken ct)
     {
         var result = await Sender.Send(new GetBookBySlugQuery(slug), ct);
@@ -41,6 +47,8 @@ public sealed class BooksController(ISender sender, ILogger<BooksController> log
     }
 
     [HttpPut("{id:guid}/status")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> SetStatus(Guid id, SetBookStatusRequest request, CancellationToken ct)
     {
         var result = await Sender.Send(new SetBookStatusCommand(id, request.Status), ct);
@@ -48,6 +56,8 @@ public sealed class BooksController(ISender sender, ILogger<BooksController> log
     }
 
     [HttpDelete("{id:guid}/status")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> RemoveStatus(Guid id, CancellationToken ct)
     {
         var result = await Sender.Send(new RemoveBookStatusCommand(id), ct);
@@ -55,6 +65,8 @@ public sealed class BooksController(ISender sender, ILogger<BooksController> log
     }
 
     [AllowAnonymous, HttpGet("{id:guid}/comments")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IReadOnlyList<BookCommentResponse>))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetComments(Guid id, CancellationToken ct)
     {
         var result = await Sender.Send(new GetBookCommentsQuery(id), ct);
@@ -62,11 +74,13 @@ public sealed class BooksController(ISender sender, ILogger<BooksController> log
     }
 
     [HttpPost("{id:guid}/comments")]
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(IdResponse))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> AddComment(Guid id, BookCommentRequest request, CancellationToken ct)
     {
         var result = await Sender.Send(new AddBookCommentCommand(id, request.Body), ct);
         return result.IsFailure
             ? HandleFailure(result)
-            : Created($"/api/book-comments/{result.Value}", new { id = result.Value });
+            : Created($"/api/book-comments/{result.Value}", new IdResponse(result.Value));
     }
 }

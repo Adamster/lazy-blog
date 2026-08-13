@@ -2,6 +2,7 @@ using Lazy.Application.Shelf;
 using Lazy.Presentation.Abstractions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -13,6 +14,8 @@ public sealed class GenresController(
     ILogger<GenresController> logger) : BaseJwtController(sender, logger)
 {
     [AllowAnonymous, HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IReadOnlyList<GenreResponse>))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Get(CancellationToken ct)
     {
         var result = await Sender.Send(new GetGenresQuery(), ct);

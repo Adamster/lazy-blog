@@ -4,6 +4,7 @@ using Lazy.Presentation.Abstractions;
 using Lazy.Presentation.Contracts.Shelf;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -15,6 +16,8 @@ public sealed class AdminGenresController(ISender sender, ILogger<AdminGenresCon
     : BaseJwtController(sender, logger)
 {
     [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IReadOnlyList<GenreResponse>))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> List(CancellationToken ct)
     {
         var result = await Sender.Send(new GetGenresQuery(), ct);
@@ -22,15 +25,19 @@ public sealed class AdminGenresController(ISender sender, ILogger<AdminGenresCon
     }
 
     [HttpPost]
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(IdResponse))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Create(ManageGenreRequest request, CancellationToken ct)
     {
         var result = await Sender.Send(new CreateGenreCommand(request.Slug, request.Name, request.SortOrder), ct);
         return result.IsFailure
             ? HandleFailure(result)
-            : Created($"/api/admin/genres/{result.Value}", new { id = result.Value });
+            : Created($"/api/admin/genres/{result.Value}", new IdResponse(result.Value));
     }
 
     [HttpPut("{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Update(Guid id, ManageGenreRequest request, CancellationToken ct)
     {
         var result = await Sender.Send(new UpdateGenreCommand(id, request.Slug, request.Name, request.SortOrder), ct);
@@ -38,6 +45,8 @@ public sealed class AdminGenresController(ISender sender, ILogger<AdminGenresCon
     }
 
     [HttpDelete("{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Delete(Guid id, CancellationToken ct)
     {
         var result = await Sender.Send(new DeleteGenreCommand(id), ct);

@@ -17,6 +17,8 @@ public sealed class AdminBooksController(ISender sender, ILogger<AdminBooksContr
     : BaseJwtController(sender, logger)
 {
     [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BooksPageResponse))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> List(
         [FromQuery] string? search,
         [FromQuery] string? genre,
@@ -30,17 +32,21 @@ public sealed class AdminBooksController(ISender sender, ILogger<AdminBooksContr
 
     [HttpPost]
     [Consumes("multipart/form-data")]
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(IdResponse))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Create([FromForm] ManageBookFormRequest request, CancellationToken ct)
     {
         if (request.Cover is null) return BadRequest("cover is required");
         var result = await Sender.Send(new CreateBookCommand(Map(request), Map(request.Cover)), ct);
         return result.IsFailure
             ? HandleFailure(result)
-            : Created($"/api/admin/books/{result.Value}", new { id = result.Value });
+            : Created($"/api/admin/books/{result.Value}", new IdResponse(result.Value));
     }
 
     [HttpPut("{id:guid}")]
     [Consumes("multipart/form-data")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Update(Guid id, [FromForm] ManageBookFormRequest request, CancellationToken ct)
     {
         var cover = request.Cover is null ? null : Map(request.Cover);
@@ -49,6 +55,8 @@ public sealed class AdminBooksController(ISender sender, ILogger<AdminBooksContr
     }
 
     [HttpDelete("{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Delete(Guid id, CancellationToken ct)
     {
         var result = await Sender.Send(new DeleteBookCommand(id), ct);
@@ -56,6 +64,8 @@ public sealed class AdminBooksController(ISender sender, ILogger<AdminBooksContr
     }
 
     [HttpPost("ratings/sync")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RatingSyncResponse))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> SyncRatings(ImportBookRatingsRequest request, CancellationToken ct)
     {
         var items = request.Items
