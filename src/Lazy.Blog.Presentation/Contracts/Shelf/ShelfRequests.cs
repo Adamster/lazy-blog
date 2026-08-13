@@ -1,13 +1,21 @@
 using Microsoft.AspNetCore.Http;
+
 namespace Lazy.Presentation.Contracts.Shelf;
 
 public record SetBookStatusRequest(string Status);
+
 public record BookCommentRequest(string Body);
+
 public record RatingImportItemRequest(string SourceWorkId, decimal Rating, int RatingCount);
+
 public record ImportBookRatingsRequest(string Source, IReadOnlyList<RatingImportItemRequest> Items);
+
 public record ManageGenreRequest(string Slug, string Name, int SortOrder);
+
 public record ManageAuthorRequest(string Name);
+
 public record ManageSeriesRequest(string Slug, string Title);
+
 public sealed class ManageBookFormRequest
 {
     public Guid GenreId { get; init; }
