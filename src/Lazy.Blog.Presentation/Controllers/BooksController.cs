@@ -22,13 +22,14 @@ public sealed class BooksController(ISender sender, ILogger<BooksController> log
     [AllowAnonymous, HttpGet]
     public async Task<IActionResult> GetBooks(
         [FromQuery] string? genre,
+        [FromQuery] string? author,
         [FromQuery] string? search,
         [FromQuery] string? sort = null,
         [FromQuery] int offset = 0,
         [FromQuery] int limit = 24,
         CancellationToken ct = default)
     {
-        var result = await Sender.Send(new GetBooksQuery(genre, search, sort, offset, limit), ct);
+        var result = await Sender.Send(new GetShelfCatalogQuery(genre, author, search, sort, offset, limit), ct);
         return result.IsFailure ? HandleFailure(result) : Ok(result.Value);
     }
 

@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace Lazy.Application.Shelf;
 
 public record GenreResponse(Guid Id, string Slug, string Name, int SortOrder, int BookCount);
@@ -50,6 +52,43 @@ public record RatingSyncResponse(
 public record SeriesResponse(Guid Id, string Slug, string Title, int BookCount);
 
 public record SeriesDetailResponse(Guid Id, string Slug, string Title, IReadOnlyList<BookResponse> Volumes);
+
+[JsonPolymorphic(TypeDiscriminatorPropertyName = "type")]
+[JsonDerivedType(typeof(ShelfBookCard), "book")]
+[JsonDerivedType(typeof(ShelfSeriesCard), "series")]
+public abstract record ShelfCatalogItem;
+
+public sealed record ShelfBookCard(
+    Guid Id,
+    string Slug,
+    string Title,
+    BookAuthorResponse Author,
+    BookGenreResponse Genre,
+    string CoverUrl,
+    decimal Rating,
+    int RatingCount,
+    string? Status) : ShelfCatalogItem;
+
+public sealed record ShelfSeriesCard(
+    Guid Id,
+    string Slug,
+    string Title,
+    BookAuthorResponse Author,
+    IReadOnlyList<string> CoverUrls,
+    int BooksCount,
+    int ReadCount,
+    int ReadingCount,
+    decimal Rating,
+    int ReadersCount,
+    string? Status) : ShelfCatalogItem;
+
+public record ShelfCatalogResponse(
+    IReadOnlyList<ShelfCatalogItem> Items,
+    int TotalItems,
+    int TotalBooks,
+    int Offset,
+    int Limit,
+    DateTime? RatingLastSyncedOnUtc);
 
 internal static class ShelfMapping
 {

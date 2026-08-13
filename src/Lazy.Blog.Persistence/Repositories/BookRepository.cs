@@ -94,6 +94,27 @@ public sealed class BookRepository(LazyBlogDbContext dbContext) : IBookRepositor
         await dbContext.Set<Book>().AsNoTracking().Include(book => book.Author).Include(book => book.Genre)
             .Where(book => book.SeriesId == seriesId).OrderBy(book => book.VolumeNumber).ToListAsync(ct);
 
+    public async Task<IReadOnlyList<Book>> GetBySeriesIdsAsync(IReadOnlyCollection<Guid> seriesIds, CancellationToken ct) =>
+        await dbContext.Set<Book>().AsNoTracking().Include(book => book.Author).Include(book => book.Genre).Include(book => book.Series)
+            .Where(book => book.SeriesId != null && seriesIds.Contains(book.SeriesId.Value))
+            .OrderBy(book => book.VolumeNumber).ToListAsync(ct);
+
+    public async Task<IReadOnlyList<Book>> GetFilteredAsync(string? genre, string? authorSlug, string? search, CancellationToken ct)
+    {
+        IQueryable<Book> books = dbContext.Set<Book>().AsNoTracking()
+            .Include(book => book.Author).Include(book => book.Genre).Include(book => book.Series);
+        if (!string.IsNullOrWhiteSpace(genre)) books = books.Where(book => book.Genre.Slug == genre);
+        if (!string.IsNullOrWhiteSpace(authorSlug)) books = books.Where(book => book.Author.Slug == authorSlug);
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            string term = search.Trim();
+            books = books.Where(book => book.Title.Contains(term) || book.Author.Name.Contains(term) ||
+                (book.Series != null && book.Series.Title.Contains(term)));
+        }
+
+        return await books.ToListAsync(ct);
+    }
+
     public Task<bool> HasByAuthorAsync(Guid authorId, CancellationToken ct) =>
         dbContext.Set<Book>().AnyAsync(book => book.AuthorId == authorId, ct);
 

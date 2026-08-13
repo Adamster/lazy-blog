@@ -32,6 +32,10 @@ public interface IBookRepository
 
     Task<IReadOnlyList<Book>> GetBySeriesIdAsync(Guid seriesId, CancellationToken ct);
 
+    Task<IReadOnlyList<Book>> GetBySeriesIdsAsync(IReadOnlyCollection<Guid> seriesIds, CancellationToken ct);
+
+    Task<IReadOnlyList<Book>> GetFilteredAsync(string? genre, string? authorSlug, string? search, CancellationToken ct);
+
     Task<bool> HasByAuthorAsync(Guid authorId, CancellationToken ct);
 
     Task<bool> HasByGenreAsync(Guid genreId, CancellationToken ct);
