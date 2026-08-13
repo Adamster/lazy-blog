@@ -17,12 +17,21 @@ public sealed class ImportBookRatingsCommandHandler(IShelfRepository repository,
     {
         if (request.Items.Select(x => x.SourceWorkId).Distinct(StringComparer.Ordinal).Count() != request.Items.Count)
             return Result.Failure<RatingSyncResponse>(DomainErrors.Shelf.DuplicateRatingSourceWorkId);
-        DateTime now = DateTime.UtcNow; var run = RatingSyncRun.Create(Guid.NewGuid(), request.Source, now); repository.Add(run);
+        DateTime now = DateTime.UtcNow;
+        var run = RatingSyncRun.Create(Guid.NewGuid(), request.Source, now);
+        repository.Add(run);
         var books = await repository.GetBooksBySourceIdsAsync(request.Source, request.Items.Select(x => x.SourceWorkId).ToList(), ct);
-        var lookup = books.ToDictionary(x => x.SourceWorkId!); int updated = 0; int failed = 0;
+        var lookup = books.ToDictionary(x => x.SourceWorkId!);
+        int updated = 0;
+        int failed = 0;
         foreach (var item in request.Items)
         {
-            if (!lookup.TryGetValue(item.SourceWorkId, out var book) || book.UpdateRating(item.Rating, item.RatingCount, request.Source, now).IsFailure) { failed++; continue; }
+            if (!lookup.TryGetValue(item.SourceWorkId, out var book) ||
+                book.UpdateRating(item.Rating, item.RatingCount, request.Source, now).IsFailure)
+            {
+                failed++;
+                continue;
+            }
             updated++;
         }
         run.Complete(request.Items.Count, updated, failed, failed == 0 ? null : $"{failed} item(s) failed", now);
@@ -33,4 +42,19 @@ public sealed class ImportBookRatingsCommandHandler(IShelfRepository repository,
 }
 
 public sealed class ImportBookRatingsCommandValidator : AbstractValidator<ImportBookRatingsCommand>
-{ public ImportBookRatingsCommandValidator() { RuleFor(x => x.Source).NotEmpty().MaximumLength(50); RuleFor(x => x.Items).NotEmpty().Must(x => x.Select(i => i.SourceWorkId).Distinct(StringComparer.Ordinal).Count() == x.Count).WithMessage("SourceWorkId values must be unique"); RuleForEach(x => x.Items).ChildRules(i => { i.RuleFor(x => x.SourceWorkId).NotEmpty().MaximumLength(100); i.RuleFor(x => x.Rating).InclusiveBetween(0, 10); i.RuleFor(x => x.RatingCount).GreaterThanOrEqualTo(0); }); } }
+{
+    public ImportBookRatingsCommandValidator()
+    {
+        RuleFor(x => x.Source).NotEmpty().MaximumLength(50);
+        RuleFor(x => x.Items)
+            .NotEmpty()
+            .Must(items => items.Select(item => item.SourceWorkId).Distinct(StringComparer.Ordinal).Count() == items.Count)
+            .WithMessage("SourceWorkId values must be unique");
+        RuleForEach(x => x.Items).ChildRules(item =>
+        {
+            item.RuleFor(x => x.SourceWorkId).NotEmpty().MaximumLength(100);
+            item.RuleFor(x => x.Rating).InclusiveBetween(0, 10);
+            item.RuleFor(x => x.RatingCount).GreaterThanOrEqualTo(0);
+        });
+    }
+}

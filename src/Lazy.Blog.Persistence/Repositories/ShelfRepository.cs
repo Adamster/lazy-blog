@@ -32,6 +32,9 @@ public sealed class ShelfRepository(LazyBlogDbContext dbContext) : IShelfReposit
     public Task<Genre?> GetGenreAsync(Guid id, CancellationToken ct) =>
         dbContext.Set<Genre>().FirstOrDefaultAsync(genre => genre.Id == id, ct);
 
+    public Task<bool> GenreConflictsAsync(Guid? excludedId, string slug, string name, CancellationToken ct) =>
+        dbContext.Set<Genre>().AnyAsync(genre => genre.Id != excludedId && (genre.Slug == slug || genre.Name == name), ct);
+
     public async Task<IReadOnlyDictionary<Guid, int>> GetBookCountsByGenreAsync(CancellationToken ct) =>
         await dbContext.Set<Book>().AsNoTracking().GroupBy(book => book.GenreId)
             .ToDictionaryAsync(group => group.Key, group => group.Count(), ct);
@@ -86,10 +89,11 @@ public sealed class ShelfRepository(LazyBlogDbContext dbContext) : IShelfReposit
 
     public async Task<Page<UserBookStatus>> GetUserBooksAsync(string userName, ReadingStatus status, int offset, int limit, CancellationToken ct)
     {
+        string normalizedUserName = userName.ToUpperInvariant();
         IQueryable<UserBookStatus> statuses = dbContext.Set<UserBookStatus>().AsNoTracking()
             .Include(value => value.Book).ThenInclude(book => book.Author)
             .Include(value => value.Book).ThenInclude(book => book.Genre)
-            .Where(value => value.User.UserName == userName && value.Status == status)
+            .Where(value => value.User.NormalizedUserName == normalizedUserName && value.Status == status)
             .OrderByDescending(value => value.UpdatedOnUtc ?? value.CreatedOnUtc);
         int total = await statuses.CountAsync(ct);
         IReadOnlyList<UserBookStatus> items = await statuses.Skip(offset).Take(limit).ToListAsync(ct);

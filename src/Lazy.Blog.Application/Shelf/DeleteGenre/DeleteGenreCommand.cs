@@ -19,6 +19,6 @@ public sealed class DeleteGenreCommandHandler(IShelfRepository repository, IShel
         if (value is null) return Result.Failure(DomainErrors.Shelf.GenreNotFound(request.Id));
         if (await repository.GenreHasBooksAsync(request.Id, ct)) return Result.Failure(DomainErrors.Shelf.GenreInUse);
         repository.Remove(value);
-        return await unitOfWork.SaveChangesAsync(null, ct);
+        return await unitOfWork.SaveChangesAsync(ShelfConflict.GenreInUse, ct);
     }
 }

@@ -25,4 +25,10 @@ public sealed class AddBookCommentCommandHandler(IShelfRepository repository, IC
 }
 
 public sealed class AddBookCommentCommandValidator : AbstractValidator<AddBookCommentCommand>
-{ public AddBookCommentCommandValidator() { RuleFor(x => x.BookId).NotEmpty(); RuleFor(x => x.Body).NotEmpty().MaximumLength(BookComment.MaxLength); } }
+{
+    public AddBookCommentCommandValidator()
+    {
+        RuleFor(x => x.BookId).NotEmpty();
+        RuleFor(x => x.Body).NotEmpty().MaximumLength(BookComment.MaxLength);
+    }
+}

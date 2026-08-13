@@ -18,6 +18,8 @@ public sealed class DeleteBookCommentCommandHandler(IShelfRepository repository,
         var value = await repository.GetBookCommentAsync(request.CommentId, ct);
         if (value is null) return Result.Failure(DomainErrors.Shelf.CommentNotFound(request.CommentId));
         if (value.UserId != currentUser.GetCurrentUserId()) return Result.Failure(DomainErrors.Shelf.UnauthorizedCommentUpdate);
-        repository.Remove(value); return await unitOfWork.SaveChangesAsync(null, ct);
+        if (!value.CanEdit(DateTime.UtcNow)) return Result.Failure(DomainErrors.Shelf.CommentEditWindowExpired);
+        repository.Remove(value);
+        return await unitOfWork.SaveChangesAsync(null, ct);
     }
 }

@@ -7,16 +7,16 @@ namespace Lazy.Blog.Api.Extensions;
 
 internal static class AdminRoleBootstrapExtensions
 {
-    private const string ConfigurationKey = "Authorization:BootstrapAdminUserName";
+    private const string ConfigurationKey = "Authorization:BootstrapAdminEmails";
     private const string CompletionClaimType = "notlazy/bootstrap";
     private const string CompletionClaimValue = "admin-assigned";
 
     internal static async Task BootstrapAdminRoleAsync(this WebApplication app)
     {
-        string? userName = app.Configuration[ConfigurationKey];
-        if (string.IsNullOrWhiteSpace(userName))
+        string[] emails = app.Configuration.GetSection(ConfigurationKey).Get<string[]>() ?? [];
+        if (emails.Length == 0)
         {
-            throw new InvalidOperationException($"Configuration value '{ConfigurationKey}' is required.");
+            throw new InvalidOperationException($"Configuration value '{ConfigurationKey}' must list at least one admin email.");
         }
 
         await using var scope = app.Services.CreateAsyncScope();
@@ -35,15 +35,26 @@ internal static class AdminRoleBootstrapExtensions
         if ((await roleManager.GetClaimsAsync(role)).Any(claim =>
                 claim.Type == CompletionClaimType && claim.Value == CompletionClaimValue)) return;
 
-        var user = await userManager.FindByNameAsync(userName);
-        if (user is null)
+        bool anyAssigned = false;
+        foreach (string email in emails)
         {
-            logger.LogWarning("Admin bootstrap user {UserName} was not found.", userName);
-            return;
+            var user = await userManager.FindByEmailAsync(email);
+            if (user is null)
+            {
+                logger.LogWarning("Admin bootstrap email {Email} was not found.", email);
+                continue;
+            }
+
+            anyAssigned = true;
+            if (!await userManager.IsInRoleAsync(user, Role.AdminRoleName))
+                EnsureSucceeded(await userManager.AddToRoleAsync(user, Role.AdminRoleName), $"assign Admin role to {email}");
         }
 
-        if (!await userManager.IsInRoleAsync(user, Role.AdminRoleName))
-            EnsureSucceeded(await userManager.AddToRoleAsync(user, Role.AdminRoleName), $"assign Admin role to {userName}");
+        // Keep retrying on every startup until at least one configured admin account exists.
+        // Once granted, the completion claim prevents an explicit role removal from being
+        // silently reapplied by a later restart.
+        if (!anyAssigned) return;
+
         EnsureSucceeded(await roleManager.AddClaimAsync(role, new Claim(CompletionClaimType, CompletionClaimValue)),
             "mark Admin bootstrap complete");
     }

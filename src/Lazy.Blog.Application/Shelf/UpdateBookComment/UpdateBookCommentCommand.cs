@@ -18,10 +18,21 @@ public sealed class UpdateBookCommentCommandHandler(IShelfRepository repository,
         var value = await repository.GetBookCommentAsync(request.CommentId, ct);
         if (value is null) return Result.Failure(DomainErrors.Shelf.CommentNotFound(request.CommentId));
         if (value.UserId != currentUser.GetCurrentUserId()) return Result.Failure(DomainErrors.Shelf.UnauthorizedCommentUpdate);
-        var result = value.Update(request.Body.Trim()); if (result.IsFailure) return result;
+        if (!value.CanEdit(DateTime.UtcNow)) return Result.Failure(DomainErrors.Shelf.CommentEditWindowExpired);
+        var result = value.Update(request.Body.Trim());
+        if (result.IsFailure)
+        {
+            return result;
+        }
         return await unitOfWork.SaveChangesAsync(null, ct);
     }
 }
 
 public sealed class UpdateBookCommentCommandValidator : AbstractValidator<UpdateBookCommentCommand>
-{ public UpdateBookCommentCommandValidator() { RuleFor(x => x.CommentId).NotEmpty(); RuleFor(x => x.Body).NotEmpty().MaximumLength(BookComment.MaxLength); } }
+{
+    public UpdateBookCommentCommandValidator()
+    {
+        RuleFor(x => x.CommentId).NotEmpty();
+        RuleFor(x => x.Body).NotEmpty().MaximumLength(BookComment.MaxLength);
+    }
+}

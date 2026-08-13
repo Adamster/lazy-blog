@@ -17,6 +17,7 @@ public sealed class RemoveBookStatusCommandHandler(IShelfRepository repository, 
     {
         var existing = await repository.GetUserBookStatusAsync(currentUser.GetCurrentUserId(), request.BookId, ct);
         if (existing is null) return Result.Success();
-        repository.Remove(existing); return await unitOfWork.SaveChangesAsync(null, ct);
+        repository.Remove(existing);
+        return await unitOfWork.SaveChangesAsync(null, ct);
     }
 }

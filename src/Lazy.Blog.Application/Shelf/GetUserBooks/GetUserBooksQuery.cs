@@ -13,7 +13,7 @@ public sealed class GetUserBooksQueryValidator : AbstractValidator<GetUserBooksQ
     public GetUserBooksQueryValidator()
     {
         RuleFor(x => x.UserName).NotEmpty();
-        RuleFor(x => x.Status).Must(x => x is "read" or "reading");
+        RuleFor(x => x.Status).Must(x => ShelfMapping.TryStatus(x, out _));
         RuleFor(x => x.Limit).InclusiveBetween(1, 100);
     }
 }

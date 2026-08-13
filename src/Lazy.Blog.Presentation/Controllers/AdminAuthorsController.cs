@@ -4,7 +4,6 @@ using Lazy.Presentation.Abstractions;
 using Lazy.Presentation.Contracts.Shelf;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -26,7 +25,10 @@ public sealed class AdminAuthorsController(ISender sender, ILogger<AdminAuthorsC
     public async Task<IActionResult> Create(ManageAuthorRequest request, CancellationToken ct)
     {
         var result = await Sender.Send(new CreateAuthorCommand(request.Name), ct);
-        return result.IsFailure ? HandleFailure(result) : StatusCode(StatusCodes.Status201Created, new { id = result.Value });
+        if (result.IsFailure) return HandleFailure(result);
+        return result.Value.Created
+            ? Created($"/api/admin/authors/{result.Value.Id}", new { id = result.Value.Id })
+            : Ok(new { id = result.Value.Id });
     }
 
     [HttpPut("{id:guid}")]

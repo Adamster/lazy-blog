@@ -26,4 +26,11 @@ public sealed class UpdateAuthorCommandHandler(IShelfRepository repository, IShe
     }
 }
 
-public sealed class UpdateAuthorCommandValidator:AbstractValidator<UpdateAuthorCommand>{public UpdateAuthorCommandValidator(){RuleFor(x=>x.Id).NotEmpty();RuleFor(x=>x.Name).NotEmpty().MaximumLength(300);}}
+public sealed class UpdateAuthorCommandValidator : AbstractValidator<UpdateAuthorCommand>
+{
+    public UpdateAuthorCommandValidator()
+    {
+        RuleFor(x => x.Id).NotEmpty();
+        RuleFor(x => x.Name).NotEmpty().MaximumLength(300);
+    }
+}

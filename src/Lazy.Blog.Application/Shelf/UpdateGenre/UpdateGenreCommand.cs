@@ -19,7 +19,7 @@ public sealed class UpdateGenreCommandHandler(IShelfRepository repository, IShel
         if (value is null) return Result.Failure(DomainErrors.Shelf.GenreNotFound(request.Id));
         string slug = ShelfInput.Normalize(request.Slug);
         string name = ShelfInput.Normalize(request.Name);
-        if ((await repository.GetGenresAsync(ct)).Any(x => x.Id != request.Id && (x.Slug == slug || x.Name == name)))
+        if (await repository.GenreConflictsAsync(request.Id, slug, name, ct))
             return Result.Failure(DomainErrors.Shelf.GenreAlreadyExists);
         var result = value.Update(slug, name, request.SortOrder);
         if (result.IsFailure) return result;
@@ -28,4 +28,11 @@ public sealed class UpdateGenreCommandHandler(IShelfRepository repository, IShel
 }
 
 public sealed class UpdateGenreCommandValidator : AbstractValidator<UpdateGenreCommand>
-{public UpdateGenreCommandValidator(){RuleFor(x=>x.Id).NotEmpty();RuleFor(x=>x.Slug).NotEmpty().MaximumLength(50);RuleFor(x=>x.Name).NotEmpty().MaximumLength(100);}}
+{
+    public UpdateGenreCommandValidator()
+    {
+        RuleFor(x => x.Id).NotEmpty();
+        RuleFor(x => x.Slug).NotEmpty().MaximumLength(50);
+        RuleFor(x => x.Name).NotEmpty().MaximumLength(100);
+    }
+}

@@ -4,7 +4,6 @@ using Lazy.Presentation.Abstractions;
 using Lazy.Presentation.Contracts.Shelf;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -26,7 +25,9 @@ public sealed class AdminGenresController(ISender sender, ILogger<AdminGenresCon
     public async Task<IActionResult> Create(ManageGenreRequest request, CancellationToken ct)
     {
         var result = await Sender.Send(new CreateGenreCommand(request.Slug, request.Name, request.SortOrder), ct);
-        return result.IsFailure ? HandleFailure(result) : StatusCode(StatusCodes.Status201Created, new { id = result.Value });
+        return result.IsFailure
+            ? HandleFailure(result)
+            : Created($"/api/admin/genres/{result.Value}", new { id = result.Value });
     }
 
     [HttpPut("{id:guid}")]

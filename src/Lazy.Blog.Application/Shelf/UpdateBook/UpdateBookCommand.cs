@@ -22,7 +22,16 @@ public sealed class UpdateBookCommandHandler(IShelfRepository repository, IShelf
         string slug = ShelfInput.Normalize(request.Data.Slug);
         if (await repository.BookConflictsAsync(request.Id, slug, request.Data.RatingSource, request.Data.SourceWorkId, ct)) return Result.Failure(DomainErrors.Shelf.BookAlreadyExists);
         string coverUrl = book.CoverUrl;
-        if (request.Cover is not null) { var cover = await covers.ProcessAndUploadAsync(request.Cover, ct); if (cover is null) return Result.Failure(DomainErrors.Shelf.CoverUploadFailed); coverUrl = cover.Url; }
+        if (request.Cover is not null)
+        {
+            var cover = await covers.ProcessAndUploadAsync(request.Cover, ct);
+            if (cover is null)
+            {
+                return Result.Failure(DomainErrors.Shelf.CoverUploadFailed);
+            }
+
+            coverUrl = cover.Url;
+        }
         var result = ShelfInput.Apply(book, request.Data with { Slug = slug, CoverUrl = coverUrl });
         if (result.IsFailure) return result;
         return await unitOfWork.SaveChangesAsync(ShelfConflict.Book, ct);
@@ -30,4 +39,12 @@ public sealed class UpdateBookCommandHandler(IShelfRepository repository, IShelf
 }
 
 public sealed class UpdateBookCommandValidator : AbstractValidator<UpdateBookCommand>
-{ public UpdateBookCommandValidator(){RuleFor(x=>x.Id).NotEmpty();RuleFor(x=>x.Data).SetValidator(new ManageBookDataValidator(false));When(x=>x.Cover is not null,()=>RuleFor(x=>x.Cover!).Must(x=>x.Length is >0 and <=20*1024*1024));}}
+{
+    public UpdateBookCommandValidator()
+    {
+        RuleFor(x => x.Id).NotEmpty();
+        RuleFor(x => x.Data).SetValidator(new ManageBookDataValidator(false));
+        When(x => x.Cover is not null, () =>
+            RuleFor(x => x.Cover!).Must(x => x.Length is > 0 and <= 20 * 1024 * 1024));
+    }
+}

@@ -36,7 +36,7 @@ public sealed class AdminBooksController(ISender sender, ILogger<AdminBooksContr
         var result = await Sender.Send(new CreateBookCommand(Map(request), Map(request.Cover)), ct);
         return result.IsFailure
             ? HandleFailure(result)
-            : StatusCode(StatusCodes.Status201Created, new { id = result.Value });
+            : Created($"/api/admin/books/{result.Value}", new { id = result.Value });
     }
 
     [HttpPut("{id:guid}")]

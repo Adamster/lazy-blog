@@ -5,68 +5,105 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Lazy.Persistence.Configurations;
 
-public sealed class GenreConfiguration : IEntityTypeConfiguration<Genre>
+internal sealed class GenreConfiguration : IEntityTypeConfiguration<Genre>
 {
-    public void Configure(EntityTypeBuilder<Genre> b)
+    public void Configure(EntityTypeBuilder<Genre> builder)
     {
-        b.ToTable(TableNames.Genres); b.HasKey(x => x.Id);
-        b.Property(x => x.Slug).HasMaxLength(50).IsRequired(); b.HasIndex(x => x.Slug).IsUnique();
-        b.Property(x => x.Name).HasMaxLength(100).IsRequired(); b.HasIndex(x => x.Name).IsUnique();
+        builder.ToTable(TableNames.Genres);
+        builder.HasKey(x => x.Id);
+
+        builder.Property(x => x.Slug).HasMaxLength(50).IsRequired();
+        builder.HasIndex(x => x.Slug).IsUnique();
+
+        builder.Property(x => x.Name).HasMaxLength(100).IsRequired();
+        builder.HasIndex(x => x.Name).IsUnique();
     }
 }
 
-public sealed class BookConfiguration : IEntityTypeConfiguration<Book>
+internal sealed class BookConfiguration : IEntityTypeConfiguration<Book>
 {
-    public void Configure(EntityTypeBuilder<Book> b)
+    public void Configure(EntityTypeBuilder<Book> builder)
     {
-        b.ToTable(TableNames.Books); b.HasKey(x => x.Id);
-        b.HasOne(x => x.Genre).WithMany().HasForeignKey(x => x.GenreId).OnDelete(DeleteBehavior.Restrict);
-        b.HasOne(x => x.Author).WithMany().HasForeignKey(x => x.AuthorId).OnDelete(DeleteBehavior.Restrict);
-        b.Property(x => x.Slug).HasMaxLength(160).IsRequired(); b.HasIndex(x => x.Slug).IsUnique();
-        b.Property(x => x.Title).HasMaxLength(300).IsRequired();
-        b.Property(x => x.Series).HasMaxLength(300); b.Property(x => x.CoverUrl).HasMaxLength(1000).IsRequired();
-        b.Property(x => x.SeriesTitlesJson).HasColumnType("nvarchar(max)");
-        b.Property(x => x.Rating).HasPrecision(4, 2); b.Property(x => x.RatingSource).HasMaxLength(50);
-        b.Property(x => x.SourceWorkId).HasMaxLength(100); b.Property(x => x.SourceUrl).HasMaxLength(1000);
-        b.HasIndex(x => new { x.RatingSource, x.SourceWorkId }).IsUnique().HasFilter("[SourceWorkId] IS NOT NULL");
-        b.HasIndex(x => new { x.GenreId, x.AuthorId, x.Title });
+        builder.ToTable(TableNames.Books);
+        builder.HasKey(x => x.Id);
+
+        builder.HasOne(x => x.Genre).WithMany().HasForeignKey(x => x.GenreId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne(x => x.Author).WithMany().HasForeignKey(x => x.AuthorId).OnDelete(DeleteBehavior.Restrict);
+
+        builder.Property(x => x.Slug).HasMaxLength(160).IsRequired();
+        builder.HasIndex(x => x.Slug).IsUnique();
+
+        builder.Property(x => x.Title).HasMaxLength(300).IsRequired();
+        builder.Property(x => x.Series).HasMaxLength(300);
+        builder.Property(x => x.CoverUrl).HasMaxLength(1000).IsRequired();
+        builder.Property(x => x.SeriesTitlesJson).HasColumnType("nvarchar(max)");
+        builder.Property(x => x.Rating).HasPrecision(4, 2);
+        builder.Property(x => x.RatingSource).HasMaxLength(50);
+        builder.Property(x => x.SourceWorkId).HasMaxLength(100);
+        builder.Property(x => x.SourceUrl).HasMaxLength(1000);
+
+        builder.HasIndex(x => new { x.RatingSource, x.SourceWorkId }).IsUnique().HasFilter("[SourceWorkId] IS NOT NULL");
+        builder.HasIndex(x => new { x.GenreId, x.AuthorId, x.Title });
     }
 }
 
-public sealed class AuthorConfiguration : IEntityTypeConfiguration<Author>
-{ public void Configure(EntityTypeBuilder<Author> b) { b.ToTable(TableNames.Authors); b.HasKey(x => x.Id); b.Property(x => x.Name).HasMaxLength(300).IsRequired(); b.Property(x => x.NormalizedName).HasMaxLength(300).IsRequired(); b.HasIndex(x => x.NormalizedName).IsUnique(); } }
-
-public sealed class UserBookStatusConfiguration : IEntityTypeConfiguration<UserBookStatus>
+internal sealed class AuthorConfiguration : IEntityTypeConfiguration<Author>
 {
-    public void Configure(EntityTypeBuilder<UserBookStatus> b)
+    public void Configure(EntityTypeBuilder<Author> builder)
     {
-        b.ToTable(TableNames.UserBookStatuses); b.HasKey(x => new { x.UserId, x.BookId });
-        b.HasOne(x => x.User).WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
-        b.HasOne(x => x.Book).WithMany().HasForeignKey(x => x.BookId).OnDelete(DeleteBehavior.Cascade);
-        b.Property(x => x.Status).HasConversion<byte>();
-        b.HasIndex(x => new { x.UserId, x.Status, x.UpdatedOnUtc });
+        builder.ToTable(TableNames.Authors);
+        builder.HasKey(x => x.Id);
+
+        builder.Property(x => x.Name).HasMaxLength(300).IsRequired();
+
+        builder.Property(x => x.NormalizedName).HasMaxLength(300).IsRequired();
+        builder.HasIndex(x => x.NormalizedName).IsUnique();
     }
 }
 
-public sealed class BookCommentConfiguration : IEntityTypeConfiguration<BookComment>
+internal sealed class UserBookStatusConfiguration : IEntityTypeConfiguration<UserBookStatus>
 {
-    public void Configure(EntityTypeBuilder<BookComment> b)
+    public void Configure(EntityTypeBuilder<UserBookStatus> builder)
     {
-        b.ToTable(TableNames.BookComments); b.HasKey(x => x.Id);
-        b.Property(x => x.Body).HasMaxLength(BookComment.MaxLength).IsRequired();
-        b.HasOne(x => x.Book).WithMany().HasForeignKey(x => x.BookId).OnDelete(DeleteBehavior.Cascade);
-        b.HasOne(x => x.User).WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Restrict);
-        b.HasIndex(x => new { x.BookId, x.CreatedOnUtc }); b.HasIndex(x => x.UserId);
+        builder.ToTable(TableNames.UserBookStatuses);
+        builder.HasKey(x => new { x.UserId, x.BookId });
+
+        builder.HasOne(x => x.User).WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne(x => x.Book).WithMany().HasForeignKey(x => x.BookId).OnDelete(DeleteBehavior.Cascade);
+
+        builder.Property(x => x.Status).HasConversion<byte>();
+        builder.HasIndex(x => new { x.UserId, x.Status, x.UpdatedOnUtc });
     }
 }
 
-public sealed class RatingSyncRunConfiguration : IEntityTypeConfiguration<RatingSyncRun>
+internal sealed class BookCommentConfiguration : IEntityTypeConfiguration<BookComment>
 {
-    public void Configure(EntityTypeBuilder<RatingSyncRun> b)
+    public void Configure(EntityTypeBuilder<BookComment> builder)
     {
-        b.ToTable(TableNames.RatingSyncRuns); b.HasKey(x => x.Id);
-        b.Property(x => x.Source).HasMaxLength(50); b.Property(x => x.Status).HasMaxLength(30);
-        b.Property(x => x.ErrorSummary).HasMaxLength(2000);
-        b.HasIndex(x => new { x.Source, x.CompletedOnUtc });
+        builder.ToTable(TableNames.BookComments);
+        builder.HasKey(x => x.Id);
+
+        builder.Property(x => x.Body).HasMaxLength(BookComment.MaxLength).IsRequired();
+
+        builder.HasOne(x => x.Book).WithMany().HasForeignKey(x => x.BookId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne(x => x.User).WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasIndex(x => new { x.BookId, x.CreatedOnUtc });
+        builder.HasIndex(x => x.UserId);
+    }
+}
+
+internal sealed class RatingSyncRunConfiguration : IEntityTypeConfiguration<RatingSyncRun>
+{
+    public void Configure(EntityTypeBuilder<RatingSyncRun> builder)
+    {
+        builder.ToTable(TableNames.RatingSyncRuns);
+        builder.HasKey(x => x.Id);
+
+        builder.Property(x => x.Source).HasMaxLength(50);
+        builder.Property(x => x.Status).HasMaxLength(30);
+        builder.Property(x => x.ErrorSummary).HasMaxLength(2000);
+
+        builder.HasIndex(x => new { x.Source, x.CompletedOnUtc });
     }
 }

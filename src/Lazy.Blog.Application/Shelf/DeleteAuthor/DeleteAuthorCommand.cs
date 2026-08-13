@@ -19,6 +19,6 @@ public sealed class DeleteAuthorCommandHandler(IShelfRepository repository, IShe
         if (value is null) return Result.Failure(DomainErrors.Shelf.AuthorNotFound(request.Id));
         if (await repository.AuthorHasBooksAsync(request.Id, ct)) return Result.Failure(DomainErrors.Shelf.AuthorInUse);
         repository.Remove(value);
-        return await unitOfWork.SaveChangesAsync(null, ct);
+        return await unitOfWork.SaveChangesAsync(ShelfConflict.AuthorInUse, ct);
     }
 }

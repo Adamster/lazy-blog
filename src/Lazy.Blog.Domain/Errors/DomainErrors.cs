@@ -11,6 +11,7 @@ public static class DomainErrors
         public static readonly Func<string, Error> BookSlugNotFound = slug => new("Book.NotFound", $"The book with the slug {slug} was not found.");
         public static readonly Func<Guid, Error> CommentNotFound = id => new("BookComment.NotFound", $"The book comment with the identifier {id} was not found.");
         public static readonly Error UnauthorizedCommentUpdate = new("BookComment.NotAuthorized", "Book comment can be updated only by its author");
+        public static readonly Error CommentEditWindowExpired = new("BookComment.EditWindowExpired", "Book comment can no longer be edited or deleted");
         public static readonly Error InvalidStatus = new("BookStatus.Invalid", "Status must be 'reading' or 'read'");
         public static readonly Func<Guid, Error> GenreNotFound = id => new("Genre.NotFound", $"Genre {id} was not found");
         public static readonly Error GenreInUse = new("Genre.InUse", "Genre cannot be deleted while it contains books");

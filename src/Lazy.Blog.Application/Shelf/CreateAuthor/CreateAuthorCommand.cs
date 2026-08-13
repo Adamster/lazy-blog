@@ -9,20 +9,30 @@ using Lazy.Domain.Shared;
 
 namespace Lazy.Application.Shelf;
 
-public record CreateAuthorCommand(string Name) : ICommand<Guid>;
+public record CreateAuthorCommand(string Name) : ICommand<CreateAuthorResult>;
 
-public sealed class CreateAuthorCommandHandler(IShelfRepository repository, IShelfUnitOfWork unitOfWork) : ICommandHandler<CreateAuthorCommand, Guid>
+public record CreateAuthorResult(Guid Id, bool Created);
+
+public sealed class CreateAuthorCommandHandler(IShelfRepository repository, IShelfUnitOfWork unitOfWork) : ICommandHandler<CreateAuthorCommand, CreateAuthorResult>
 {
-    public async Task<Result<Guid>> Handle(CreateAuthorCommand request, CancellationToken ct)
+    public async Task<Result<CreateAuthorResult>> Handle(CreateAuthorCommand request, CancellationToken ct)
     {
         var result = Author.Create(Guid.NewGuid(), request.Name);
-        if (result.IsFailure) return Result.Failure<Guid>(result.Error);
+        if (result.IsFailure) return Result.Failure<CreateAuthorResult>(result.Error);
         var existing = await repository.GetAuthorByNormalizedNameAsync(result.Value.NormalizedName, ct);
-        if (existing is not null) return existing.Id;
+        if (existing is not null) return new CreateAuthorResult(existing.Id, false);
         repository.Add(result.Value);
         var saveResult = await unitOfWork.SaveChangesAsync(ShelfConflict.Author, ct);
-        return saveResult.IsFailure ? Result.Failure<Guid>(saveResult.Error) : result.Value.Id;
+        return saveResult.IsFailure
+            ? Result.Failure<CreateAuthorResult>(saveResult.Error)
+            : new CreateAuthorResult(result.Value.Id, true);
     }
 }
 
-public sealed class CreateAuthorCommandValidator:AbstractValidator<CreateAuthorCommand>{public CreateAuthorCommandValidator(){RuleFor(x=>x.Name).NotEmpty().MaximumLength(300);}}
+public sealed class CreateAuthorCommandValidator : AbstractValidator<CreateAuthorCommand>
+{
+    public CreateAuthorCommandValidator()
+    {
+        RuleFor(x => x.Name).NotEmpty().MaximumLength(300);
+    }
+}

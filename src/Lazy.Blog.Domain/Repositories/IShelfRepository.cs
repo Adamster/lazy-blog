@@ -4,7 +4,7 @@ using Lazy.Domain.Shared;
 namespace Lazy.Domain.Repositories;
 
 public sealed record Page<T>(IReadOnlyList<T> Items, int Total);
-public enum ShelfConflict { Book, Author, Genre }
+public enum ShelfConflict { Book, Author, Genre, AuthorInUse, GenreInUse }
 
 public interface IShelfUnitOfWork
 {
@@ -19,6 +19,7 @@ public interface IShelfRepository
     Task<bool> AuthorHasBooksAsync(Guid authorId, CancellationToken ct);
     Task<IReadOnlyList<Genre>> GetGenresAsync(CancellationToken ct);
     Task<Genre?> GetGenreAsync(Guid id, CancellationToken ct);
+    Task<bool> GenreConflictsAsync(Guid? excludedId, string slug, string name, CancellationToken ct);
     Task<IReadOnlyDictionary<Guid, int>> GetBookCountsByGenreAsync(CancellationToken ct);
     Task<bool> GenreHasBooksAsync(Guid genreId, CancellationToken ct);
     Task<Page<Book>> GetBooksAsync(string? genre, string? search, string? sort, int offset, int limit, CancellationToken ct);

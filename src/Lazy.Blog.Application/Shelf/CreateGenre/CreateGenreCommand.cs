@@ -17,7 +17,7 @@ public sealed class CreateGenreCommandHandler(IShelfRepository repository, IShel
     {
         string slug = ShelfInput.Normalize(request.Slug);
         string name = ShelfInput.Normalize(request.Name);
-        if ((await repository.GetGenresAsync(ct)).Any(x => x.Slug == slug || x.Name == name))
+        if (await repository.GenreConflictsAsync(null, slug, name, ct))
             return Result.Failure<Guid>(DomainErrors.Shelf.GenreAlreadyExists);
         var result = Genre.Create(Guid.NewGuid(), slug, name, request.SortOrder);
         if (result.IsFailure) return Result.Failure<Guid>(result.Error);
@@ -28,4 +28,10 @@ public sealed class CreateGenreCommandHandler(IShelfRepository repository, IShel
 }
 
 public sealed class CreateGenreCommandValidator : AbstractValidator<CreateGenreCommand>
-{public CreateGenreCommandValidator(){RuleFor(x=>x.Slug).NotEmpty().MaximumLength(50);RuleFor(x=>x.Name).NotEmpty().MaximumLength(100);}}
+{
+    public CreateGenreCommandValidator()
+    {
+        RuleFor(x => x.Slug).NotEmpty().MaximumLength(50);
+        RuleFor(x => x.Name).NotEmpty().MaximumLength(100);
+    }
+}

@@ -18,8 +18,26 @@ public sealed class BookComment : Entity, IAuditableEntity
     public string Body { get; private set; } = null!;
     public DateTime CreatedOnUtc { get; set; }
     public DateTime? UpdatedOnUtc { get; set; }
-    public static Result<BookComment> Create(Guid id, Guid bookId, Guid userId, string body) => Valid(body) ? new BookComment(id, bookId, userId, body) : Result.Failure<BookComment>(DomainErrors.Shelf.InvalidData($"Comment must contain 1 to {MaxLength} characters"));
-    public Result Update(string body) { if (!Valid(body)) return Result.Failure(DomainErrors.Shelf.InvalidData($"Comment must contain 1 to {MaxLength} characters")); Body = body; return Result.Success(); }
+    public static Result<BookComment> Create(Guid id, Guid bookId, Guid userId, string body)
+    {
+        return Valid(body)
+            ? new BookComment(id, bookId, userId, body)
+            : Result.Failure<BookComment>(InvalidBodyError());
+    }
+
+    public Result Update(string body)
+    {
+        if (!Valid(body))
+        {
+            return Result.Failure(InvalidBodyError());
+        }
+
+        Body = body;
+        return Result.Success();
+    }
+
+    private static Error InvalidBodyError() =>
+        DomainErrors.Shelf.InvalidData($"Comment must contain 1 to {MaxLength} characters");
     public bool CanEdit(DateTime nowUtc) => nowUtc - CreatedOnUtc < EditWindow;
     private static bool Valid(string body) => !string.IsNullOrWhiteSpace(body) && body.Length <= MaxLength;
 }

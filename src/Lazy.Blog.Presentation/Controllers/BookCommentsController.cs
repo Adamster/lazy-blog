@@ -12,8 +12,15 @@ public sealed class BookCommentsController(ISender sender, ILogger<BookCommentsC
 {
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> Update(Guid id, BookCommentRequest request, CancellationToken ct)
-    { var result = await Sender.Send(new UpdateBookCommentCommand(id, request.Body), ct); return result.IsFailure ? HandleFailure(result) : NoContent(); }
+    {
+        var result = await Sender.Send(new UpdateBookCommentCommand(id, request.Body), ct);
+        return result.IsFailure ? HandleFailure(result) : NoContent();
+    }
+
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id, CancellationToken ct)
-    { var result = await Sender.Send(new DeleteBookCommentCommand(id), ct); return result.IsFailure ? HandleFailure(result) : NoContent(); }
+    {
+        var result = await Sender.Send(new DeleteBookCommentCommand(id), ct);
+        return result.IsFailure ? HandleFailure(result) : NoContent();
+    }
 }

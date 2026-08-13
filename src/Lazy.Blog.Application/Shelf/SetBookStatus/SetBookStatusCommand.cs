@@ -25,4 +25,10 @@ public sealed class SetBookStatusCommandHandler(IShelfRepository repository, ICu
 }
 
 public sealed class SetBookStatusCommandValidator : AbstractValidator<SetBookStatusCommand>
-{ public SetBookStatusCommandValidator() { RuleFor(x => x.BookId).NotEmpty(); RuleFor(x => x.Status).Must(x => x is "read" or "reading"); } }
+{
+    public SetBookStatusCommandValidator()
+    {
+        RuleFor(x => x.BookId).NotEmpty();
+        RuleFor(x => x.Status).Must(x => ShelfMapping.TryStatus(x, out _));
+    }
+}

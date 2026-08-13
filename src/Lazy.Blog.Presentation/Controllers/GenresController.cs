@@ -12,5 +12,8 @@ public sealed class GenresController(ISender sender, ILogger<GenresController> l
 {
     [AllowAnonymous, HttpGet]
     public async Task<IActionResult> Get(CancellationToken ct)
-    { var result = await Sender.Send(new GetGenresQuery(), ct); return result.IsFailure ? HandleFailure(result) : Ok(result.Value); }
+    {
+        var result = await Sender.Send(new GetGenresQuery(), ct);
+        return result.IsFailure ? HandleFailure(result) : Ok(result.Value);
+    }
 }
