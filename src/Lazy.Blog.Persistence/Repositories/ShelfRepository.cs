@@ -42,22 +42,47 @@ public sealed class ShelfRepository(LazyBlogDbContext dbContext) : IShelfReposit
     public Task<bool> GenreHasBooksAsync(Guid genreId, CancellationToken ct) =>
         dbContext.Set<Book>().AnyAsync(book => book.GenreId == genreId, ct);
 
+    public async Task<IReadOnlyList<Series>> GetSeriesAsync(CancellationToken ct) =>
+        await dbContext.Set<Series>().AsNoTracking().OrderBy(series => series.Title).ToListAsync(ct);
+
+    public Task<Series?> GetSeriesAsync(Guid id, CancellationToken ct) =>
+        dbContext.Set<Series>().FirstOrDefaultAsync(series => series.Id == id, ct);
+
+    public Task<Series?> GetSeriesBySlugAsync(string slug, CancellationToken ct) =>
+        dbContext.Set<Series>().AsNoTracking().FirstOrDefaultAsync(series => series.Slug == slug, ct);
+
+    public Task<bool> SeriesConflictsAsync(Guid? excludedId, string slug, string title, CancellationToken ct) =>
+        dbContext.Set<Series>().AnyAsync(series => series.Id != excludedId && (series.Slug == slug || series.Title == title), ct);
+
+    public Task<bool> SeriesHasBooksAsync(Guid seriesId, CancellationToken ct) =>
+        dbContext.Set<Book>().AnyAsync(book => book.SeriesId == seriesId, ct);
+
+    public async Task<IReadOnlyDictionary<Guid, int>> GetBookCountsBySeriesAsync(CancellationToken ct) =>
+        await dbContext.Set<Book>().AsNoTracking().Where(book => book.SeriesId != null).GroupBy(book => book.SeriesId!.Value)
+            .ToDictionaryAsync(group => group.Key, group => group.Count(), ct);
+
+    public async Task<IReadOnlyList<Book>> GetBooksBySeriesIdAsync(Guid seriesId, CancellationToken ct) =>
+        await dbContext.Set<Book>().AsNoTracking().Include(book => book.Author).Include(book => book.Genre)
+            .Where(book => book.SeriesId == seriesId).OrderBy(book => book.VolumeNumber).ToListAsync(ct);
+
     public async Task<Page<Book>> GetBooksAsync(string? genre, string? search, string? sort, int offset, int limit, CancellationToken ct)
     {
-        IQueryable<Book> books = dbContext.Set<Book>().AsNoTracking().Include(book => book.Author).Include(book => book.Genre);
+        IQueryable<Book> books = dbContext.Set<Book>().AsNoTracking()
+            .Include(book => book.Author).Include(book => book.Genre).Include(book => book.Series);
         if (!string.IsNullOrWhiteSpace(genre)) books = books.Where(book => book.Genre.Slug == genre);
         if (!string.IsNullOrWhiteSpace(search))
         {
             string term = search.Trim();
             books = books.Where(book => book.Title.Contains(term) || book.Author.Name.Contains(term) ||
-                (book.Series != null && book.Series.Contains(term)));
+                (book.Series != null && book.Series.Title.Contains(term)));
         }
 
         books = sort switch
         {
             "rating" => books.OrderByDescending(book => book.Rating).ThenBy(book => book.Author.Name).ThenBy(book => book.Title),
             "readers" => books.OrderByDescending(book => book.RatingCount).ThenByDescending(book => book.Rating).ThenBy(book => book.Title),
-            "author" => books.OrderBy(book => book.Author.Name).ThenBy(book => book.Series ?? book.Title).ThenBy(book => book.Title),
+            "author" => books.OrderBy(book => book.Author.Name)
+                .ThenBy(book => book.Series != null ? book.Series.Title : book.Title).ThenBy(book => book.Title),
             "title" => books.OrderBy(book => book.Title).ThenBy(book => book.Author.Name),
             _ => books.OrderByDescending(book => (book.Rating * book.RatingCount + 700m) / (book.RatingCount + 100m))
                 .ThenByDescending(book => book.RatingCount).ThenBy(book => book.Author.Name).ThenBy(book => book.Title)
@@ -69,10 +94,11 @@ public sealed class ShelfRepository(LazyBlogDbContext dbContext) : IShelfReposit
     }
 
     public Task<Book?> GetBookAsync(Guid id, CancellationToken ct) =>
-        dbContext.Set<Book>().Include(book => book.Author).Include(book => book.Genre).FirstOrDefaultAsync(book => book.Id == id, ct);
+        dbContext.Set<Book>().Include(book => book.Author).Include(book => book.Genre).Include(book => book.Series)
+            .FirstOrDefaultAsync(book => book.Id == id, ct);
 
     public Task<Book?> GetBookBySlugAsync(string slug, CancellationToken ct) =>
-        dbContext.Set<Book>().AsNoTracking().Include(book => book.Author).Include(book => book.Genre)
+        dbContext.Set<Book>().AsNoTracking().Include(book => book.Author).Include(book => book.Genre).Include(book => book.Series)
             .FirstOrDefaultAsync(book => book.Slug == slug, ct);
 
     public Task<bool> BookExistsAsync(Guid id, CancellationToken ct) => dbContext.Set<Book>().AnyAsync(book => book.Id == id, ct);
@@ -93,6 +119,7 @@ public sealed class ShelfRepository(LazyBlogDbContext dbContext) : IShelfReposit
         IQueryable<UserBookStatus> statuses = dbContext.Set<UserBookStatus>().AsNoTracking()
             .Include(value => value.Book).ThenInclude(book => book.Author)
             .Include(value => value.Book).ThenInclude(book => book.Genre)
+            .Include(value => value.Book).ThenInclude(book => book.Series)
             .Where(value => value.User.NormalizedUserName == normalizedUserName && value.Status == status)
             .OrderByDescending(value => value.UpdatedOnUtc ?? value.CreatedOnUtc);
         int total = await statuses.CountAsync(ct);
@@ -120,12 +147,14 @@ public sealed class ShelfRepository(LazyBlogDbContext dbContext) : IShelfReposit
 
     public void Add(Author value) => dbContext.Add(value);
     public void Add(Genre value) => dbContext.Add(value);
+    public void Add(Series value) => dbContext.Add(value);
     public void Add(Book value) => dbContext.Add(value);
     public void Add(UserBookStatus value) => dbContext.Add(value);
     public void Add(BookComment value) => dbContext.Add(value);
     public void Add(RatingSyncRun value) => dbContext.Add(value);
     public void Remove(Author value) => dbContext.Remove(value);
     public void Remove(Genre value) => dbContext.Remove(value);
+    public void Remove(Series value) => dbContext.Remove(value);
     public void Remove(Book value) => dbContext.Remove(value);
     public void Remove(UserBookStatus value) => dbContext.Remove(value);
     public void Remove(BookComment value) => dbContext.Remove(value);

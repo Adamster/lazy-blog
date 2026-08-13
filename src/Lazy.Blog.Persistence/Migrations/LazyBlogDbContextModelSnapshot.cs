@@ -119,12 +119,8 @@ namespace Lazy.Persistence.Migrations
                     b.Property<DateTime?>("RatingSyncedOnUtc")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Series")
-                        .HasMaxLength(300)
-                        .HasColumnType("nvarchar(300)");
-
-                    b.Property<string>("SeriesTitlesJson")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid?>("SeriesId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Slug")
                         .IsRequired()
@@ -147,6 +143,9 @@ namespace Lazy.Persistence.Migrations
                     b.Property<DateTime?>("UpdatedOnUtc")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("VolumeNumber")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AuthorId");
@@ -157,6 +156,10 @@ namespace Lazy.Persistence.Migrations
                     b.HasIndex("RatingSource", "SourceWorkId")
                         .IsUnique()
                         .HasFilter("[SourceWorkId] IS NOT NULL");
+
+                    b.HasIndex("SeriesId", "VolumeNumber")
+                        .IsUnique()
+                        .HasFilter("[SeriesId] IS NOT NULL");
 
                     b.HasIndex("GenreId", "AuthorId", "Title");
 
@@ -580,6 +583,39 @@ namespace Lazy.Persistence.Migrations
                     b.ToTable("RatingSyncRuns", (string)null);
                 });
 
+            modelBuilder.Entity("Lazy.Domain.Entities.Series", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedOnUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<DateTime?>("UpdatedOnUtc")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Slug")
+                        .IsUnique();
+
+                    b.HasIndex("Title")
+                        .IsUnique();
+
+                    b.ToTable("Series", (string)null);
+                });
+
             modelBuilder.Entity("Lazy.Domain.Entities.Tag", b =>
                 {
                     b.Property<Guid>("Id")
@@ -762,9 +798,16 @@ namespace Lazy.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Lazy.Domain.Entities.Series", "Series")
+                        .WithMany()
+                        .HasForeignKey("SeriesId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.Navigation("Author");
 
                     b.Navigation("Genre");
+
+                    b.Navigation("Series");
                 });
 
             modelBuilder.Entity("Lazy.Domain.Entities.BookComment", b =>

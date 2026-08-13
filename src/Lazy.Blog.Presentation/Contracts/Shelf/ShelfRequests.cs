@@ -7,14 +7,15 @@ public record RatingImportItemRequest(string SourceWorkId, decimal Rating, int R
 public record ImportBookRatingsRequest(string Source, IReadOnlyList<RatingImportItemRequest> Items);
 public record ManageGenreRequest(string Slug, string Name, int SortOrder);
 public record ManageAuthorRequest(string Name);
+public record ManageSeriesRequest(string Slug, string Title);
 public sealed class ManageBookFormRequest
 {
     public Guid GenreId { get; init; }
     public Guid AuthorId { get; init; }
     public string Slug { get; init; } = null!;
     public string Title { get; init; } = null!;
-    public string? Series { get; init; }
-    public List<string> SeriesTitles { get; init; } = [];
+    public Guid? SeriesId { get; init; }
+    public int? VolumeNumber { get; init; }
     public decimal Rating { get; init; }
     public int RatingCount { get; init; }
     public string RatingSource { get; init; } = "FantLab";

@@ -22,8 +22,10 @@ public sealed class ShelfUnitOfWork(LazyBlogDbContext dbContext) : IShelfUnitOfW
                 ShelfConflict.Book => DomainErrors.Shelf.BookAlreadyExists,
                 ShelfConflict.Author => DomainErrors.Shelf.AuthorAlreadyExists,
                 ShelfConflict.Genre => DomainErrors.Shelf.GenreAlreadyExists,
+                ShelfConflict.Series => DomainErrors.Shelf.SeriesAlreadyExists,
                 ShelfConflict.AuthorInUse => DomainErrors.Shelf.AuthorInUse,
                 ShelfConflict.GenreInUse => DomainErrors.Shelf.GenreInUse,
+                ShelfConflict.SeriesInUse => DomainErrors.Shelf.SeriesInUse,
                 _ => throw new ArgumentOutOfRangeException(nameof(conflict))
             });
         }
@@ -31,7 +33,7 @@ public sealed class ShelfUnitOfWork(LazyBlogDbContext dbContext) : IShelfUnitOfW
 
     private static bool Matches(ShelfConflict conflict, DbUpdateException exception) => conflict switch
     {
-        ShelfConflict.AuthorInUse or ShelfConflict.GenreInUse => IsForeignKeyViolation(exception),
+        ShelfConflict.AuthorInUse or ShelfConflict.GenreInUse or ShelfConflict.SeriesInUse => IsForeignKeyViolation(exception),
         _ => IsUniqueConstraint(exception)
     };
 

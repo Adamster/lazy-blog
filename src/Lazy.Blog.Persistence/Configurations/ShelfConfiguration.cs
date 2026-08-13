@@ -29,21 +29,36 @@ internal sealed class BookConfiguration : IEntityTypeConfiguration<Book>
 
         builder.HasOne(x => x.Genre).WithMany().HasForeignKey(x => x.GenreId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne(x => x.Author).WithMany().HasForeignKey(x => x.AuthorId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne(x => x.Series).WithMany().HasForeignKey(x => x.SeriesId).OnDelete(DeleteBehavior.Restrict);
 
         builder.Property(x => x.Slug).HasMaxLength(160).IsRequired();
         builder.HasIndex(x => x.Slug).IsUnique();
 
         builder.Property(x => x.Title).HasMaxLength(300).IsRequired();
-        builder.Property(x => x.Series).HasMaxLength(300);
         builder.Property(x => x.CoverUrl).HasMaxLength(1000).IsRequired();
-        builder.Property(x => x.SeriesTitlesJson).HasColumnType("nvarchar(max)");
         builder.Property(x => x.Rating).HasPrecision(4, 2);
         builder.Property(x => x.RatingSource).HasMaxLength(50);
         builder.Property(x => x.SourceWorkId).HasMaxLength(100);
         builder.Property(x => x.SourceUrl).HasMaxLength(1000);
 
         builder.HasIndex(x => new { x.RatingSource, x.SourceWorkId }).IsUnique().HasFilter("[SourceWorkId] IS NOT NULL");
+        builder.HasIndex(x => new { x.SeriesId, x.VolumeNumber }).IsUnique().HasFilter("[SeriesId] IS NOT NULL");
         builder.HasIndex(x => new { x.GenreId, x.AuthorId, x.Title });
+    }
+}
+
+internal sealed class SeriesConfiguration : IEntityTypeConfiguration<Series>
+{
+    public void Configure(EntityTypeBuilder<Series> builder)
+    {
+        builder.ToTable(TableNames.Series);
+        builder.HasKey(x => x.Id);
+
+        builder.Property(x => x.Slug).HasMaxLength(50).IsRequired();
+        builder.HasIndex(x => x.Slug).IsUnique();
+
+        builder.Property(x => x.Title).HasMaxLength(300).IsRequired();
+        builder.HasIndex(x => x.Title).IsUnique();
     }
 }
 

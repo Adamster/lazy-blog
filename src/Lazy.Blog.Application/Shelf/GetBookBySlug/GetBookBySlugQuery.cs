@@ -1,4 +1,3 @@
-using System.Text.Json;
 using Lazy.Application.Abstractions.Authorization;
 using Lazy.Application.Abstractions.Messaging;
 using Lazy.Domain.Errors;
@@ -16,8 +15,7 @@ public sealed class GetBookBySlugQueryHandler(IShelfRepository shelf, ICurrentUs
         var book = await shelf.GetBookBySlugAsync(request.Slug, ct);
         if (book is null) return Result.Failure<BookDetailResponse>(DomainErrors.Shelf.BookSlugNotFound(request.Slug));
         var status = await shelf.GetUserBookStatusAsync(currentUser.GetCurrentUserId(), book.Id, ct);
-        var titles = string.IsNullOrWhiteSpace(book.SeriesTitlesJson) ? [] : JsonSerializer.Deserialize<List<string>>(book.SeriesTitlesJson) ?? [];
-        return new BookDetailResponse(book.Id, book.Slug, book.Title, new(book.Author.Id, book.Author.Name), book.Series, titles,
+        return new BookDetailResponse(book.Id, book.Slug, book.Title, new(book.Author.Id, book.Author.Name), ShelfMapping.ToSeriesInfo(book),
             book.CoverUrl, book.Rating, book.RatingCount, book.RatingSource, book.SourceWorkId, book.SourceUrl, book.RatingSyncedOnUtc,
             new(book.Genre.Id, book.Genre.Slug, book.Genre.Name), status is null ? null : ShelfMapping.StatusName(status.Status),
             await shelf.GetBookCommentsCountAsync(book.Id, ct));

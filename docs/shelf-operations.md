@@ -1,5 +1,14 @@
 # Shelf operational decisions
 
+## Series and volumes
+
+A book belongs to a `Series` (a cycle) or stands alone; there is no separate "volume" concept — each volume is its
+own `Book` row with `SeriesId` and `VolumeNumber` set. `VolumeNumber` is required and unique within a series when
+`SeriesId` is set, and both fields must be null together on a standalone book (enforced in `Book.UpdateCatalog`).
+Reading status is tracked per book (`UserBookStatus`), so per-volume progress ("reading volume 2, finished volume 3")
+falls out of the existing per-book status table with no extra modeling. `GET /api/series/{slug}` returns a series
+with all of its volumes, each carrying the caller's status for that volume.
+
 ## Cover retention
 
 Shelf covers are immutable, content-addressed blobs. Uploading identical processed bytes reuses the same blob key.

@@ -19,4 +19,20 @@ public sealed class BookTests
         var result = book.UpdateRating(10.01m, 1, "FantLab", DateTime.UtcNow);
         Assert.True(result.IsFailure);
     }
+
+    [Fact]
+    public void UpdateCatalogRejectsSeriesWithoutVolumeNumber()
+    {
+        var book = Book.Create(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "slug", "Title", "https://cover").Value;
+        var result = book.UpdateCatalog(Guid.NewGuid(), Guid.NewGuid(), "Title", "https://cover", Guid.NewGuid(), null, null, null);
+        Assert.True(result.IsFailure);
+    }
+
+    [Fact]
+    public void UpdateCatalogAcceptsMatchingSeriesAndVolumeNumber()
+    {
+        var book = Book.Create(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "slug", "Title", "https://cover").Value;
+        var result = book.UpdateCatalog(Guid.NewGuid(), Guid.NewGuid(), "Title", "https://cover", Guid.NewGuid(), 1, null, null);
+        Assert.True(result.IsSuccess);
+    }
 }

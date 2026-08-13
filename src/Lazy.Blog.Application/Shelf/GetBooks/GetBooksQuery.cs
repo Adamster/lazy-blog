@@ -25,7 +25,7 @@ public sealed class GetBooksQueryHandler(IShelfRepository shelf, ICurrentUserCon
         int limit = Math.Clamp(request.Limit, 1, 100);
         var page = await shelf.GetBooksAsync(request.Genre, request.Search, request.Sort, offset, limit, ct);
         var statuses = await shelf.GetUserBookStatusesAsync(currentUser.GetCurrentUserId(), page.Items.Select(x => x.Id).ToList(), ct);
-        return new BooksPageResponse(page.Items.Select(x => ShelfMapping.ToResponse(x, statuses.GetValueOrDefault(x.Id))).ToList(),
+        return new BooksPageResponse(page.Items.Select(x => ShelfMapping.ToResponse(x, ShelfMapping.LookupStatus(statuses, x.Id))).ToList(),
             page.Total, offset, limit, await shelf.GetLastRatingSyncAsync(ct));
     }
 }

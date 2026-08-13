@@ -15,8 +15,9 @@ public sealed class Book : Entity, IAuditableEntity
     public string Title { get; private set; } = null!;
     public Guid AuthorId { get; private set; }
     public Author Author { get; private set; } = null!;
-    public string? Series { get; private set; }
-    public string? SeriesTitlesJson { get; private set; }
+    public Guid? SeriesId { get; private set; }
+    public Series? Series { get; private set; }
+    public int? VolumeNumber { get; private set; }
     public string CoverUrl { get; private set; } = null!;
     public decimal Rating { get; private set; }
     public int RatingCount { get; private set; }
@@ -38,12 +39,12 @@ public sealed class Book : Entity, IAuditableEntity
         return Result.Success();
     }
     public Result UpdateCatalog(Guid genreId, Guid authorId, string title, string coverUrl,
-        string? series, string? seriesTitlesJson, string? sourceWorkId, string? sourceUrl)
+        Guid? seriesId, int? volumeNumber, string? sourceWorkId, string? sourceUrl)
     {
-        var valid = ValidateCatalog(Slug, title, coverUrl, series, sourceWorkId, sourceUrl, seriesTitlesJson);
+        var valid = ValidateCatalog(Slug, title, coverUrl, seriesId, volumeNumber, sourceWorkId, sourceUrl);
         if (valid.IsFailure) return valid;
-        (GenreId, AuthorId, Title, CoverUrl, Series, SeriesTitlesJson, SourceWorkId, SourceUrl) =
-            (genreId, authorId, title, coverUrl, series, seriesTitlesJson, sourceWorkId, sourceUrl);
+        (GenreId, AuthorId, Title, CoverUrl, SeriesId, VolumeNumber, SourceWorkId, SourceUrl) =
+            (genreId, authorId, title, coverUrl, seriesId, volumeNumber, sourceWorkId, sourceUrl);
         return Result.Success();
     }
     public Result UpdateSlug(string slug)
@@ -53,7 +54,11 @@ public sealed class Book : Entity, IAuditableEntity
         Slug = slug;
         return Result.Success();
     }
-    private static Result ValidateCatalog(string slug, string title, string coverUrl, string? series, string? sourceWorkId, string? sourceUrl, string? seriesTitlesJson)
-        => string.IsNullOrWhiteSpace(slug) || slug.Length > 160 || string.IsNullOrWhiteSpace(title) || title.Length > 300 || string.IsNullOrWhiteSpace(coverUrl) || coverUrl.Length > 1000 || series?.Length > 300 || sourceWorkId?.Length > 100 || sourceUrl?.Length > 1000 || seriesTitlesJson?.Length > 100_000
-            ? Result.Failure(DomainErrors.Shelf.InvalidData("Book catalog data is empty or too long")) : Result.Success();
+    private static Result ValidateCatalog(string slug, string title, string coverUrl,
+        Guid? seriesId, int? volumeNumber, string? sourceWorkId, string? sourceUrl)
+        => string.IsNullOrWhiteSpace(slug) || slug.Length > 160 || string.IsNullOrWhiteSpace(title) || title.Length > 300 ||
+           string.IsNullOrWhiteSpace(coverUrl) || coverUrl.Length > 1000 || sourceWorkId?.Length > 100 || sourceUrl?.Length > 1000 ||
+           seriesId.HasValue != volumeNumber.HasValue
+            ? Result.Failure(DomainErrors.Shelf.InvalidData("Book catalog data is empty, too long, or has a series without a volume number"))
+            : Result.Success();
 }
