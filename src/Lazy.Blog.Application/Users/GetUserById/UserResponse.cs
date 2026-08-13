@@ -9,7 +9,8 @@ public record UserResponse(
     string UserName,
     string? Biography,
     string? AvatarUrl,
-    DateTime CreatedOnUtc)
+    DateTime CreatedOnUtc,
+    int ReadBooksCount = 0)
 {
     public static UserResponse FromPost(Post post)
     {

@@ -10,11 +10,11 @@ public sealed class UserBookStatusRepository(LazyBlogDbContext dbContext) : IUse
         dbContext.Set<UserBookStatus>()
             .FirstOrDefaultAsync(status => status.UserId == userId && status.BookId == bookId, ct);
 
-    public async Task<Page<UserBookStatus>> GetPagedAsync(
+    public async Task<IReadOnlyList<UserBookStatus>> GetFilteredAsync(
         string userName,
-        ReadingStatus status,
-        int offset,
-        int limit,
+        ReadingStatus? status,
+        string? genre,
+        string? search,
         CancellationToken ct)
     {
         string normalizedUserName = userName.ToUpperInvariant();
@@ -22,11 +22,29 @@ public sealed class UserBookStatusRepository(LazyBlogDbContext dbContext) : IUse
             .Include(value => value.Book).ThenInclude(book => book.Author)
             .Include(value => value.Book).ThenInclude(book => book.Genre)
             .Include(value => value.Book).ThenInclude(book => book.Series)
-            .Where(value => value.User.NormalizedUserName == normalizedUserName && value.Status == status)
-            .OrderByDescending(value => value.UpdatedOnUtc ?? value.CreatedOnUtc);
-        int total = await statuses.CountAsync(ct);
-        IReadOnlyList<UserBookStatus> items = await statuses.Skip(offset).Take(limit).ToListAsync(ct);
-        return new Page<UserBookStatus>(items, total);
+            .Where(value => value.User.NormalizedUserName == normalizedUserName);
+        if (status is not null) statuses = statuses.Where(value => value.Status == status);
+        if (!string.IsNullOrWhiteSpace(genre)) statuses = statuses.Where(value => value.Book.Genre.Slug == genre);
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            string term = search.Trim();
+            statuses = statuses.Where(value => value.Book.Title.Contains(term) || value.Book.Author.Name.Contains(term) ||
+                (value.Book.Series != null && value.Book.Series.Title.Contains(term)));
+        }
+
+        return await statuses.ToListAsync(ct);
+    }
+
+    public async Task<IReadOnlyDictionary<Guid, UserBookStatus>> GetEntriesAsync(
+        string userName,
+        IReadOnlyCollection<Guid> bookIds,
+        CancellationToken ct)
+    {
+        string normalizedUserName = userName.ToUpperInvariant();
+        return await dbContext.Set<UserBookStatus>()
+            .AsNoTracking()
+            .Where(value => value.User.NormalizedUserName == normalizedUserName && bookIds.Contains(value.BookId))
+            .ToDictionaryAsync(value => value.BookId, value => value, ct);
     }
 
     public async Task<IReadOnlyDictionary<Guid, ReadingStatus>> GetStatusesAsync(
@@ -37,6 +55,13 @@ public sealed class UserBookStatusRepository(LazyBlogDbContext dbContext) : IUse
             .AsNoTracking()
             .Where(status => status.UserId == userId && bookIds.Contains(status.BookId))
             .ToDictionaryAsync(status => status.BookId, status => status.Status, ct);
+
+    public Task<int> GetCountAsync(string userName, ReadingStatus status, CancellationToken ct)
+    {
+        string normalizedUserName = userName.ToUpperInvariant();
+        return dbContext.Set<UserBookStatus>().AsNoTracking()
+            .CountAsync(value => value.User.NormalizedUserName == normalizedUserName && value.Status == status, ct);
+    }
 
     public void Add(UserBookStatus status) => dbContext.Add(status);
 
