@@ -4,7 +4,6 @@ using Azure.Identity;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Lazy.Application.Abstractions.File;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SkiaSharp;
@@ -15,7 +14,7 @@ public sealed class BookCoverService(IOptions<AzureBlobStorageOptions> options, 
 {
     private const long MaxInputBytes = 20 * 1024 * 1024;
     private readonly AzureBlobStorageOptions _options = options.Value;
-    public async Task<BookCoverUpload?> ProcessAndUploadAsync(IFormFile file, CancellationToken ct)
+    public async Task<BookCoverUpload?> ProcessAndUploadAsync(FileUpload file, CancellationToken ct)
     {
         if (file.Length is <= 0 or > MaxInputBytes) return null;
         try
@@ -99,16 +98,6 @@ public sealed class BookCoverService(IOptions<AzureBlobStorageOptions> options, 
         return result;
     }
 
-    public async Task<bool> DeleteAsync(string url, CancellationToken ct)
-    {
-        if (!Uri.TryCreate(url, UriKind.Absolute, out var uri)) return false;
-        var container = Container();
-        var expectedPrefix = container.Uri.AbsoluteUri.TrimEnd('/') + "/shelf/covers/";
-        if (!uri.AbsoluteUri.StartsWith(expectedPrefix, StringComparison.Ordinal)) return false;
-        var name = Uri.UnescapeDataString(uri.AbsoluteUri[container.Uri.AbsoluteUri.TrimEnd('/').Length..].TrimStart('/'));
-        if (!System.Text.RegularExpressions.Regex.IsMatch(name, "^shelf/covers/[0-9a-f]{16}\\.(jpg|webp|png)$")) return false;
-        return (await container.DeleteBlobIfExistsAsync(name, cancellationToken: ct)).Value;
-    }
     private BlobContainerClient Container() => new BlobServiceClient(
         new Uri($"https://{_options.AccountName}.blob.core.windows.net"), new DefaultAzureCredential())
         .GetBlobContainerClient(_options.ImageContainerName);

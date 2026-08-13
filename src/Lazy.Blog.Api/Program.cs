@@ -163,7 +163,7 @@ try
     var app = builder.Build();
 
     await ApplyMigrationsAsync(app);
-    await SeedAdminRoleAsync(app);
+    await app.BootstrapAdminRoleAsync();
 
     app.UseForwardedHeaders();
 
@@ -227,41 +227,4 @@ static async Task ApplyMigrationsAsync(WebApplication app)
     await context.Database.MigrateAsync();
 
     logger.LogInformation("Migrations applied successfully.");
-}
-
-static async Task SeedAdminRoleAsync(WebApplication app)
-{
-    const string adminUserName = "igormariuta";
-    await using var scope = app.Services.CreateAsyncScope();
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<Role>>();
-    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
-    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-
-    if (!await roleManager.RoleExistsAsync(Role.AdminRoleName))
-    {
-        var roleResult = await roleManager.CreateAsync(new Role { Name = Role.AdminRoleName });
-        if (!roleResult.Succeeded)
-        {
-            throw new InvalidOperationException($"Could not create the {Role.AdminRoleName} role: " +
-                string.Join(", ", roleResult.Errors.Select(x => x.Description)));
-        }
-    }
-
-    var admin = await userManager.FindByNameAsync(adminUserName);
-    if (admin is null)
-    {
-        logger.LogWarning("Admin role exists, but bootstrap user {UserName} was not found.", adminUserName);
-        return;
-    }
-
-    if (!await userManager.IsInRoleAsync(admin, Role.AdminRoleName))
-    {
-        var addResult = await userManager.AddToRoleAsync(admin, Role.AdminRoleName);
-        if (!addResult.Succeeded)
-        {
-            throw new InvalidOperationException($"Could not assign the {Role.AdminRoleName} role to {adminUserName}: " +
-                string.Join(", ", addResult.Errors.Select(x => x.Description)));
-        }
-        logger.LogInformation("Assigned role {Role} to bootstrap user {UserName}.", Role.AdminRoleName, adminUserName);
-    }
 }

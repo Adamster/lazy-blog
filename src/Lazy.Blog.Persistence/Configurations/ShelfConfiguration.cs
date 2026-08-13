@@ -33,8 +33,8 @@ public sealed class BookConfiguration : IEntityTypeConfiguration<Book>
     }
 }
 
-public sealed class AuthorConfiguration:IEntityTypeConfiguration<Author>
-{public void Configure(EntityTypeBuilder<Author>b){b.ToTable(TableNames.Authors);b.HasKey(x=>x.Id);b.Property(x=>x.Name).HasMaxLength(300).IsRequired();b.Property(x=>x.NormalizedName).HasMaxLength(300).IsRequired();b.HasIndex(x=>x.NormalizedName).IsUnique();}}
+public sealed class AuthorConfiguration : IEntityTypeConfiguration<Author>
+{ public void Configure(EntityTypeBuilder<Author> b) { b.ToTable(TableNames.Authors); b.HasKey(x => x.Id); b.Property(x => x.Name).HasMaxLength(300).IsRequired(); b.Property(x => x.NormalizedName).HasMaxLength(300).IsRequired(); b.HasIndex(x => x.NormalizedName).IsUnique(); } }
 
 public sealed class UserBookStatusConfiguration : IEntityTypeConfiguration<UserBookStatus>
 {

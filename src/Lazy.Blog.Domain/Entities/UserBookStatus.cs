@@ -16,6 +16,6 @@ public sealed class UserBookStatus : IAuditableEntity
     public ReadingStatus Status { get; private set; }
     public DateTime CreatedOnUtc { get; set; }
     public DateTime? UpdatedOnUtc { get; set; }
-    public static UserBookStatus Create(Guid userId,Guid bookId,ReadingStatus status)=>new(userId,bookId,status);
+    public static UserBookStatus Create(Guid userId, Guid bookId, ReadingStatus status) => new(userId, bookId, status);
     public void SetStatus(ReadingStatus status) => Status = status;
 }

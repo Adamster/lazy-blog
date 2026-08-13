@@ -7,6 +7,7 @@ namespace Lazy.Domain.Entities;
 public sealed class BookComment : Entity, IAuditableEntity
 {
     public const int MaxLength = 4000;
+    public static readonly TimeSpan EditWindow = TimeSpan.FromHours(1);
     private BookComment() { }
     private BookComment(Guid id, Guid bookId, Guid userId, string body) : base(id)
         => (BookId, UserId, Body) = (bookId, userId, body);
@@ -17,7 +18,8 @@ public sealed class BookComment : Entity, IAuditableEntity
     public string Body { get; private set; } = null!;
     public DateTime CreatedOnUtc { get; set; }
     public DateTime? UpdatedOnUtc { get; set; }
-    public static Result<BookComment> Create(Guid id,Guid bookId,Guid userId,string body)=>Valid(body)?new BookComment(id,bookId,userId,body):Result.Failure<BookComment>(DomainErrors.Shelf.InvalidData($"Comment must contain 1 to {MaxLength} characters"));
-    public Result Update(string body){if(!Valid(body))return Result.Failure(DomainErrors.Shelf.InvalidData($"Comment must contain 1 to {MaxLength} characters"));Body=body;return Result.Success();}
-    private static bool Valid(string body)=>!string.IsNullOrWhiteSpace(body)&&body.Length<=MaxLength;
+    public static Result<BookComment> Create(Guid id, Guid bookId, Guid userId, string body) => Valid(body) ? new BookComment(id, bookId, userId, body) : Result.Failure<BookComment>(DomainErrors.Shelf.InvalidData($"Comment must contain 1 to {MaxLength} characters"));
+    public Result Update(string body) { if (!Valid(body)) return Result.Failure(DomainErrors.Shelf.InvalidData($"Comment must contain 1 to {MaxLength} characters")); Body = body; return Result.Success(); }
+    public bool CanEdit(DateTime nowUtc) => nowUtc - CreatedOnUtc < EditWindow;
+    private static bool Valid(string body) => !string.IsNullOrWhiteSpace(body) && body.Length <= MaxLength;
 }
