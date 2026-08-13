@@ -19,7 +19,8 @@ public sealed class GetSeriesQueryHandler(
                 value.Id,
                 value.Slug,
                 value.Title,
-                counts.GetValueOrDefault(value.Id)))
+                counts.GetValueOrDefault(value.Id),
+                value.TitleEn))
             .ToList();
     }
 }

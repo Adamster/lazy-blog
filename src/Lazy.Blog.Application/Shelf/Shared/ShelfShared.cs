@@ -8,7 +8,8 @@ using Lazy.Domain.Shared;
 namespace Lazy.Application.Shelf;
 
 public record ManageBookData(Guid GenreId, Guid AuthorId, string Slug, string Title, Guid? SeriesId, int? VolumeNumber,
-    string CoverUrl, decimal Rating, int RatingCount, string RatingSource, string? SourceWorkId, string? SourceUrl);
+    string CoverUrl, decimal Rating, int RatingCount, string RatingSource, string? SourceWorkId, string? SourceUrl,
+    string TitleEn);
 
 public sealed class ManageBookDataValidator : AbstractValidator<ManageBookData>
 {
@@ -18,6 +19,7 @@ public sealed class ManageBookDataValidator : AbstractValidator<ManageBookData>
         RuleFor(x => x.AuthorId).NotEmpty();
         RuleFor(x => x.Slug).NotEmpty().MaximumLength(160);
         RuleFor(x => x.Title).NotEmpty().MaximumLength(300);
+        RuleFor(x => x.TitleEn).NotEmpty().MaximumLength(300);
         if (requireCoverUrl) RuleFor(x => x.CoverUrl).NotEmpty().MaximumLength(1000);
         RuleFor(x => x.Rating).InclusiveBetween(0, 10);
         RuleFor(x => x.RatingCount).GreaterThanOrEqualTo(0);
@@ -40,8 +42,8 @@ internal static class ShelfInput
     {
         var result = book.UpdateSlug(Normalize(data.Slug));
         if (result.IsFailure) return result;
-        result = book.UpdateCatalog(data.GenreId, data.AuthorId, Normalize(data.Title), data.CoverUrl,
-            data.SeriesId, data.VolumeNumber, data.SourceWorkId, data.SourceUrl);
+        result = book.UpdateCatalog(data.GenreId, data.AuthorId, Normalize(data.Title), Normalize(data.TitleEn),
+            data.CoverUrl, data.SeriesId, data.VolumeNumber, data.SourceWorkId, data.SourceUrl);
         return result.IsFailure
             ? result
             : book.UpdateRating(data.Rating, data.RatingCount, data.RatingSource, DateTime.UtcNow);

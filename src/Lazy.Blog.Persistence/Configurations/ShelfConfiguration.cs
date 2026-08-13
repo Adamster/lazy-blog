@@ -35,6 +35,7 @@ internal sealed class BookConfiguration : IEntityTypeConfiguration<Book>
         builder.HasIndex(x => x.Slug).IsUnique();
 
         builder.Property(x => x.Title).HasMaxLength(300).IsRequired();
+        builder.Property(x => x.TitleEn).HasMaxLength(300);
         builder.Property(x => x.CoverUrl).HasMaxLength(1000).IsRequired();
         builder.Property(x => x.Rating).HasPrecision(4, 2);
         builder.Property(x => x.RatingSource).HasMaxLength(50);
@@ -60,6 +61,7 @@ internal sealed class SeriesConfiguration : IEntityTypeConfiguration<Series>
         builder.HasIndex(x => x.Slug).IsUnique();
 
         builder.Property(x => x.Title).HasMaxLength(300).IsRequired();
+        builder.Property(x => x.TitleEn).HasMaxLength(300);
         builder.HasIndex(x => x.Title).IsUnique();
     }
 }
@@ -75,6 +77,7 @@ internal sealed class AuthorConfiguration : IEntityTypeConfiguration<Author>
         builder.HasIndex(x => x.Slug).IsUnique();
 
         builder.Property(x => x.Name).HasMaxLength(300).IsRequired();
+        builder.Property(x => x.NameEn).HasMaxLength(300);
 
         builder.Property(x => x.NormalizedName).HasMaxLength(300).IsRequired();
         builder.HasIndex(x => x.NormalizedName).IsUnique();

@@ -30,7 +30,7 @@ public sealed class AdminAuthorsController(ISender sender, ILogger<AdminAuthorsC
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Create(ManageAuthorRequest request, CancellationToken ct)
     {
-        var result = await Sender.Send(new CreateAuthorCommand(request.Slug, request.Name), ct);
+        var result = await Sender.Send(new CreateAuthorCommand(request.Slug, request.Name, request.NameEn), ct);
         if (result.IsFailure) return HandleFailure(result);
         var response = new IdResponse(result.Value.Id);
         return result.Value.Created
@@ -43,7 +43,7 @@ public sealed class AdminAuthorsController(ISender sender, ILogger<AdminAuthorsC
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Update(Guid id, ManageAuthorRequest request, CancellationToken ct)
     {
-        var result = await Sender.Send(new UpdateAuthorCommand(id, request.Slug, request.Name), ct);
+        var result = await Sender.Send(new UpdateAuthorCommand(id, request.Slug, request.Name, request.NameEn), ct);
         return result.IsFailure ? HandleFailure(result) : NoContent();
     }
 

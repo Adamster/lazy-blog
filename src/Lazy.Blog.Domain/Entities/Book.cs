@@ -15,6 +15,7 @@ public sealed class Book : Entity, IAuditableEntity
     public Genre Genre { get; private set; } = null!;
     public string Slug { get; private set; } = null!;
     public string Title { get; private set; } = null!;
+    public string? TitleEn { get; private set; }
     public Guid AuthorId { get; private set; }
     public Author Author { get; private set; } = null!;
     public Guid? SeriesId { get; private set; }
@@ -31,7 +32,7 @@ public sealed class Book : Entity, IAuditableEntity
     public DateTime? UpdatedOnUtc { get; set; }
 
     public static Result<Book> Create(Guid id, Guid genreId, Guid authorId, string slug, string title, string coverUrl)
-        => ValidateCatalog(slug, title, coverUrl, null, null, null, null).IsFailure
+        => ValidateCatalog(slug, title, null, coverUrl, null, null, null, null).IsFailure
             ? Result.Failure<Book>(DomainErrors.Shelf.InvalidData("Book catalog data is empty or too long"))
             : new Book(id, genreId, authorId, slug, title, coverUrl);
 
@@ -44,14 +45,14 @@ public sealed class Book : Entity, IAuditableEntity
         return Result.Success();
     }
 
-    public Result UpdateCatalog(Guid genreId, Guid authorId, string title, string coverUrl,
+    public Result UpdateCatalog(Guid genreId, Guid authorId, string title, string? titleEn, string coverUrl,
         Guid? seriesId, int? volumeNumber, string? sourceWorkId, string? sourceUrl)
     {
-        var valid = ValidateCatalog(Slug, title, coverUrl, seriesId, volumeNumber, sourceWorkId, sourceUrl);
+        var valid = ValidateCatalog(Slug, title, titleEn, coverUrl, seriesId, volumeNumber, sourceWorkId, sourceUrl);
         if (valid.IsFailure) return valid;
 
-        (GenreId, AuthorId, Title, CoverUrl, SeriesId, VolumeNumber, SourceWorkId, SourceUrl) =
-            (genreId, authorId, title, coverUrl, seriesId, volumeNumber, sourceWorkId, sourceUrl);
+        (GenreId, AuthorId, Title, TitleEn, CoverUrl, SeriesId, VolumeNumber, SourceWorkId, SourceUrl) =
+            (genreId, authorId, title, titleEn, coverUrl, seriesId, volumeNumber, sourceWorkId, sourceUrl);
         return Result.Success();
     }
 
@@ -67,6 +68,7 @@ public sealed class Book : Entity, IAuditableEntity
     private static Result ValidateCatalog(
         string slug,
         string title,
+        string? titleEn,
         string coverUrl,
         Guid? seriesId,
         int? volumeNumber,
@@ -78,6 +80,7 @@ public sealed class Book : Entity, IAuditableEntity
             slug.Length > 160 ||
             string.IsNullOrWhiteSpace(title) ||
             title.Length > 300 ||
+            titleEn?.Length > 300 ||
             string.IsNullOrWhiteSpace(coverUrl) ||
             coverUrl.Length > 1000 ||
             sourceWorkId?.Length > 100 ||

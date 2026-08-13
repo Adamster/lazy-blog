@@ -23,7 +23,7 @@ public sealed class GetShelfCatalogQueryHandlerTests
         decimal rating, int ratingCount)
     {
         var book = Book.Create(Guid.NewGuid(), genreId, authorId, slug, title, "https://cover").Value;
-        book.UpdateCatalog(genreId, authorId, title, "https://cover", seriesId, volumeNumber, null, null);
+        book.UpdateCatalog(genreId, authorId, title, $"{title} (EN)", "https://cover", seriesId, volumeNumber, null, null);
         book.UpdateRating(rating, ratingCount, "FantLab", DateTime.UtcNow);
         return book;
     }
@@ -43,8 +43,8 @@ public sealed class GetShelfCatalogQueryHandlerTests
     {
         await using var context = CreateContext();
         var genre = Genre.Create(Guid.NewGuid(), "fantasy", "Fantasy", 1).Value;
-        var author = Author.Create(Guid.NewGuid(), "author", "Author").Value;
-        var series = Series.Create(Guid.NewGuid(), "cycle", "Cycle").Value;
+        var author = Author.Create(Guid.NewGuid(), "author", "Author", "Author (EN)").Value;
+        var series = Series.Create(Guid.NewGuid(), "cycle", "Cycle", "Cycle (EN)").Value;
         context.AddRange(genre, author, series);
         context.AddRange(
             CreateBook(genre.Id, author.Id, "vol-1", "Volume 1", series.Id, 1, 8, 100),
@@ -66,8 +66,8 @@ public sealed class GetShelfCatalogQueryHandlerTests
     {
         await using var context = CreateContext();
         var genre = Genre.Create(Guid.NewGuid(), "fantasy", "Fantasy", 1).Value;
-        var author = Author.Create(Guid.NewGuid(), "author", "Author").Value;
-        var series = Series.Create(Guid.NewGuid(), "cycle", "Cycle").Value;
+        var author = Author.Create(Guid.NewGuid(), "author", "Author", "Author (EN)").Value;
+        var series = Series.Create(Guid.NewGuid(), "cycle", "Cycle", "Cycle (EN)").Value;
         var volume1 = CreateBook(genre.Id, author.Id, "vol-1", "Volume 1", series.Id, 1, 8, 100);
         var volume2 = CreateBook(genre.Id, author.Id, "vol-2", "Volume 2", series.Id, 2, 9, 50);
         context.AddRange(genre, author, series, volume1, volume2);
@@ -92,8 +92,8 @@ public sealed class GetShelfCatalogQueryHandlerTests
         await using var context = CreateContext();
         var matchingGenre = Genre.Create(Guid.NewGuid(), "fantasy", "Fantasy", 1).Value;
         var otherGenre = Genre.Create(Guid.NewGuid(), "scifi", "Sci-Fi", 2).Value;
-        var author = Author.Create(Guid.NewGuid(), "author", "Author").Value;
-        var series = Series.Create(Guid.NewGuid(), "cycle", "Cycle").Value;
+        var author = Author.Create(Guid.NewGuid(), "author", "Author", "Author (EN)").Value;
+        var series = Series.Create(Guid.NewGuid(), "cycle", "Cycle", "Cycle (EN)").Value;
         context.AddRange(matchingGenre, otherGenre, author, series);
         context.AddRange(
             CreateBook(matchingGenre.Id, author.Id, "vol-1", "Volume 1", series.Id, 1, 8, 100),
@@ -112,9 +112,9 @@ public sealed class GetShelfCatalogQueryHandlerTests
     {
         await using var context = CreateContext();
         var genre = Genre.Create(Guid.NewGuid(), "fantasy", "Fantasy", 1).Value;
-        var matchingAuthor = Author.Create(Guid.NewGuid(), "matching-author", "Matching Author").Value;
-        var otherAuthor = Author.Create(Guid.NewGuid(), "other-author", "Other Author").Value;
-        var series = Series.Create(Guid.NewGuid(), "cycle", "Cycle").Value;
+        var matchingAuthor = Author.Create(Guid.NewGuid(), "matching-author", "Matching Author", "Matching Author (EN)").Value;
+        var otherAuthor = Author.Create(Guid.NewGuid(), "other-author", "Other Author", "Other Author (EN)").Value;
+        var series = Series.Create(Guid.NewGuid(), "cycle", "Cycle", "Cycle (EN)").Value;
         context.AddRange(genre, matchingAuthor, otherAuthor, series);
         context.AddRange(
             CreateBook(genre.Id, matchingAuthor.Id, "vol-1", "Volume 1", series.Id, 1, 8, 100),
@@ -133,9 +133,9 @@ public sealed class GetShelfCatalogQueryHandlerTests
     {
         await using var context = CreateContext();
         var genre = Genre.Create(Guid.NewGuid(), "fantasy", "Fantasy", 1).Value;
-        var author = Author.Create(Guid.NewGuid(), "author", "Author").Value;
-        var lowSeries = Series.Create(Guid.NewGuid(), "low-cycle", "Low Cycle").Value;
-        var highSeries = Series.Create(Guid.NewGuid(), "high-cycle", "High Cycle").Value;
+        var author = Author.Create(Guid.NewGuid(), "author", "Author", "Author (EN)").Value;
+        var lowSeries = Series.Create(Guid.NewGuid(), "low-cycle", "Low Cycle", "Low Cycle (EN)").Value;
+        var highSeries = Series.Create(Guid.NewGuid(), "high-cycle", "High Cycle", "High Cycle (EN)").Value;
         context.AddRange(genre, author, lowSeries, highSeries);
         // low-cycle: weighted average is low (9-rated volume has far fewer raters than the 2-rated one)
         context.AddRange(

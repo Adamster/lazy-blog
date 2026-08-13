@@ -6,7 +6,7 @@ using Lazy.Domain.Shared;
 
 namespace Lazy.Application.Shelf;
 
-public record UpdateSeriesCommand(Guid Id, string Slug, string Title) : ICommand;
+public record UpdateSeriesCommand(Guid Id, string Slug, string Title, string TitleEn) : ICommand;
 
 public sealed class UpdateSeriesCommandHandler(
     ISeriesRepository series,
@@ -18,9 +18,10 @@ public sealed class UpdateSeriesCommandHandler(
         if (value is null) return Result.Failure(DomainErrors.Shelf.SeriesNotFound(request.Id));
         string slug = ShelfInput.Normalize(request.Slug);
         string title = ShelfInput.Normalize(request.Title);
+        string titleEn = ShelfInput.Normalize(request.TitleEn);
         if (await series.ConflictsAsync(request.Id, slug, title, ct))
             return Result.Failure(DomainErrors.Shelf.SeriesAlreadyExists);
-        var result = value.Update(slug, title);
+        var result = value.Update(slug, title, titleEn);
         if (result.IsFailure) return result;
         return await unitOfWork.SaveChangesAsync(ShelfConflict.Series, ct);
     }
@@ -33,5 +34,6 @@ public sealed class UpdateSeriesCommandValidator : AbstractValidator<UpdateSerie
         RuleFor(x => x.Id).NotEmpty();
         RuleFor(x => x.Slug).NotEmpty().MaximumLength(50);
         RuleFor(x => x.Title).NotEmpty().MaximumLength(300);
+        RuleFor(x => x.TitleEn).NotEmpty().MaximumLength(300);
     }
 }

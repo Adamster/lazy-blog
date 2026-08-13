@@ -68,6 +68,10 @@ namespace Lazy.Persistence.Migrations
                         .HasMaxLength(300)
                         .HasColumnType("nvarchar(300)");
 
+                    b.Property<string>("NameEn")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
                     b.Property<string>("NormalizedName")
                         .IsRequired()
                         .HasMaxLength(300)
@@ -145,6 +149,10 @@ namespace Lazy.Persistence.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<string>("TitleEn")
                         .HasMaxLength(300)
                         .HasColumnType("nvarchar(300)");
 
@@ -607,6 +615,10 @@ namespace Lazy.Persistence.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<string>("TitleEn")
                         .HasMaxLength(300)
                         .HasColumnType("nvarchar(300)");
 

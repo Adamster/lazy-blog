@@ -6,7 +6,7 @@ using Lazy.Domain.Shared;
 
 namespace Lazy.Application.Shelf;
 
-public record UpdateAuthorCommand(Guid Id, string Slug, string Name) : ICommand;
+public record UpdateAuthorCommand(Guid Id, string Slug, string Name, string NameEn) : ICommand;
 
 public sealed class UpdateAuthorCommandHandler(
     IAuthorRepository authors,
@@ -22,7 +22,7 @@ public sealed class UpdateAuthorCommandHandler(
         {
             return Result.Failure(DomainErrors.Shelf.AuthorAlreadyExists);
         }
-        var result = value.Update(ShelfInput.Normalize(request.Slug), request.Name);
+        var result = value.Update(ShelfInput.Normalize(request.Slug), request.Name, request.NameEn);
         if (result.IsFailure) return result;
         return await unitOfWork.SaveChangesAsync(ShelfConflict.Author, ct);
     }
@@ -35,5 +35,6 @@ public sealed class UpdateAuthorCommandValidator : AbstractValidator<UpdateAutho
         RuleFor(x => x.Id).NotEmpty();
         RuleFor(x => x.Slug).NotEmpty().MaximumLength(50);
         RuleFor(x => x.Name).NotEmpty().MaximumLength(300);
+        RuleFor(x => x.NameEn).NotEmpty().MaximumLength(300);
     }
 }

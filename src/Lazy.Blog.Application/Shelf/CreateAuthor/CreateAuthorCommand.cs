@@ -6,7 +6,7 @@ using Lazy.Domain.Shared;
 
 namespace Lazy.Application.Shelf;
 
-public record CreateAuthorCommand(string Slug, string Name) : ICommand<CreateAuthorResult>;
+public record CreateAuthorCommand(string Slug, string Name, string NameEn) : ICommand<CreateAuthorResult>;
 
 public record CreateAuthorResult(Guid Id, bool Created);
 
@@ -16,7 +16,7 @@ public sealed class CreateAuthorCommandHandler(
 {
     public async Task<Result<CreateAuthorResult>> Handle(CreateAuthorCommand request, CancellationToken ct)
     {
-        var result = Author.Create(Guid.NewGuid(), ShelfInput.Normalize(request.Slug), request.Name);
+        var result = Author.Create(Guid.NewGuid(), ShelfInput.Normalize(request.Slug), request.Name, request.NameEn);
         if (result.IsFailure)
         {
             return Result.Failure<CreateAuthorResult>(result.Error);
@@ -42,5 +42,6 @@ public sealed class CreateAuthorCommandValidator : AbstractValidator<CreateAutho
     {
         RuleFor(x => x.Slug).NotEmpty().MaximumLength(50);
         RuleFor(x => x.Name).NotEmpty().MaximumLength(300);
+        RuleFor(x => x.NameEn).NotEmpty().MaximumLength(300);
     }
 }

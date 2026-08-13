@@ -78,7 +78,7 @@ public sealed class AdminBooksController(ISender sender, ILogger<AdminBooksContr
     private static ManageBookData Map(ManageBookFormRequest request) =>
         new(request.GenreId, request.AuthorId, request.Slug, request.Title, request.SeriesId, request.VolumeNumber,
             string.Empty, request.Rating, request.RatingCount,
-            request.RatingSource, request.SourceWorkId, request.SourceUrl);
+            request.RatingSource, request.SourceWorkId, request.SourceUrl, request.TitleEn);
 
     private static FileUpload Map(IFormFile file) =>
         new(file.FileName, file.ContentType, file.Length, file.OpenReadStream);

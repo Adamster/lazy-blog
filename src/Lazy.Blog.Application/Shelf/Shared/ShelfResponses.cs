@@ -6,13 +6,13 @@ public record GenreResponse(Guid Id, string Slug, string Name, int SortOrder, in
 
 public record BookGenreResponse(Guid Id, string Slug, string Name);
 
-public record BookAuthorResponse(Guid Id, string Slug, string Name);
+public record BookAuthorResponse(Guid Id, string Slug, string Name, string? NameEn);
 
 public record BookSeriesInfo(Guid Id, string Slug, string Title, int VolumeNumber);
 
 public record BookResponse(Guid Id, string Slug, string Title, BookAuthorResponse Author, BookSeriesInfo? Series,
     string CoverUrl, decimal Rating, int RatingCount, string RatingSource, string? SourceWorkId,
-    BookGenreResponse Genre, string? Status);
+    BookGenreResponse Genre, string? Status, string? TitleEn);
 
 public record BooksPageResponse(
     IReadOnlyList<BookResponse> Items,
@@ -28,7 +28,8 @@ public record BookDetailResponse(Guid Id, string Slug, string Title, BookAuthorR
     DateTime? RatingSyncedOnUtc,
     BookGenreResponse Genre,
     string? Status,
-    int CommentsCount);
+    int CommentsCount,
+    string? TitleEn);
 
 public record BookCommentUserResponse(Guid Id, string DisplayName, string UserName, string? AvatarUrl);
 
@@ -49,9 +50,9 @@ public record RatingSyncResponse(
     int BooksFailed,
     DateTime CompletedOnUtc);
 
-public record SeriesResponse(Guid Id, string Slug, string Title, int BookCount);
+public record SeriesResponse(Guid Id, string Slug, string Title, int BookCount, string? TitleEn);
 
-public record SeriesDetailResponse(Guid Id, string Slug, string Title, IReadOnlyList<BookResponse> Volumes);
+public record SeriesDetailResponse(Guid Id, string Slug, string Title, IReadOnlyList<BookResponse> Volumes, string? TitleEn);
 
 public record IdResponse(Guid Id);
 
@@ -121,7 +122,7 @@ internal static class ShelfMapping
             book.Id,
             book.Slug,
             book.Title,
-            new(book.Author.Id, book.Author.Slug, book.Author.Name),
+            new(book.Author.Id, book.Author.Slug, book.Author.Name, book.Author.NameEn),
             ToSeriesInfo(book),
             book.CoverUrl,
             book.Rating,
@@ -129,5 +130,6 @@ internal static class ShelfMapping
             book.RatingSource,
             book.SourceWorkId,
             new(book.Genre.Id, book.Genre.Slug, book.Genre.Name),
-            status is null ? null : StatusName(status.Value));
+            status is null ? null : StatusName(status.Value),
+            book.TitleEn);
 }

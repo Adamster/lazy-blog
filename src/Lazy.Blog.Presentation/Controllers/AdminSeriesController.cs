@@ -29,7 +29,7 @@ public sealed class AdminSeriesController(ISender sender, ILogger<AdminSeriesCon
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Create(ManageSeriesRequest request, CancellationToken ct)
     {
-        var result = await Sender.Send(new CreateSeriesCommand(request.Slug, request.Title), ct);
+        var result = await Sender.Send(new CreateSeriesCommand(request.Slug, request.Title, request.TitleEn), ct);
         return result.IsFailure
             ? HandleFailure(result)
             : Created($"/api/admin/series/{result.Value}", new IdResponse(result.Value));
@@ -40,7 +40,7 @@ public sealed class AdminSeriesController(ISender sender, ILogger<AdminSeriesCon
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Update(Guid id, ManageSeriesRequest request, CancellationToken ct)
     {
-        var result = await Sender.Send(new UpdateSeriesCommand(id, request.Slug, request.Title), ct);
+        var result = await Sender.Send(new UpdateSeriesCommand(id, request.Slug, request.Title, request.TitleEn), ct);
         return result.IsFailure ? HandleFailure(result) : NoContent();
     }
 

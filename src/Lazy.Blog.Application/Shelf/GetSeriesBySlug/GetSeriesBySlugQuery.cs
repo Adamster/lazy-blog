@@ -29,6 +29,6 @@ public sealed class GetSeriesBySlugQueryHandler(
         var items = volumes
             .Select(book => ShelfMapping.ToResponse(book, ShelfMapping.LookupStatus(statuses, book.Id)))
             .ToList();
-        return new SeriesDetailResponse(value.Id, value.Slug, value.Title, items);
+        return new SeriesDetailResponse(value.Id, value.Slug, value.Title, items, value.TitleEn);
     }
 }

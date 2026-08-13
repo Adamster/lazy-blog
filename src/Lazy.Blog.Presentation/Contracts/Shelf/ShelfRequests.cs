@@ -12,9 +12,9 @@ public record ImportBookRatingsRequest(string Source, IReadOnlyList<RatingImport
 
 public record ManageGenreRequest(string Slug, string Name, int SortOrder);
 
-public record ManageAuthorRequest(string Slug, string Name);
+public record ManageAuthorRequest(string Slug, string Name, string NameEn);
 
-public record ManageSeriesRequest(string Slug, string Title);
+public record ManageSeriesRequest(string Slug, string Title, string TitleEn);
 
 public sealed class ManageBookFormRequest
 {
@@ -22,6 +22,7 @@ public sealed class ManageBookFormRequest
     public Guid AuthorId { get; init; }
     public string Slug { get; init; } = null!;
     public string Title { get; init; } = null!;
+    public string TitleEn { get; init; } = null!;
     public Guid? SeriesId { get; init; }
     public int? VolumeNumber { get; init; }
     public decimal Rating { get; init; }

@@ -27,7 +27,7 @@ public sealed class GetBookBySlugQueryHandler(
             book.Id,
             book.Slug,
             book.Title,
-            new(book.Author.Id, book.Author.Slug, book.Author.Name),
+            new(book.Author.Id, book.Author.Slug, book.Author.Name, book.Author.NameEn),
             ShelfMapping.ToSeriesInfo(book),
             book.CoverUrl,
             book.Rating,
@@ -38,6 +38,7 @@ public sealed class GetBookBySlugQueryHandler(
             book.RatingSyncedOnUtc,
             new(book.Genre.Id, book.Genre.Slug, book.Genre.Name),
             status is null ? null : ShelfMapping.StatusName(status.Status),
-            await comments.GetCountAsync(book.Id, ct));
+            await comments.GetCountAsync(book.Id, ct),
+            book.TitleEn);
     }
 }

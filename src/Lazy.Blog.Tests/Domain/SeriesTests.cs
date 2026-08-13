@@ -8,14 +8,14 @@ public sealed class SeriesTests
     [Fact]
     public void CreateRejectsEmptySlug()
     {
-        var result = Series.Create(Guid.NewGuid(), string.Empty, "Title");
+        var result = Series.Create(Guid.NewGuid(), string.Empty, "Title", "Title (EN)");
         Assert.True(result.IsFailure);
     }
 
     [Fact]
     public void CreateAcceptsValidSlugAndTitle()
     {
-        var result = Series.Create(Guid.NewGuid(), "slug", "Title");
+        var result = Series.Create(Guid.NewGuid(), "slug", "Title", "Title (EN)");
         Assert.True(result.IsSuccess);
     }
 }

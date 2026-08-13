@@ -24,7 +24,7 @@ public sealed class BookTests
     public void UpdateCatalogRejectsSeriesWithoutVolumeNumber()
     {
         var book = Book.Create(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "slug", "Title", "https://cover").Value;
-        var result = book.UpdateCatalog(Guid.NewGuid(), Guid.NewGuid(), "Title", "https://cover", Guid.NewGuid(), null, null, null);
+        var result = book.UpdateCatalog(Guid.NewGuid(), Guid.NewGuid(), "Title", "Title (EN)", "https://cover", Guid.NewGuid(), null, null, null);
         Assert.True(result.IsFailure);
     }
 
@@ -32,7 +32,7 @@ public sealed class BookTests
     public void UpdateCatalogAcceptsMatchingSeriesAndVolumeNumber()
     {
         var book = Book.Create(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "slug", "Title", "https://cover").Value;
-        var result = book.UpdateCatalog(Guid.NewGuid(), Guid.NewGuid(), "Title", "https://cover", Guid.NewGuid(), 1, null, null);
+        var result = book.UpdateCatalog(Guid.NewGuid(), Guid.NewGuid(), "Title", "Title (EN)", "https://cover", Guid.NewGuid(), 1, null, null);
         Assert.True(result.IsSuccess);
     }
 }
